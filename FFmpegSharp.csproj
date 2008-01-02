@@ -1,0 +1,226 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{DE95E14E-C50B-4C0D-B99A-8D76EF73B812}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FFmpegSharp</RootNamespace>
+    <AssemblyName>FFmpegSharp</AssemblyName>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>FFmpegSharp.snk</AssemblyOriginatorKeyFile>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Audio\AudioDecoderStream.cs" />
+    <Compile Include="Audio\AudioEncoderStream.cs" />
+    <Compile Include="Audio\FifoMemoryStream.cs" />
+    <Compile Include="Interop\AVCodec.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVCodec\AVBitStreamFilter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVCodec\AVBitStreamFilterContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVCodec\AVCodec.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVCodec\AVCodecContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVCodec\AVCodecParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVCodec\AVCodecParserContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVCodec\AVFrame.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVCodec\AVPaletteControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVCodec\AVPanScan.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVCodec\AVPicture.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVCodec\AVResampleContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVCodec\AVSubtitle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVCodec\AVSubtitleRect.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVCodec\Enums.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVCodec\ImgReSampleContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVCodec\PictureType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVCodec\RcOverride.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVCodec\ReSampleContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVFormat.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVFormat\AVError.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVFormat\AVFormatContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVFormat\AVFormatParameters.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVFormat\AVFrac.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVFormat\AVImageFormat.cs" />
+    <Compile Include="Interop\AVFormat\AVImageInfo.cs" />
+    <Compile Include="Interop\AVFormat\AVIndexEntry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVFormat\AVInputFormat.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVFormat\AVOutputFormat.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVFormat\AVPacket.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVFormat\AVPacketList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVFormat\AVProbeData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVFormat\AVStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVIO.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVIO\ByteIOContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVIO\URLContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVIO\URLPoolEntry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVIO\URLProtocol.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVUtil\AVClass.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVUtil\AVOption.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVUtil\AVOptionFlag.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVUtil\AVOptionType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVUtil\AVRational.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\AVUtil\PixelFormat.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\Mem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interop\Utils.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FFmpegSharp.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
