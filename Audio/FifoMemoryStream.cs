@@ -75,7 +75,31 @@ namespace FFmpegSharp.Audio
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            throw new Exception("The method or operation is not implemented.");
+            if (count == 0)
+                return;
+
+            // Get the free space in the buffer and resize if necessary
+            int maxSize = GetMaxWriteSize();
+
+            while (count >= maxSize)
+            {
+                DoubleBufferSize();
+                maxSize = GetMaxWriteSize();
+            }
+
+            do
+            {
+                int writeLength = m_buffer.Length - m_writeCursor;
+                writeLength = Math.Min(writeLength, count);
+
+                Array.Copy(buffer, offset, m_buffer, m_writeCursor, writeLength);
+
+                m_writeCursor += writeLength;
+                m_writeCursor %= m_buffer.Length;
+
+                offset += writeLength;
+                count -= writeLength;
+            } while (count > 0);
         }
 
         private int GetMaxReadSize()
@@ -84,6 +108,25 @@ namespace FFmpegSharp.Audio
                 return m_writeCursor - m_readCursor;
             else
                 return m_array.Length - m_writeCursor + m_readCursor;
+        }
+
+        private void DoubleBufferSize()
+        {
+            if (m_readCursor <= m_writeCursor)
+                Array.Resize<byte>(m_array, m_array.Length * 2);
+            else // Buffer is looped
+            {
+                int dataSize = m_array.Length - m_readCursor + m_writeCursor;
+                byte[] tempArr = new byte[m_array.Length * 2];
+
+                Array.Copy(m_array, m_readCursor, tempArr, 0, m_array.Length - m_readCursor);
+                Array.Copy(m_array, 0, tempArr, m_buffer.Length - m_readCursor, m_writeCursor);
+
+                m_readCursor = 0;
+                m_writeCursor = dataSize;
+
+                m_array = tempArr;
+            }
         }
 
         #region Not Supported

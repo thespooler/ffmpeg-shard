@@ -282,6 +282,12 @@ namespace FFmpegSharp.Interop
             IntPtr ptr;
             AVError err = av_open_input_file(out ptr, filename, null, 0, null);
 
+            if (ptr == IntPtr.Zero)
+            {
+                pFormatContext = new AVFormatContext();
+                return err;
+            }
+
             pFormatContext = *(AVFormatContext*)ptr.ToPointer();
 
             FFmpeg.av_freep(ref ptr);
@@ -312,6 +318,12 @@ namespace FFmpegSharp.Interop
         {
             IntPtr ptr;
             AVError err = av_open_input_file(out ptr, filename, null, 0, null);
+
+            if (ptr == IntPtr.Zero)
+            {
+                pFormatContext = new AVFormatContext();
+                return err;
+            }
 
             pFormatContext = *(AVFormatContext*) ptr.ToPointer();
 
