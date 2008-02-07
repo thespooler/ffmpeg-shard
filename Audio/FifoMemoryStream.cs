@@ -89,17 +89,34 @@ namespace FFmpegSharp.Audio
 
             do
             {
-                int writeLength = m_buffer.Length - m_writeCursor;
+                int writeLength = m_array.Length - m_writeCursor;
                 writeLength = Math.Min(writeLength, count);
 
-                Array.Copy(buffer, offset, m_buffer, m_writeCursor, writeLength);
+                Array.Copy(buffer, offset, m_array, m_writeCursor, writeLength);
 
                 m_writeCursor += writeLength;
-                m_writeCursor %= m_buffer.Length;
+                m_writeCursor %= m_array.Length;
 
                 offset += writeLength;
                 count -= writeLength;
             } while (count > 0);
+        }
+
+        private int GetMaxWriteSize()
+        {
+            int maxSize;
+
+            // If completely filling the buffer, return the max size possible
+            if (m_writeCursor == 0 && m_readCursor == 0)
+                return m_array.Length;
+
+            // Check if the buffer has looped and return maxSize accordingly
+            if (m_writeCursor < m_readCursor)
+                maxSize = m_readCursor - m_writeCursor;
+            else
+                maxSize = m_array.Length - m_writeCursor + m_readCursor;
+
+            return maxSize;
         }
 
         private int GetMaxReadSize()
@@ -113,14 +130,14 @@ namespace FFmpegSharp.Audio
         private void DoubleBufferSize()
         {
             if (m_readCursor <= m_writeCursor)
-                Array.Resize<byte>(m_array, m_array.Length * 2);
+                Array.Resize<byte>(ref m_array, m_array.Length * 2);
             else // Buffer is looped
             {
                 int dataSize = m_array.Length - m_readCursor + m_writeCursor;
                 byte[] tempArr = new byte[m_array.Length * 2];
 
                 Array.Copy(m_array, m_readCursor, tempArr, 0, m_array.Length - m_readCursor);
-                Array.Copy(m_array, 0, tempArr, m_buffer.Length - m_readCursor, m_writeCursor);
+                Array.Copy(m_array, 0, tempArr, m_array.Length - m_readCursor, m_writeCursor);
 
                 m_readCursor = 0;
                 m_writeCursor = dataSize;
