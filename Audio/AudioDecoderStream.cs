@@ -284,7 +284,7 @@ namespace FFmpegSharp.Audio
                 {
                     int len = Math.Min(count, m_bufferUsedSize);
 
-                    Array.Copy(m_buffer, 0, buffer, offset, len);
+                    Buffer.BlockCopy(m_buffer, 0, buffer, offset, len);
 
                     m_bufferUsedSize -= len;
                     offset += len;
@@ -292,7 +292,7 @@ namespace FFmpegSharp.Audio
                     totalWritten += len;
 
                     if (m_bufferUsedSize > 0)
-                        Array.Copy(m_buffer, len, m_buffer, 0, m_bufferUsedSize);
+                        Buffer.BlockCopy(m_buffer, len, m_buffer, 0, m_bufferUsedSize);
                 }
 
                 Debug.Assert(m_bufferUsedSize >= 0);

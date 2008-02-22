@@ -63,7 +63,7 @@ namespace FFmpegSharp.Audio
             do
             {
                 int readLength = Math.Min(length, m_array.Length - m_readCursor);
-                Array.Copy(m_array, m_readCursor, buffer, offset, readLength);
+                Buffer.BlockCopy(m_array, m_readCursor, buffer, offset, readLength);
 
                 offset += readLength;
                 count -= readLength;
@@ -92,7 +92,7 @@ namespace FFmpegSharp.Audio
                 int writeLength = m_array.Length - m_writeCursor;
                 writeLength = Math.Min(writeLength, count);
 
-                Array.Copy(buffer, offset, m_array, m_writeCursor, writeLength);
+                Buffer.BlockCopy(buffer, offset, m_array, m_writeCursor, writeLength);
 
                 m_writeCursor += writeLength;
                 m_writeCursor %= m_array.Length;
@@ -130,14 +130,14 @@ namespace FFmpegSharp.Audio
         private void DoubleBufferSize()
         {
             if (m_readCursor <= m_writeCursor)
-                Array.Resize<byte>(ref m_array, m_array.Length * 2);
+				ResizeByteArray(ref m_array, m_array.Length * 2);
             else // Buffer is looped
             {
                 int dataSize = m_array.Length - m_readCursor + m_writeCursor;
                 byte[] tempArr = new byte[m_array.Length * 2];
 
-                Array.Copy(m_array, m_readCursor, tempArr, 0, m_array.Length - m_readCursor);
-                Array.Copy(m_array, 0, tempArr, m_array.Length - m_readCursor, m_writeCursor);
+                Buffer.BlockCopy(m_array, m_readCursor, tempArr, 0, m_array.Length - m_readCursor);
+                Buffer.BlockCopy(m_array, 0, tempArr, m_array.Length - m_readCursor, m_writeCursor);
 
                 m_readCursor = 0;
                 m_writeCursor = dataSize;
@@ -158,5 +158,13 @@ namespace FFmpegSharp.Audio
         public override void SetLength(long value) { throw new NotSupportedException(); }
 
         #endregion
+
+		private void ResizeByteArray(ref byte[] array, int newLength)
+		{
+			byte[] old = array;
+			array = new byte[newLength];
+
+			Buffer.BlockCopy(old, 0, array, 0, Math.Min(Buffer.ByteLength(old), Buffer.ByteLength(array)));
+		}
     }
 }
