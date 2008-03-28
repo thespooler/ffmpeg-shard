@@ -4,7 +4,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{DE95E14E-C50B-4C0D-B99A-8D76EF73B812}</ProjectGuid>
+    <ProjectGuid>{09066EC3-71AD-42AD-B403-E8917B47021D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FFmpegSharp</RootNamespace>
@@ -56,9 +56,15 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Audio\AudioDecoderStream.cs" />
-    <Compile Include="Audio\AudioEncoderStream.cs" />
+    <Compile Include="Audio\AudioDecoderStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Audio\AudioEncoderStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Audio\FifoMemoryStream.cs" />
+    <Compile Include="DecoderStream.cs" />
+    <Compile Include="DecoderException.cs" />
     <Compile Include="Interop\AVCodec.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -169,6 +175,10 @@
     <Compile Include="Interop\AVIO\URLProtocol.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Interop\SWScale\SwsContext.cs" />
+    <Compile Include="Interop\SWScale\SwsFilter.cs" />
+    <Compile Include="Interop\SWScale\SwsVector.cs" />
+    <Compile Include="Interop\SWScale.cs" />
     <Compile Include="Interop\AVUtil\AVClass.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -194,6 +204,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Video\VideoDecoderStream.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FFmpegSharp.snk" />

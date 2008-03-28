@@ -295,7 +295,7 @@ namespace FFmpegSharp.Interop
         [DllImport(AVFORMAT_DLL_NAME)]
         public static extern int url_close_dyn_buf(ref ByteIOContext s, out byte* pbuffer);
 
-        public void url_close_dyn_buf(ref ByteIOContext s, out byte[] buffer)
+        public static void url_close_dyn_buf(ref ByteIOContext s, out byte[] buffer)
         {
             byte* ptr;
             int length = url_close_dyn_buf(ref s, out ptr);

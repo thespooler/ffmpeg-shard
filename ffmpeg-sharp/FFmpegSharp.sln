@@ -1,11 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FFmpegSharp", "src\\FFmpegSharp.csproj", "{DE95E14E-C50B-4C0D-B99A-8D76EF73B812}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FFmpegSharp", "src\FFmpegSharp.csproj", "{09066EC3-71AD-42AD-B403-E8917B47021D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,10 +9,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DE95E14E-C50B-4C0D-B99A-8D76EF73B812}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DE95E14E-C50B-4C0D-B99A-8D76EF73B812}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DE95E14E-C50B-4C0D-B99A-8D76EF73B812}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DE95E14E-C50B-4C0D-B99A-8D76EF73B812}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09066EC3-71AD-42AD-B403-E8917B47021D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09066EC3-71AD-42AD-B403-E8917B47021D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09066EC3-71AD-42AD-B403-E8917B47021D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09066EC3-71AD-42AD-B403-E8917B47021D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,11 +1,11 @@
-#region LGPL License
+﻿#region LGPL License
 //
-// AVRational.cs
+// SwsVector.cs
 //
 // Author:
-//   Justin Cherniak (justin.cherniak@gmail.com
+//   Tim Jones (tim@roastedamoeba.com)
 //
-// Copyright (C) 2008 Justin Cherniak
+// Copyright (C) 2008 Tim Jones
 //
 // This library is free software; you can redistribute it and/or modify
 // it  under the terms of the GNU Lesser General Public License version
@@ -23,19 +23,20 @@
 //
 #endregion
 
+using System;
 using System.Runtime.InteropServices;
 
-namespace FFmpegSharp.Interop.Util
+namespace FFmpegSharp.Interop.SWScale
 {
-    [StructLayout(LayoutKind.Sequential)]
-    public unsafe struct AVRational
-    {
-        public int num;
-        public int den;
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct SwsFilter
+	{
+		public SwsVector* lumH;
 
-				public static implicit operator float(AVRational a)
-				{
-					return a.num / (float) a.den;
-				}
-    };
+		public SwsVector* lumV;
+
+		public SwsVector* chrH;
+
+		public SwsVector* chrV;
+	}
 }

@@ -32,17 +32,10 @@ using FFmpegSharp.Interop.Format;
 
 namespace FFmpegSharp.Audio
 {
-    public unsafe class AudioDecoderStream : Stream
+    public unsafe class AudioDecoderStream : DecoderStream
     {
         #region Private Instance Members
 
-        private AVFormatContext m_avFormatCtx;
-        private AVCodecContext m_avCodecCtx;
-        private uint m_audioStreamIdx;
-        private bool m_disposed;
-        private byte[] m_buffer;
-        private int m_bufferUsedSize;
-        private long m_position;
         private const int BUFFER_SIZE = FFmpeg.AVCODEC_MAX_AUDIO_FRAME_SIZE;
 
         #endregion
@@ -64,59 +57,10 @@ namespace FFmpegSharp.Audio
         /// </summary>
         /// <param name="Filename">File to decode</param>
         public AudioDecoderStream(string Filename)
+					: base(Filename, CodecType.CODEC_TYPE_AUDIO)
         {
             // Initialize instance variables
-            m_disposed = false;
             m_buffer = new byte[FFmpeg.AVCODEC_MAX_AUDIO_FRAME_SIZE];
-            m_position = m_bufferUsedSize = 0;
-
-            // Open FFmpeg
-            FFmpeg.av_register_all();
-
-            // Open the file with FFmpeg
-            if (FFmpeg.av_open_input_file(out m_avFormatCtx, Filename) != 0)
-                throw new DecoderException("Couldn't open file");
-
-            if (FFmpeg.av_find_stream_info(ref m_avFormatCtx) < 0)
-                throw new DecoderException("Couldn't find stream info");
-
-            if (m_avFormatCtx.nb_streams < 1)
-                throw new DecoderException("No streams found");
-
-            // Find the first audio stream in the file (eventually might support selecting streams)
-            m_avCodecCtx = *m_avFormatCtx.streams[0]->codec;
-
-            for (m_audioStreamIdx = 0; m_audioStreamIdx < m_avFormatCtx.nb_streams; m_audioStreamIdx++)
-            {
-                m_avCodecCtx = *m_avFormatCtx.streams[m_audioStreamIdx]->codec;
-
-                if (m_avCodecCtx.codec_type == CodecType.CODEC_TYPE_AUDIO)
-                    break;
-            }
-
-            if (m_avCodecCtx.codec_type != CodecType.CODEC_TYPE_AUDIO)
-                throw new DecoderException("No audio stream found");
-
-            // Open the audio decoding codec
-            AVCodec* avCodec = FFmpeg.avcodec_find_decoder(m_avCodecCtx.codec_id);
-            if (avCodec == null)
-                throw new DecoderException("No decoder found");
-
-            if (FFmpeg.avcodec_open(ref m_avCodecCtx, ref *avCodec) < 0)
-                throw new DecoderException("Error opening codec");
-        }
-
-        ~AudioDecoderStream()
-        {
-            Dispose(false);
-        }
-
-        /// <summary>
-        /// Duration of the stream 
-        /// </summary>
-        public TimeSpan Duration
-        {
-            get { return new TimeSpan((long)((m_avFormatCtx.duration / (double)FFmpeg.AV_TIME_BASE) * 1E7)); }
         }
 
         /// <summary>
@@ -166,172 +110,51 @@ namespace FFmpegSharp.Audio
             get { return (Channels * SampleRate * SampleSize) / 8; }
         }
 
-        private void DecodeNextPacket()
-        {
-            if (m_position >= Length)
-                throw new System.IO.EndOfStreamException();
+			protected override bool DecodeNextPacket(ref AVPacket packet)
+			{
+				int totalOutput = 0;
 
-            if (m_disposed)
-                return;
+				// Copy the data pointer to we can muck with it
+				int packetSize = packet.size;
+				byte* packetData = (byte*) packet.data;
 
-            AVPacket packet = new AVPacket();
-            FFmpeg.av_init_packet(ref packet);
+				// Allocate a new PcmPacket and get a pointer to its array so we can muck with it
+				fixed (byte* pcmPacketPtr = m_buffer)
+				{
+					// May be necessary to loop multiple times if more than one frame is in the compressed packet
+					do
+					{
+						if (m_disposed)
+						{
+							m_bufferUsedSize = 0;
+							return false;
+						}
 
-            bool retry = false;
+						int outputBufferUsedSize = (m_buffer.Length) - totalOutput; //Must be initialized before sending in as per docs
 
-            do
-            {
-                // Read a frame of compressed audio data
-                int r;
-                if ((r = FFmpeg.av_read_frame(ref m_avFormatCtx, ref packet)) < 0)
-                    throw new System.IO.EndOfStreamException();
+						short* pcmWritePtr = (short*) ((byte*) pcmPacketPtr + totalOutput);
 
-                try
-                {
-                    // Make sure the packet is an audio packet and has data
-                    if (packet.stream_index != m_audioStreamIdx ||
-                        packet.data == IntPtr.Zero)
-                    {
-                        retry = true;
-                        continue;
-                    }
+						int usedInputBytes = FFmpeg.avcodec_decode_audio2(ref m_avCodecCtx, pcmWritePtr, ref outputBufferUsedSize, packetData, packetSize);
 
-                    int totalOutput = 0;
+						if (usedInputBytes < 0) //Error in packet, ignore packet
+							break;
 
-                    // Copy the data pointer to we can muck with it
-                    int packetSize = packet.size;
-                    byte* packetData = (byte*)packet.data;
+						if (outputBufferUsedSize > 0)
+							totalOutput += outputBufferUsedSize;
 
-                    // Allocate a new PcmPacket and get a pointer to its array so we can muck with it
-                    fixed (byte* pcmPacketPtr = m_buffer)
-                    {
-                        // May be necessary to loop multiple times if more than one frame is in the compressed packet
-                        do
-                        {
-                            if (m_disposed)
-                            {
-                                m_bufferUsedSize = 0;
-                                return;
-                            }
+						packetData += usedInputBytes;
+						packetSize -= usedInputBytes;
+					}
+					while (packetSize > 0);
 
-                            int outputBufferUsedSize = (m_buffer.Length) - totalOutput; //Must be initialized before sending in as per docs
-
-                            short* pcmWritePtr = (short*)((byte*)pcmPacketPtr + totalOutput);
-
-                            int usedInputBytes = FFmpeg.avcodec_decode_audio2(ref m_avCodecCtx, pcmWritePtr, ref outputBufferUsedSize, packetData, packetSize);
-
-                            if (usedInputBytes < 0) //Error in packet, ignore packet
-                                break;
-
-                            if (outputBufferUsedSize > 0)
-                                totalOutput += outputBufferUsedSize;
-
-                            packetData += usedInputBytes;
-                            packetSize -= usedInputBytes;
-                        }
-                        while (packetSize > 0);
-
-                        retry = false;
-                        m_bufferUsedSize = totalOutput;
-                    }
-                }
-                finally
-                {
-                    FFmpeg.av_free_packet(ref packet);
-                }
-
-            } while (retry);
-        }
-
-        public override bool CanRead
-        {
-            get { return true; }
-        }
-
-        public override bool CanSeek
-        {
-            get { return true; }
-        }
-
-        public override bool CanWrite
-        {
-            get { return false; }
-        }
-
-        public override void Flush()
-        {
-            throw new NotSupportedException();
-        }
+					m_bufferUsedSize = totalOutput;
+					return false;
+				}
+			}
 
         public override long Length
         {
             get { return (long)(Math.Ceiling(Duration.TotalSeconds * AverageBytesPerSecond)); }
-        }
-
-        public override long Position
-        {
-            get { return m_position; }
-            set { this.Seek(value, SeekOrigin.Begin); }
-        }
-
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            int totalWritten = 0;
-
-            while (count > 0)
-            {
-                if (m_bufferUsedSize > 0)
-                {
-                    int len = Math.Min(count, m_bufferUsedSize);
-
-                    Buffer.BlockCopy(m_buffer, 0, buffer, offset, len);
-
-                    m_bufferUsedSize -= len;
-                    offset += len;
-                    count -= len;
-                    totalWritten += len;
-
-                    if (m_bufferUsedSize > 0)
-                        Buffer.BlockCopy(m_buffer, len, m_buffer, 0, m_bufferUsedSize);
-                }
-
-                Debug.Assert(m_bufferUsedSize >= 0);
-
-                if (m_bufferUsedSize == 0)
-                {
-                    try
-                    {
-                        DecodeNextPacket();
-                    }
-                    catch (EndOfStreamException)
-                    {
-                        break;
-                    }
-                }
-            }
-
-            m_position += totalWritten;
-
-            if (totalWritten == 0)
-                return -1;
-
-            return totalWritten;
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (!m_disposed)
-            {
-                if (disposing)
-                    m_buffer = null;
-
-                m_disposed = true;
-
-                if (m_avCodecCtx.codec != null)
-                    FFmpeg.avcodec_close(ref m_avCodecCtx);
-
-                FFmpeg.av_close_input_file(ref m_avFormatCtx);
-            }
         }
 
         public override long Seek(long offset, SeekOrigin origin)
@@ -375,21 +198,5 @@ namespace FFmpegSharp.Audio
 
             return m_position;
         }
-
-        public override void SetLength(long value)
-        {
-            throw new NotSupportedException();
-        }
-
-        public override void Write(byte[] buffer, int offset, int count)
-        {
-            throw new NotSupportedException();
-        }
-    }
-
-    public class DecoderException : ApplicationException
-    {
-        public DecoderException() { }
-        public DecoderException(string Message) : base(Message) { }
     }
 }

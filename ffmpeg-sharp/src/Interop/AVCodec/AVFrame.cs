@@ -35,7 +35,7 @@ namespace FFmpegSharp.Interop.Codec
         /// Pointer to the picture planes.
         /// This might be different from the first allocated byte
         /// </summary>
-        public fixed byte data[4];
+        public fixed int data[4];
 
         public fixed int linesize[4];
 
@@ -43,14 +43,14 @@ namespace FFmpegSharp.Interop.Codec
         /// Pointer to the first allocated byte of the picture.  Can be used in get_buffer/release_buffer.
         /// This isn't used by libavcodec unless the default get/release_buffer() is used.
         /// </summary>
-        public fixed byte @base[4];
+        public fixed int @base[4];
 
         /// <summary>
         /// Keyframe.  Set by libavcodec
         /// </summary>
-        [MarshalAs(UnmanagedType.I4)]
-        public bool key_frame;
-
+        //[MarshalAs(UnmanagedType.I4)]
+        public int key_frame;
+			
         /// <summary>
         /// Picture type of the frame
         /// -Encoding: Set by libavcodec for coded_picture (set by the user for input).
@@ -91,8 +91,8 @@ namespace FFmpegSharp.Interop.Codec
         /// -encoding: unused
         /// -decoding: Set by libavcodec (before get_buffer() call)
         /// </summary>
-        [MarshalAs(UnmanagedType.I4)]
-        public bool reference;
+        //[MarshalAs(UnmanagedType.I4)]
+        public int reference;
 
         /// <summary>
         /// QP table
@@ -176,16 +176,16 @@ namespace FFmpegSharp.Interop.Codec
         /// - encoding: Set by user.
         /// - decoding: Set by libavcodec. (default 0)
         /// </summary>
-        [MarshalAs(UnmanagedType.Bool)]
-        public bool interlaced_frame;
+        //[MarshalAs(UnmanagedType.I4)]
+        public int interlaced_frame;
 
         /// <summary>
         /// If the content is interlaced, is top field displayed first.
         /// - encoding: Set by user.
         /// - decoding: Set by libavcodec.
         /// </summary>
-        [MarshalAs(UnmanagedType.Bool)]
-        public bool top_field_first;
+        //[MarshalAs(UnmanagedType.I4)]
+        public int top_field_first;
 
         /// <summary>
         /// Pan scan.
@@ -199,8 +199,8 @@ namespace FFmpegSharp.Interop.Codec
         /// - encoding: ??? (no palette-enabled encoder yet)
         /// - decoding: Set by libavcodec. (default 0).
         /// </summary>
-        [MarshalAs(UnmanagedType.Bool)]
-        public bool palette_has_changed;
+        //[MarshalAs(UnmanagedType.I4)]
+        public int palette_has_changed;
 
         /// <summary>
         /// codec suggestion on buffer type if != 0

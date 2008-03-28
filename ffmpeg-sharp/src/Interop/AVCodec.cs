@@ -190,12 +190,12 @@ namespace FFmpegSharp.Interop
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool img_get_alpha_info(ref AVPicture pAVPicture, int pix_fmt, int width, int height);
 
-        /// <summary>
-        /// Convert among pixel formats
-        /// </summary>
-        [DllImport(AVCODEC_DLL_NAME)]
-        public static extern int img_convert(ref AVPicture dst, PixelFormat dst_pix_fmt,
-                            ref AVPicture src, PixelFormat pix_fmt, int width, int height);
+				/// <summary>
+				/// Convert among pixel formats
+				/// </summary>
+				[DllImport(AVCODEC_DLL_NAME)]
+				public static extern int img_convert(ref AVPicture dst, PixelFormat dst_pix_fmt,
+														ref AVFrame src, PixelFormat pix_fmt, int width, int height);
 
         /// <summary>
         /// Deinterlace a picture
@@ -274,8 +274,16 @@ namespace FFmpegSharp.Interop
         /// <summary>
         /// Allocates a AVFrame and sets its fields to default values.
         /// </summary>
-        [DllImport(AVCODEC_DLL_NAME)]
-        internal static extern AVFrame avcodec_alloc_frame();
+				public static AVFrame* avcodec_alloc_frame()
+				{
+					return (AVFrame*) avcodec_alloc_frame_internal();
+				}
+
+				/// <summary>
+				/// Allocates a AVFrame and sets its fields to default values.
+				/// </summary>
+				[DllImport(AVCODEC_DLL_NAME, EntryPoint = "avcodec_alloc_frame")]
+				private static extern IntPtr avcodec_alloc_frame_internal();
 
         [DllImport(AVCODEC_DLL_NAME)]
         public static extern int avcodec_default_get_buffer(ref AVCodecContext pAVCodecContext, ref AVFrame pAVFrame);
@@ -407,9 +415,9 @@ namespace FFmpegSharp.Interop
         /// <param name="buf">The input buffer</param>
         /// <param name="buf_size">The size of the input buffer in bytes</param>
         /// <returns></returns>
-        [DllImport(AVCODEC_DLL_NAME)]
-        public static extern int avcodec_decode_video(ref AVCodecContext pAVCodecContext, ref AVFrame pAVFrame,
-                                                [MarshalAs(UnmanagedType.Bool)]out bool got_picture_ptr, byte[] buf, int buf_size);
+				[DllImport(AVCODEC_DLL_NAME)]
+				public static extern int avcodec_decode_video(ref AVCodecContext pAVCodecContext, IntPtr pAVFrame,
+																								[MarshalAs(UnmanagedType.Bool)]out bool got_picture_ptr, IntPtr buf, int buf_size);
 
 
         /// <summary>

@@ -1,6 +1,6 @@
-#region LGPL License
+﻿#region LGPL License
 //
-// AVRational.cs
+// SwsVector.cs
 //
 // Author:
 //   Justin Cherniak (justin.cherniak@gmail.com
@@ -23,19 +23,13 @@
 //
 #endregion
 
-using System.Runtime.InteropServices;
+using System;
 
-namespace FFmpegSharp.Interop.Util
+namespace FFmpegSharp
 {
-    [StructLayout(LayoutKind.Sequential)]
-    public unsafe struct AVRational
-    {
-        public int num;
-        public int den;
-
-				public static implicit operator float(AVRational a)
-				{
-					return a.num / (float) a.den;
-				}
-    };
+	public class DecoderException : ApplicationException
+	{
+		public DecoderException() { }
+		public DecoderException(string Message) : base(Message) { }
+	}
 }
