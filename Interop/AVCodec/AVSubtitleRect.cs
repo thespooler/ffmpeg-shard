@@ -43,7 +43,7 @@ namespace FFmpegSharp.Interop.Codec
 
         public int linesize;
 
-        public IntPtr rgba_palette; //uint32_t *rgba_palette
-        public IntPtr bitmap; // byte *bitmap;
+        public uint* rgba_palette; //uint32_t *rgba_palette
+        public byte* bitmap; // byte *bitmap;
     };
 }

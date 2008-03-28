@@ -1,3 +1,18 @@
+2008-03-27  Justin Cherniak <justin.cherniak@gmail.com>
+	* Fixed layout of AVFrame
+	* Refactored IntPtr's with pointers in a few other structs
+	[AVResampleContext, AVSubtitleRect, ImgResampleContext]
+
+2008-02-22  Justin Cherniak <justin.cherniak@gmail.com>
+	* Replaces use of System.Array with System.Buffer for speed improvement
+
+2008-02-07  Justin Cherniak <justin.cherniak@gmail.com>
+	* Finished implementation of FifoMemoryStream
+
+2008-01-27  Justin Cherniak <justin.cherniak@gmail.com>
+	* Fixed bug in AVFormat where NullPointerException would be thrown if 
+	  FFmpeg.av_open_input_file failed.	
+
 2008-01-01  Justin Cherniak <justin.cherniak@gmail.com>
 
 	* Initial Commit

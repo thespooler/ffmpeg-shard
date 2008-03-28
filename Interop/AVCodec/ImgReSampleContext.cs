@@ -38,6 +38,6 @@ namespace FFmpegSharp.Interop.Codec
         public int h_incr, v_incr;
         public IntPtr h_filters; /* horizontal filters */
         public IntPtr v_filters; /* vertical filters */
-        public IntPtr line_buf;
+        public byte* line_buf;
     }
 }

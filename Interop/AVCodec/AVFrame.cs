@@ -35,7 +35,7 @@ namespace FFmpegSharp.Interop.Codec
         /// Pointer to the picture planes.
         /// This might be different from the first allocated byte
         /// </summary>
-        public IntPtr data;
+        public fixed byte data[4];
 
         public fixed int linesize[4];
 
@@ -43,7 +43,7 @@ namespace FFmpegSharp.Interop.Codec
         /// Pointer to the first allocated byte of the picture.  Can be used in get_buffer/release_buffer.
         /// This isn't used by libavcodec unless the default get/release_buffer() is used.
         /// </summary>
-        public IntPtr @base;
+        public fixed byte @base[4];
 
         /// <summary>
         /// Keyframe.  Set by libavcodec
@@ -100,14 +100,14 @@ namespace FFmpegSharp.Interop.Codec
         /// -decoding: Set by libavcodec
         /// </summary>
         /// <remarks>*byte</remarks>
-        public IntPtr qscale_table;
+        public byte* qscale_table;
 
         /// <summary>
         /// QP store stride
         /// -encoding: unused
         /// -decoding: Set by libavcodec
         /// </summary>
-        public IntPtr mbskip_table;
+        public byte* mbskip_table;
 
         ///<summary>
         /// motion vector table
@@ -120,7 +120,8 @@ namespace FFmpegSharp.Interop.Codec
         /// - encoding: Set by user.
         /// - decoding: Set by libavcodec.
         /// </summary>
-        public IntPtr motionVal;
+        /// <remarks>int16_t (*motion_val[2])[2];</remarks>
+        public fixed short motionVal[4];
 
         ///< summary>
         /// macroblock type table\
@@ -128,7 +129,7 @@ namespace FFmpegSharp.Interop.Codec
         /// - encoding: Set by user.\
         /// - decoding: Set by libavcodec.\
         /// </summary>
-        public IntPtr mb_type;
+        public uint* mb_type;
 
         /// <summary>
         /// Log2 of the size of the block which a single vector in motion_val represents
@@ -213,14 +214,13 @@ namespace FFmpegSharp.Interop.Codec
         /// - encoding: unused
         /// - decoding: Set by libavcodec
         /// </summary>
-        /// <remarks>*short</remarks>
-        public IntPtr dct_coeff;
+        public short* dct_coeff;
 
         /// <summary>
         ///  motion referece frame index
         /// - encoding: Set by user.
         /// - decoding: Set by libavcodec.
         /// </summary>
-        public fixed int ref_index[2];
+        public fixed byte ref_index[2];
     };
 }

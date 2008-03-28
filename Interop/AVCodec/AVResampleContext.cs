@@ -31,7 +31,7 @@ namespace FFmpegSharp.Interop.Codec
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct AVResampleContext
     {
-        public IntPtr filter_bank;
+        public short* filter_bank;
         public int filter_length;
         public int dst_incr;
         public int index;
