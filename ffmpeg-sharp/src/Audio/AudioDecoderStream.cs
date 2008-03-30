@@ -57,7 +57,7 @@ namespace FFmpegSharp.Audio
         /// </summary>
         /// <param name="Filename">File to decode</param>
         public AudioDecoderStream(string Filename)
-                    : base(Filename, CodecType.CODEC_TYPE_AUDIO)
+            : base(Filename, CodecType.CODEC_TYPE_AUDIO)
         {
             // Initialize instance variables
             m_buffer = new byte[FFmpeg.AVCODEC_MAX_AUDIO_FRAME_SIZE];
@@ -110,47 +110,47 @@ namespace FFmpegSharp.Audio
             get { return (Channels * SampleRate * SampleSize) / 8; }
         }
 
-            protected override bool DecodeNextPacket(ref AVPacket packet)
+        protected override bool DecodeNextPacket(ref AVPacket packet)
+        {
+            int totalOutput = 0;
+
+            // Copy the data pointer to we can muck with it
+            int packetSize = packet.size;
+            byte* packetData = (byte*)packet.data;
+
+            // Allocate a new PcmPacket and get a pointer to its array so we can muck with it
+            fixed (byte* pcmPacketPtr = m_buffer)
             {
-                int totalOutput = 0;
-
-                // Copy the data pointer to we can muck with it
-                int packetSize = packet.size;
-                byte* packetData = (byte*) packet.data;
-
-                // Allocate a new PcmPacket and get a pointer to its array so we can muck with it
-                fixed (byte* pcmPacketPtr = m_buffer)
+                // May be necessary to loop multiple times if more than one frame is in the compressed packet
+                do
                 {
-                    // May be necessary to loop multiple times if more than one frame is in the compressed packet
-                    do
+                    if (m_disposed)
                     {
-                        if (m_disposed)
-                        {
-                            m_bufferUsedSize = 0;
-                            return false;
-                        }
-
-                        int outputBufferUsedSize = (m_buffer.Length) - totalOutput; //Must be initialized before sending in as per docs
-
-                        short* pcmWritePtr = (short*) ((byte*) pcmPacketPtr + totalOutput);
-
-                        int usedInputBytes = FFmpeg.avcodec_decode_audio2(ref m_avCodecCtx, pcmWritePtr, ref outputBufferUsedSize, packetData, packetSize);
-
-                        if (usedInputBytes < 0) //Error in packet, ignore packet
-                            break;
-
-                        if (outputBufferUsedSize > 0)
-                            totalOutput += outputBufferUsedSize;
-
-                        packetData += usedInputBytes;
-                        packetSize -= usedInputBytes;
+                        m_bufferUsedSize = 0;
+                        return false;
                     }
-                    while (packetSize > 0);
 
-                    m_bufferUsedSize = totalOutput;
-                    return false;
+                    int outputBufferUsedSize = (m_buffer.Length) - totalOutput; //Must be initialized before sending in as per docs
+
+                    short* pcmWritePtr = (short*)((byte*)pcmPacketPtr + totalOutput);
+
+                    int usedInputBytes = FFmpeg.avcodec_decode_audio2(ref m_avCodecCtx, pcmWritePtr, ref outputBufferUsedSize, packetData, packetSize);
+
+                    if (usedInputBytes < 0) //Error in packet, ignore packet
+                        break;
+
+                    if (outputBufferUsedSize > 0)
+                        totalOutput += outputBufferUsedSize;
+
+                    packetData += usedInputBytes;
+                    packetSize -= usedInputBytes;
                 }
+                while (packetSize > 0);
+
+                m_bufferUsedSize = totalOutput;
+                return false;
             }
+        }
 
         public override long Length
         {
@@ -179,9 +179,9 @@ namespace FFmpegSharp.Audio
             else if (newPosition > Length)
                 newPosition = Length;
 
-            bool Backward = newPosition > m_position;
+            bool backward = newPosition > m_position;
 
-            int flags = FFmpeg.AVSEEK_FLAG_ANY | (Backward ? FFmpeg.AVSEEK_FLAG_BACKWARD : 0);
+            int flags = FFmpeg.AVSEEK_FLAG_ANY | (backward ? FFmpeg.AVSEEK_FLAG_BACKWARD : 0);
             long newTimestamp = (long)((newPosition / (m_avCodecCtx.channels * sizeof(short) * m_avCodecCtx.sample_rate)) * FFmpeg.AV_TIME_BASE);
 
             m_bufferUsedSize = 0;
