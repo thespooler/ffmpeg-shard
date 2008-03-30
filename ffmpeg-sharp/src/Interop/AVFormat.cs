@@ -253,7 +253,7 @@ namespace FFmpegSharp.Interop
                     [MarshalAs(UnmanagedType.LPStr)]string filename, ref AVInputFormat fmt, ref AVFormatParameters ap)
         {
             AVFormatContext* ptr;
-            AVError err = av_open_input_stream(out ptr, ref pb, filename,ref fmt, ref ap);
+            AVError err = av_open_input_stream(out ptr, ref pb, filename, ref fmt, ref ap);
 
             ctx = *ptr;
 
@@ -325,7 +325,7 @@ namespace FFmpegSharp.Interop
                 return err;
             }
 
-            pFormatContext = *(AVFormatContext*) ptr.ToPointer();
+            pFormatContext = *(AVFormatContext*)ptr.ToPointer();
 
             FFmpeg.av_freep(ref ptr);
 
@@ -336,7 +336,7 @@ namespace FFmpegSharp.Interop
         /// Allocates an empty AVFormatContext
         /// </summary>
         /// <remarks>This must be freed using <see cref="FFmpeg.av_free()">FFmpeg.av_free()</see> </remarks>
-        [DllImport("avformat-51.dll", EntryPoint="av_alloc_format_context")]
+        [DllImport("avformat-51.dll", EntryPoint = "av_alloc_format_context")]
         private static extern AVFormatContext* av_alloc_format_context_internal();
 
         /// <summary>

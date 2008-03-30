@@ -28,13 +28,13 @@ using System.Runtime.InteropServices;
 
 namespace FFmpegSharp.Interop.AVIO
 {
-    public delegate int ReadPacketCallback(IntPtr opaque, [In,Out] byte[] buf, int buf_size);
+    public delegate int ReadPacketCallback(IntPtr opaque, [In, Out] byte[] buf, int buf_size);
 
-    public delegate int WritePacketCallback(IntPtr opaque, [In,Out] byte[] buf, int buf_size);
+    public delegate int WritePacketCallback(IntPtr opaque, [In, Out] byte[] buf, int buf_size);
 
     public delegate long SeekCallback(IntPtr opaque, long offset, int whence);
 
-    public delegate uint UpdateChecksumCallback(uint checksum, [In,Out] byte[] buf, uint size);
+    public delegate uint UpdateChecksumCallback(uint checksum, [In, Out] byte[] buf, uint size);
 
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ByteIOContext

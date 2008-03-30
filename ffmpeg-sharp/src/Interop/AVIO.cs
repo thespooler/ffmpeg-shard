@@ -179,7 +179,7 @@ namespace FFmpegSharp.Interop
         /// line is parsed. Returns NULL if first char read was EOF 
         /// </remarks>
         [DllImport(AVFORMAT_DLL_NAME)]
-        [return:MarshalAs(UnmanagedType.LPStr)]
+        [return: MarshalAs(UnmanagedType.LPStr)]
         public static extern string url_fgets(ref ByteIOContext s, [In, Out]byte[] buf, int buf_size);
 
         [DllImport(AVFORMAT_DLL_NAME)]

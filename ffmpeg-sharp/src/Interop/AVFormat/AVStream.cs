@@ -44,7 +44,7 @@ namespace FFmpegSharp.Interop.Format
          * for example if the timebase is 1/90000 and all frames have either
          * approximately 3600 or 1800 timer ticks then r_frame_rate will be 50/1
          */
-        
+
         public AVRational r_frame_rate;
 
         public IntPtr priv_data;
@@ -61,14 +61,14 @@ namespace FFmpegSharp.Interop.Format
          * timebase should be 1/framerate and timestamp increments should be
          * identically 1.
          */
-        
+
         public AVRational time_base;
 
         public int pts_wrap_bits; // number of bits in pts (used for wrapping control) 
 
         public int stream_copy; // if TRUE, just copy stream 
 
-        
+
         public AVDiscard discard; // selects which packets can be discarded at will and dont need to be demuxed
 
         public float quality;
@@ -79,9 +79,14 @@ namespace FFmpegSharp.Interop.Format
         public long duration;
 
         private fixed byte language_ptr[4]; // ISO 639 3-letter language code (empty string if undefined)
-        public string language { get { 
-            fixed(byte* ptr = language_ptr)
-            return Utils.GetString(ptr); } }
+        public string language
+        {
+            get
+            {
+                fixed (byte* ptr = language_ptr)
+                    return Utils.GetString(ptr);
+            }
+        }
 
         public int need_parsing;
 
@@ -101,6 +106,6 @@ namespace FFmpegSharp.Interop.Format
 
         public long nb_frames; // number of frames in this stream if known or 0
 
-        public fixed long pts_buffer[FFmpeg.MAX_REORDER_DELAY+1]; // pts_buffer[MAX_REORDER_DELAY+1]
+        public fixed long pts_buffer[FFmpeg.MAX_REORDER_DELAY + 1]; // pts_buffer[MAX_REORDER_DELAY+1]
     };
 }

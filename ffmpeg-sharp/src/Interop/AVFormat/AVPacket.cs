@@ -45,7 +45,7 @@ namespace FFmpegSharp.Interop.Format
         public DestructCallback destruct
         {
             get { return Utils.GetDelegate<DestructCallback>(destruct_ptr); }
-        }  
+        }
 
         public IntPtr priv;
         public long pos;

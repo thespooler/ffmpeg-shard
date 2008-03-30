@@ -54,7 +54,7 @@ namespace FFmpegSharp
         /// </summary>
         public TimeSpan Duration
         {
-            get { return new TimeSpan((long) (RawDuration * 1e7)); }
+            get { return new TimeSpan((long)(RawDuration * 1e7)); }
         }
 
         public float RawDuration
@@ -62,7 +62,7 @@ namespace FFmpegSharp
             get
             {
                 float duration = 0;
-                duration = (float) (m_avFormatCtx.duration / (double) FFmpeg.AV_TIME_BASE);
+                duration = (float)(m_avFormatCtx.duration / (double)FFmpeg.AV_TIME_BASE);
                 if (duration < 0)
                     duration = 0;
                 return duration;

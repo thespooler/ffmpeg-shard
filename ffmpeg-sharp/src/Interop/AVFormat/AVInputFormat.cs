@@ -42,7 +42,7 @@ namespace FFmpegSharp.Interop.Format
     {
         IntPtr name_ptr;
         public string name { get { return Utils.GetString(name_ptr); } }
-        
+
         IntPtr long_name_ptr;
         public string long_name { get { return Utils.GetString(long_name_ptr); } }
 
@@ -82,7 +82,7 @@ namespace FFmpegSharp.Interop.Format
         public ReadTimestampCallback read_timestamp
         {
             get { return Utils.GetDelegate<ReadTimestampCallback>(read_timestamp_ptr); }
-        }        
+        }
 
         // can use flags: AVFMT_NOFILE, AVFMT_NEEDNUMBER
         public int flags;
@@ -96,13 +96,13 @@ namespace FFmpegSharp.Interop.Format
         public ReadPlayCallback read_play
         {
             get { return Utils.GetDelegate<ReadPlayCallback>(read_play_ptr); }
-        }        
+        }
 
         private IntPtr read_pause_ptr;
         public ReadPauseCallback read_pause
         {
             get { return Utils.GetDelegate<ReadPauseCallback>(read_pause_ptr); }
-        }        
+        }
 
         public AVInputFormat* next;
     };

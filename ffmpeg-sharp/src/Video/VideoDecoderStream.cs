@@ -51,7 +51,7 @@ namespace FFmpegSharp.Audio
 
         public override long Length
         {
-            get { return (long) (Math.Ceiling(Duration.TotalSeconds * FrameRate * m_buffer.Length)); }
+            get { return (long)(Math.Ceiling(Duration.TotalSeconds * FrameRate * m_buffer.Length)); }
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace FFmpegSharp.Audio
 
         public long FrameCount
         {
-            get { return (long) (FrameRate * RawDuration); }
+            get { return (long)(FrameRate * RawDuration); }
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace FFmpegSharp.Audio
 
             // allocate some space for the converted frame
             m_avPicture = new AVPicture();
-            FFmpeg.avpicture_alloc(ref m_avPicture, (int) m_pixelFormat, m_avCodecCtx.width, m_avCodecCtx.height);
+            FFmpeg.avpicture_alloc(ref m_avPicture, (int)m_pixelFormat, m_avCodecCtx.width, m_avCodecCtx.height);
 
             // determine required buffer size and allocate buffer
             int numBytes = FFmpeg.avpicture_get_size(m_pixelFormat, this.Width, this.Height);
@@ -138,7 +138,7 @@ namespace FFmpegSharp.Audio
             if (frameFinished)
             {
                 // convert the image from its native format to RGB
-                m_avFrame = (AVFrame) Marshal.PtrToStructure(m_avFramePtr, typeof(AVFrame));
+                m_avFrame = (AVFrame)Marshal.PtrToStructure(m_avFramePtr, typeof(AVFrame));
                 FFmpeg.img_convert(ref m_avPicture, m_pixelFormat, ref m_avFrame, m_avCodecCtx.pix_fmt, this.Width, this.Height);
 
                 // can't get sws_scale to work. the converted image is black, with a blue bar down the left hand side

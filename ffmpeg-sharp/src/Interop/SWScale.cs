@@ -49,7 +49,7 @@ namespace FFmpegSharp.Interop
             int source_pix_fmt, int dest_width, int dest_height, int dest_pix_fmt, int flags,
             ref SwsFilter srcFilter, ref SwsFilter destFilter, double* Param)
         {
-            return (SwsContext*) sws_getContext_internal(source_width, source_height,
+            return (SwsContext*)sws_getContext_internal(source_width, source_height,
                 source_pix_fmt, dest_width, dest_height, dest_pix_fmt, flags,
                 ref srcFilter, ref destFilter, Param);
         }
@@ -62,7 +62,7 @@ namespace FFmpegSharp.Interop
         public unsafe static SwsContext* sws_getContext(int source_width, int source_height,
             int source_pix_fmt, int dest_width, int dest_height, int dest_pix_fmt, int flags)
         {
-            return (SwsContext*) sws_getContext_internal(source_width, source_height,
+            return (SwsContext*)sws_getContext_internal(source_width, source_height,
                 source_pix_fmt, dest_width, dest_height, dest_pix_fmt, flags,
                 null, null, null);
         }
