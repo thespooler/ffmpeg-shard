@@ -1,4 +1,4 @@
-﻿#region LGPL License
+#region LGPL License
 //
 // SwsVector.cs
 //
@@ -27,9 +27,9 @@ using System;
 
 namespace FFmpegSharp
 {
-	public class DecoderException : ApplicationException
-	{
-		public DecoderException() { }
-		public DecoderException(string Message) : base(Message) { }
-	}
+    public class DecoderException : ApplicationException
+    {
+        public DecoderException() { }
+        public DecoderException(string Message) : base(Message) { }
+    }
 }

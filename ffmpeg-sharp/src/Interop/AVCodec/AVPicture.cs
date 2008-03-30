@@ -28,16 +28,16 @@ using System;
 
 namespace FFmpegSharp.Interop.Codec
 {
-	/// <summary>
-	/// http://lumumba.uhasselt.be/takis/ffmpeg/docspublic/structAVPicture.html
-	/// </summary>
+    /// <summary>
+    /// http://lumumba.uhasselt.be/takis/ffmpeg/docspublic/structAVPicture.html
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct AVPicture
     {
         /// <summary>
         /// Ptr
         /// </summary>
-			public fixed int data[4];
+        public fixed int data[4];
 
         public fixed int linesize[4];
     };

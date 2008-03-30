@@ -33,9 +33,9 @@ namespace FFmpegSharp.Interop.Util
         public int num;
         public int den;
 
-				public static implicit operator float(AVRational a)
-				{
-					return a.num / (float) a.den;
-				}
+        public static implicit operator float(AVRational a)
+        {
+            return a.num / (float)a.den;
+        }
     };
 }

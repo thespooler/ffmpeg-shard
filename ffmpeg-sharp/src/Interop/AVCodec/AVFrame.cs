@@ -50,7 +50,7 @@ namespace FFmpegSharp.Interop.Codec
         /// </summary>
         //[MarshalAs(UnmanagedType.I4)]
         public int key_frame;
-			
+            
         /// <summary>
         /// Picture type of the frame
         /// -Encoding: Set by libavcodec for coded_picture (set by the user for input).

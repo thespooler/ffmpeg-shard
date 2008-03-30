@@ -130,7 +130,7 @@ namespace FFmpegSharp.Audio
         private void DoubleBufferSize()
         {
             if (m_readCursor <= m_writeCursor)
-				ResizeByteArray(ref m_array, m_array.Length * 2);
+                ResizeByteArray(ref m_array, m_array.Length * 2);
             else // Buffer is looped
             {
                 int dataSize = m_array.Length - m_readCursor + m_writeCursor;
@@ -159,12 +159,12 @@ namespace FFmpegSharp.Audio
 
         #endregion
 
-		private void ResizeByteArray(ref byte[] array, int newLength)
-		{
-			byte[] old = array;
-			array = new byte[newLength];
+        private void ResizeByteArray(ref byte[] array, int newLength)
+        {
+            byte[] old = array;
+            array = new byte[newLength];
 
-			Buffer.BlockCopy(old, 0, array, 0, Math.Min(Buffer.ByteLength(old), Buffer.ByteLength(array)));
-		}
+            Buffer.BlockCopy(old, 0, array, 0, Math.Min(Buffer.ByteLength(old), Buffer.ByteLength(array)));
+        }
     }
 }

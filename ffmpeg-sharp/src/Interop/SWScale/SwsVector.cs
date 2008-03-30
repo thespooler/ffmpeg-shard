@@ -1,4 +1,4 @@
-﻿#region LGPL License
+#region LGPL License
 //
 // SwsVector.cs
 //
@@ -28,15 +28,15 @@ using System.Runtime.InteropServices;
 
 namespace FFmpegSharp.Interop.SWScale
 {
-	[StructLayout(LayoutKind.Sequential)]
-	public unsafe struct SwsFilter
-	{
-		public SwsVector* lumH;
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct SwsFilter
+    {
+        public SwsVector* lumH;
 
-		public SwsVector* lumV;
+        public SwsVector* lumV;
 
-		public SwsVector* chrH;
+        public SwsVector* chrH;
 
-		public SwsVector* chrV;
-	}
+        public SwsVector* chrV;
+    }
 }
