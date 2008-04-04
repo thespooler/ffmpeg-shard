@@ -1,4 +1,4 @@
-#region LGPL License
+﻿#region LGPL License
 //
 // SwsContext.cs
 //
@@ -97,9 +97,12 @@ namespace FFmpegSharp.Interop.SWScale
         public int dstY;
         public int flags;
         public void* yuvTable;
+        [BrokenPointer]
         public fixed int table_rV[256];
         public fixed int table_gU[256];
+        [BrokenPointer]
         public fixed int table_gV[256];
+        [BrokenPointer]
         public fixed int table_bU[256];
 
         //Colorspace stuff
@@ -107,5 +110,26 @@ namespace FFmpegSharp.Interop.SWScale
         public fixed int srcColorspaceTable[4];
         public fixed int dstColorspaceTable[4];
         public int srcRange, dstRange;
+
+        // ulongs below have , so they are probably being marshalled wrong
+        public ulong redDither;
+        public ulong greenDither;
+        public ulong blueDither;
+
+        public ulong yCoeff;
+        public ulong vrCoeff;
+        public ulong ubCoeff;
+        public ulong vgCoeff;
+        public ulong ugCoeff;
+        public ulong yOffset;
+        public ulong uOffset;
+        public ulong vOffset;
+        public fixed int lumMmxFilter[4 * FFmpeg.MAX_FILTER_SIZE];
+        public fixed int chrMmxFilter[4 * FFmpeg.MAX_FILTER_SIZE];
+        public int dstW;
+        public ulong esp;
+        public ulong vRounder;
+        public ulong u_temp;
+        public ulong v_temp;
     }
 }

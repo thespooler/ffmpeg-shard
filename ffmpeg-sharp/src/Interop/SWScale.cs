@@ -1,4 +1,4 @@
-#region LGPL License
+﻿#region LGPL License
 //
 // SWScale.cs
 //
@@ -68,7 +68,7 @@ namespace FFmpegSharp.Interop
         }
 
         [DllImport(AVSWSCALE_DLL_NAME)]
-        public unsafe static extern int sws_scale(ref SwsContext SwsContext,
+        public unsafe static extern int sws_scale(SwsContext* SwsContext,
             int* src,
             int* srcStride,
             int srcSliceY, int srcSliceH,
@@ -130,6 +130,8 @@ namespace FFmpegSharp.Interop
         //public const int SWS_CPU_CAPS_BFIN    = 0x01000000;
 
         public const double SWS_MAX_REDUCE_CUTOFF = 0.002;
+
+        public const int MAX_FILTER_SIZE = 256;
 
         #endregion
     }

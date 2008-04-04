@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{09066EC3-71AD-42AD-B403-E8917B47021D}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -53,6 +53,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
@@ -175,6 +176,7 @@
     <Compile Include="Interop\AVIO\URLProtocol.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Interop\BrokenPointer.cs" />
     <Compile Include="Interop\SWScale\SwsContext.cs" />
     <Compile Include="Interop\SWScale\SwsFilter.cs" />
     <Compile Include="Interop\SWScale\SwsVector.cs" />
@@ -207,6 +209,9 @@
     <Compile Include="Video\VideoDecoderStream.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\ChangeLog">
+      <Link>ChangeLog</Link>
+    </None>
     <None Include="FFmpegSharp.snk" />
   </ItemGroup>
   <ItemGroup>

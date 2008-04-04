@@ -1,4 +1,4 @@
-#region LGPL License
+﻿#region LGPL License
 //
 // DecoderStream.cs
 //
@@ -39,7 +39,7 @@ namespace FFmpegSharp
         protected AVFormatContext m_avFormatCtx;
         protected AVCodecContext m_avCodecCtx;
         protected AVStream m_avStream;
-        protected uint m_audioStreamIdx;
+        protected uint m_streamIdx;
         protected bool m_disposed;
         protected byte[] m_buffer;
         protected int m_bufferUsedSize;
@@ -67,16 +67,6 @@ namespace FFmpegSharp
                     duration = 0;
                 return duration;
             }
-        }
-
-        public int Width
-        {
-            get { return m_avCodecCtx.width; }
-        }
-
-        public int Height
-        {
-            get { return m_avCodecCtx.height; }
         }
 
         public override bool CanRead
@@ -139,13 +129,14 @@ namespace FFmpegSharp
             if (m_avFormatCtx.nb_streams < 1)
                 throw new DecoderException("No streams found");
 
-            // Find the first audio stream in the file (eventually might support selecting streams)
+            // Find the first stream in the file of the specified type 
+            // (eventually might support selecting streams)
             m_avCodecCtx = *m_avFormatCtx.streams[0]->codec;
 
-            for (m_audioStreamIdx = 0; m_audioStreamIdx < m_avFormatCtx.nb_streams; m_audioStreamIdx++)
+            for (m_streamIdx = 0; m_streamIdx < m_avFormatCtx.nb_streams; m_streamIdx++)
             {
-                m_avStream = *m_avFormatCtx.streams[m_audioStreamIdx];
-                m_avCodecCtx = *m_avFormatCtx.streams[m_audioStreamIdx]->codec;
+                m_avStream = *m_avFormatCtx.streams[m_streamIdx];
+                m_avCodecCtx = *m_avFormatCtx.streams[m_streamIdx]->codec;
 
                 if (m_avCodecCtx.codec_type == codecType)
                     break;
@@ -225,6 +216,7 @@ namespace FFmpegSharp
                 return;
 
             AVPacket packet = new AVPacket();
+
             FFmpeg.av_init_packet(ref packet);
 
             bool retry = false;
@@ -238,8 +230,8 @@ namespace FFmpegSharp
 
                 try
                 {
-                    // Make sure the packet is an audio packet and has data
-                    if (packet.stream_index != m_audioStreamIdx ||
+                    // Make sure the packet is a packet of the correct type and has data
+                    if (packet.stream_index != m_streamIdx ||
                             packet.data == IntPtr.Zero)
                     {
                         retry = true;

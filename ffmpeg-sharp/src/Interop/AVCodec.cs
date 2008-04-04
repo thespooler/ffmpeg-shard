@@ -195,7 +195,8 @@ namespace FFmpegSharp.Interop
         /// </summary>
         [DllImport(AVCODEC_DLL_NAME)]
         public static extern int img_convert(ref AVPicture dst, PixelFormat dst_pix_fmt,
-                                                ref AVFrame src, PixelFormat pix_fmt, int width, int height);
+                                             AVPicture* src, PixelFormat src_pix_fmt,
+                                             int width, int height);
 
         /// <summary>
         /// Deinterlace a picture
@@ -416,8 +417,42 @@ namespace FFmpegSharp.Interop
         /// <param name="buf_size">The size of the input buffer in bytes</param>
         /// <returns></returns>
         [DllImport(AVCODEC_DLL_NAME)]
-        public static extern int avcodec_decode_video(ref AVCodecContext pAVCodecContext, IntPtr pAVFrame,
-                                                                                        [MarshalAs(UnmanagedType.Bool)]out bool got_picture_ptr, IntPtr buf, int buf_size);
+        public static extern int avcodec_decode_video(ref AVCodecContext pAVCodecContext, ref AVFrame pAVFrame,
+                                                      [MarshalAs(UnmanagedType.Bool)]out bool got_picture_ptr,
+                                                      byte* buf, int buf_size);
+
+        /// <summary>Decodes a video frame from buf into picture.
+        /// The avcodec_decode_video() function decodes a video frame from the input
+        /// buffer buf of size buf_size. To decode it, it makes use of the
+        /// video codec which was coupled with avctx using avcodec_open(). The
+        /// resulting decoded frame is stored in picture.</summary>
+        /// 
+        /// <warning>The input buffer must be FF_INPUT_BUFFER_PADDING_SIZE larger than
+        /// the actual read bytes because some optimized bitstream readers read 32 or 64
+        /// bits at once and could read over the end.</warning>
+        /// 
+        /// <warning>The end of the input buffer buf must be set to 0 to ensure that
+        /// no overreading happens for damaged MPEG streams.</warning>
+        /// 
+        /// <remarks> You might have to align the input buffer buf and output buffer \p
+        /// samples. The alignment requirements depend on the CPU: on some CPUs it isn't
+        /// necessary at all, on others it won't work at all if not aligned and on others
+        /// it will work but it will have an impact on performance. In practice, the
+        /// bitstream should have 4 byte alignment at minimum and all sample data should
+        /// be 16 byte aligned unless the CPU doesn't need it (AltiVec and SSE do). If
+        /// the linesize is not a multiple of 16 then there's no sense in aligning the
+        /// start of the buffer to 16.</remarks>
+        /// 
+        /// <param name="pAVCodecContext">The codec context</param>
+        /// <param name="pAVFrame">The AVFrame in which the decoded video frame will be stored</param>
+        /// <param name="got_picture_ptr">True if a frame could be decompressed</param>
+        /// <param name="buf">The input buffer</param>
+        /// <param name="buf_size">The size of the input buffer in bytes</param>
+        /// <returns></returns>
+        [DllImport(AVCODEC_DLL_NAME)]
+        public static extern int avcodec_decode_video(ref AVCodecContext pAVCodecContext, AVFrame* pAVFrame,
+                                                      [MarshalAs(UnmanagedType.Bool)]out bool got_picture_ptr,
+                                                      byte* buf, int buf_size);
 
 
         /// <summary>

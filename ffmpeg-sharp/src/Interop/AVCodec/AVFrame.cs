@@ -35,6 +35,7 @@ namespace FFmpegSharp.Interop.Codec
         /// Pointer to the picture planes.
         /// This might be different from the first allocated byte
         /// </summary>
+        [BrokenPointer]
         public fixed int data[4];
 
         public fixed int linesize[4];
@@ -43,12 +44,12 @@ namespace FFmpegSharp.Interop.Codec
         /// Pointer to the first allocated byte of the picture.  Can be used in get_buffer/release_buffer.
         /// This isn't used by libavcodec unless the default get/release_buffer() is used.
         /// </summary>
+        [BrokenPointer]
         public fixed int @base[4];
 
         /// <summary>
         /// Keyframe.  Set by libavcodec
         /// </summary>
-        //[MarshalAs(UnmanagedType.I4)]
         public int key_frame;
             
         /// <summary>
@@ -56,7 +57,6 @@ namespace FFmpegSharp.Interop.Codec
         /// -Encoding: Set by libavcodec for coded_picture (set by the user for input).
         /// -Decoding: Set by libavcodec
         /// </summary>
-        [MarshalAs(UnmanagedType.I4)]
         public PictureType pict_type;
 
         public long pts;
@@ -91,7 +91,6 @@ namespace FFmpegSharp.Interop.Codec
         /// -encoding: unused
         /// -decoding: Set by libavcodec (before get_buffer() call)
         /// </summary>
-        //[MarshalAs(UnmanagedType.I4)]
         public int reference;
 
         /// <summary>
@@ -99,7 +98,6 @@ namespace FFmpegSharp.Interop.Codec
         /// -encoding: unused
         /// -decoding: Set by libavcodec
         /// </summary>
-        /// <remarks>*byte</remarks>
         public byte* qscale_table;
 
         /// <summary>
@@ -124,10 +122,10 @@ namespace FFmpegSharp.Interop.Codec
         public fixed short motionVal[4];
 
         ///< summary>
-        /// macroblock type table\
-        /// mb_type_base + mb_width + 2\
-        /// - encoding: Set by user.\
-        /// - decoding: Set by libavcodec.\
+        /// macroblock type table
+        /// mb_type_base + mb_width + 2
+        /// - encoding: Set by user.
+        /// - decoding: Set by libavcodec.
         /// </summary>
         public uint* mb_type;
 
@@ -162,8 +160,8 @@ namespace FFmpegSharp.Interop.Codec
         public int type;
 
         /// <summary>
-        /// When decoding, this signals how much the picture must be delayed.\
-        /// extra_delay = repeat_pict / (2*fps)\
+        /// When decoding, this signals how much the picture must be delayed.
+        /// extra_delay = repeat_pict / (2*fps)
         /// - encoding: unused
         /// - decoding: Set by libavcodec.
         /// </summary>
@@ -176,7 +174,6 @@ namespace FFmpegSharp.Interop.Codec
         /// - encoding: Set by user.
         /// - decoding: Set by libavcodec. (default 0)
         /// </summary>
-        //[MarshalAs(UnmanagedType.I4)]
         public int interlaced_frame;
 
         /// <summary>
@@ -184,7 +181,6 @@ namespace FFmpegSharp.Interop.Codec
         /// - encoding: Set by user.
         /// - decoding: Set by libavcodec.
         /// </summary>
-        //[MarshalAs(UnmanagedType.I4)]
         public int top_field_first;
 
         /// <summary>
@@ -199,7 +195,6 @@ namespace FFmpegSharp.Interop.Codec
         /// - encoding: ??? (no palette-enabled encoder yet)
         /// - decoding: Set by libavcodec. (default 0).
         /// </summary>
-        //[MarshalAs(UnmanagedType.I4)]
         public int palette_has_changed;
 
         /// <summary>
@@ -222,5 +217,15 @@ namespace FFmpegSharp.Interop.Codec
         /// - decoding: Set by libavcodec.
         /// </summary>
         public fixed byte ref_index[2];
+
+        public static implicit operator AVPicture(AVFrame frame)
+        {
+            return *((AVPicture*)&frame);
+        }
+
+        public static explicit operator AVFrame(AVPicture picture)
+        {
+            return *((AVFrame*)&picture);
+        }
     };
 }

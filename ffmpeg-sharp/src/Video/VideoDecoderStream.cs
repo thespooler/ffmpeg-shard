@@ -4,8 +4,9 @@
 //
 // Author:
 //   Tim Jones (tim@roastedamoeba.com)
+//   Justin Cherniak (justin.cherniak@gmail.com)
 //
-// Copyright (C) 2008 Tim Jones
+// Copyright (C) 2008 Tim Jones, Justin Cherniak
 //
 // This library is free software; you can redistribute it and/or modify
 // it  under the terms of the GNU Lesser General Public License version
@@ -29,25 +30,35 @@ using System.Runtime.InteropServices;
 using FFmpegSharp.Interop;
 using FFmpegSharp.Interop.Codec;
 using FFmpegSharp.Interop.Format;
+using FFmpegSharp.Interop.SWScale;
 using FFmpegSharp.Interop.Util;
 
-namespace FFmpegSharp.Audio
+namespace FFmpegSharp.Video
 {
     public unsafe class VideoDecoderStream : DecoderStream
     {
         #region Fields
 
         private PixelFormat m_pixelFormat;
-        private IntPtr m_avFramePtr;
-        private AVFrame m_avFrame;
+        private AVFrame* m_avFrame;
         private AVPicture m_avPicture;
-        //private SwsContext m_swsContext;
+        private SwsContext* m_swsContext;
 
         private byte[] m_frameBuffer;
 
         #endregion
 
         #region Properties
+
+        public int Width
+        {
+            get { return m_avCodecCtx.width; }
+        }
+
+        public int Height
+        {
+            get { return m_avCodecCtx.height; }
+        }
 
         public override long Length
         {
@@ -86,19 +97,19 @@ namespace FFmpegSharp.Audio
         #region Constructors
 
         /// <summary>
-        /// Constructs a new AudioDecoderStream over a specific filename.
+        /// Constructs a new VideoDecoderStream over a specific filename.
         /// </summary>
         /// <param name="File">File to decode</param>
         public VideoDecoderStream(FileInfo File) : this(File.FullName) { }
 
         /// <summary>
-        /// Constructs a new AudioDecoderStream over a specific filename.
+        /// Constructs a new VideoDecoderStream over a specific filename.
         /// </summary>
         /// <param name="File">File to decode</param>
         public VideoDecoderStream(FileStream File) : this(File.Name) { }
 
         /// <summary>
-        /// Constructs a new AudioDecoderStream over a specific filename.
+        /// Constructs a new VideoDecoderStream over a specific filename.
         /// </summary>
         /// <param name="Filename">File to decode</param>
         public VideoDecoderStream(string Filename)
@@ -107,19 +118,20 @@ namespace FFmpegSharp.Audio
             m_pixelFormat = PixelFormat.PIX_FMT_RGB24;
 
             // allocate video frame
-            m_avFramePtr = new IntPtr(FFmpeg.avcodec_alloc_frame());
+            m_avFrame = FFmpeg.avcodec_alloc_frame();
 
             // allocate some space for the converted frame
             m_avPicture = new AVPicture();
-            FFmpeg.avpicture_alloc(ref m_avPicture, (int)m_pixelFormat, m_avCodecCtx.width, m_avCodecCtx.height);
+            if (FFmpeg.avpicture_alloc(ref m_avPicture, (int)m_pixelFormat, m_avCodecCtx.width, m_avCodecCtx.height) != 0)
+                throw new DecoderException("Error allocating AVPicture");
 
             // determine required buffer size and allocate buffer
             int numBytes = FFmpeg.avpicture_get_size(m_pixelFormat, this.Width, this.Height);
             m_buffer = new byte[numBytes];
 
             // allocate SWS context, which is used for scaling and converting image formats
-            /*m_swsContext = *FFmpeg.sws_getContext(m_avCodecCtx.width, m_avCodecCtx.height, (int) m_avCodecCtx.pix_fmt,
-                m_avCodecCtx.width, m_avCodecCtx.height, (int) m_pixelFormat, FFmpeg.SWS_BICUBIC);*/
+            m_swsContext = FFmpeg.sws_getContext(m_avCodecCtx.width, m_avCodecCtx.height, (int)m_avCodecCtx.pix_fmt,
+                m_avCodecCtx.width, m_avCodecCtx.height, (int)m_pixelFormat, FFmpeg.SWS_BICUBIC);
         }
 
         #endregion
@@ -130,7 +142,7 @@ namespace FFmpegSharp.Audio
         {
             // decode video frame
             bool frameFinished = false;
-            int byteCount = FFmpeg.avcodec_decode_video(ref m_avCodecCtx, m_avFramePtr, out frameFinished, packet.data, packet.size);
+            int byteCount = FFmpeg.avcodec_decode_video(ref m_avCodecCtx, m_avFrame, out frameFinished, (byte*)packet.data, packet.size);
             if (byteCount < 0)
                 throw new DecoderException("Couldn't decode frame");
 
@@ -138,20 +150,16 @@ namespace FFmpegSharp.Audio
             if (frameFinished)
             {
                 // convert the image from its native format to RGB
-                m_avFrame = (AVFrame)Marshal.PtrToStructure(m_avFramePtr, typeof(AVFrame));
-                FFmpeg.img_convert(ref m_avPicture, m_pixelFormat, ref m_avFrame, m_avCodecCtx.pix_fmt, this.Width, this.Height);
-
-                // can't get sws_scale to work. the converted image is black, with a blue bar down the left hand side
-                /*fixed (int* srcData = m_avFrame.data, srcLinesize = m_avFrame.linesize, dstData = m_avPicture.data, dstLinesize = m_avPicture.linesize)
+                fixed (AVPicture* pPict = &m_avPicture)
                 {
-                    FFmpeg.sws_scale(ref m_swsContext, srcData, srcLinesize, 0, m_avCodecCtx.height, dstData, dstLinesize);
-                }*/
+                    if (FFmpeg.sws_scale(m_swsContext, m_avFrame->data, m_avFrame->linesize, 0, m_avCodecCtx.height, pPict->data, pPict->linesize) != 0)
+                        ;// throw new DecoderException("Error during image conversion");
+                }
 
                 // copy RGB frame from unmanaged to managed memory
+                // We should be able to eliminate this!
                 fixed (int* pictureData = m_avPicture.data)
-                {
                     Marshal.Copy(new IntPtr(pictureData[0]), m_buffer, 0, m_buffer.Length);
-                }
 
                 m_bufferUsedSize = m_buffer.Length;
 
@@ -185,11 +193,7 @@ namespace FFmpegSharp.Audio
         {
             base.Dispose(disposing);
 
-            try
-            {
-                FFmpeg.avpicture_free(ref m_avPicture);
-            }
-            catch { }
+            FFmpeg.avpicture_free(ref m_avPicture);
         }
 
         public override long Seek(long offset, SeekOrigin origin)

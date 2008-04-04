@@ -25,7 +25,7 @@
 
 namespace FFmpegSharp.Interop.Codec
 {
-    public enum PictureType
+    public enum PictureType : int
     {
         FF_I_TYPE = 1, // Intra
         FF_P_TYPE = 2, // Predicted

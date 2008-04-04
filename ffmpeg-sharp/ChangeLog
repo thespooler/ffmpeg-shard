@@ -1,3 +1,24 @@
+2008-03-29  Justin Cherniak <justin.cherniak@gmail.com>
+	* DecoderStream.cs: 
+		- Refactored Height and Width to VideoDecoderStream
+		- Refactoring and comment updates
+	* AVCodec.cs: Added additional overload to avcodec_decode_video to
+	allow AVFrame* to be utilized
+	* AVFrame.cs: Noted x64 portability issues with
+	BrokenPointerAttribute, added conversions to and from AVPicture
+	* AVPicture.cs: Noted x64 portability issues with [BrokenPointer]
+	* BrokenPointer.cs: Attribute added to mark portability issues to x64
+	(need to deal with lack of fixed IntPtr arrays in a later release)
+	* SWSContext.cs: Added missing fields from avcodec.h, now works
+	properly
+	* VideoDecoderStream.cs:
+		- Moved to FFmpegSharp.Video namespace
+		- Replace IntPtr AVFrame with AVFrame*
+		- Utilized fixed SWScale instead of img_convert
+		- Moved Width and Height properties from DecoderStream.cs
+		- Fixed documentation
+		- Eliminated bad try/catch block in destructor
+
 2008-03-28  Tim Jones <tim@roastedamoeba.com>
 	* Added VideoDecoderStream, and refactored common code from audio and video
 	decoding into the DecoderStream base class
