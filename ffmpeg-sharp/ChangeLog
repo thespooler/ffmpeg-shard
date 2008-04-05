@@ -1,5 +1,4 @@
-2008-04-04  Justin Cherniak <justin.cherniak@gmail.com>
-	* examples/VideoPlayer: New example using a Windows Forms control
+2008-03-29  Justin Cherniak <justin.cherniak@gmail.com>
 	* DecoderStream.cs: 
 		- Refactored Height and Width to VideoDecoderStream
 		- Refactoring and comment updates
