@@ -266,9 +266,9 @@ namespace FFmpegSharp.Interop
         [DllImport(AVFORMAT_DLL_NAME)]
         private static extern AVError av_open_input_file(out IntPtr pFormatContext,
                                 [MarshalAs(UnmanagedType.LPStr)]string filename,
-                                AVInputFormat* fmt,
+                                IntPtr fmt,
                                 int buf_size,
-                                AVFormatParameters* ap);
+                                IntPtr ap);
 
         /// <summary>
         /// Opens a media file as input.  The codecs are not opened.  Only the file
@@ -280,7 +280,7 @@ namespace FFmpegSharp.Interop
         public static AVError av_open_input_file(out AVFormatContext pFormatContext, string filename)
         {
             IntPtr ptr;
-            AVError err = av_open_input_file(out ptr, filename, null, 0, null);
+            AVError err = av_open_input_file(out ptr, filename, IntPtr.Zero, 0, IntPtr.Zero);
 
             if (ptr == IntPtr.Zero)
             {
@@ -297,7 +297,7 @@ namespace FFmpegSharp.Interop
 
 
         [DllImport(AVFORMAT_DLL_NAME)]
-        private static extern AVError av_open_input_file(out AVFormatContext* pFormatContext,
+        private static extern AVError av_open_input_file(out IntPtr pFormatContext,
                                 [MarshalAs(UnmanagedType.LPStr)]string filename,
                                 ref AVInputFormat fmt,
                                 int buf_size,
@@ -317,7 +317,7 @@ namespace FFmpegSharp.Interop
                                                  ref AVInputFormat fmt, int buf_size, ref AVFormatParameters ap)
         {
             IntPtr ptr;
-            AVError err = av_open_input_file(out ptr, filename, null, 0, null);
+            AVError err = av_open_input_file(out ptr, filename, ref fmt, 0, ref ap);
 
             if (ptr == IntPtr.Zero)
             {
