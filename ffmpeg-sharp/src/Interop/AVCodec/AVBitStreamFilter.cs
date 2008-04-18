@@ -30,7 +30,7 @@ namespace FFmpegSharp.Interop.Codec
 {
     public delegate int FilterCallback(ref AVBitStreamFilterContext pAVBitStreamFilterContext,
                                        ref AVCodecContext pAVCodecContext,
-                                       [MarshalAs(UnmanagedType.LPStr)]string args,
+                                       string args,
                                        ref byte[] poutbuf, ref int poutbuf_size,
                                        byte[] buf, int buf_size, int keyframe);
 

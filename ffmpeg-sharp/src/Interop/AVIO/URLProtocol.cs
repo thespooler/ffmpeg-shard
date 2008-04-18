@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 
 namespace FFmpegSharp.Interop.AVIO
 {
-    public delegate int OpenCallback(ref URLContext h, [MarshalAs(UnmanagedType.LPStr)]string filename, int flags);
+    public delegate int OpenCallback(ref URLContext h, string filename, int flags);
     public unsafe delegate int ReadCallback(ref URLContext h, [In, Out]byte[] buf, int size);
     public unsafe delegate int WriteCallBack(ref URLContext h, [In, Out]byte[] buf, int size);
     public delegate long SeekCallBack(ref URLContext h, long pos, int whence);

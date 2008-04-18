@@ -37,7 +37,7 @@ namespace FFmpegSharp.Interop
         /// ptr = IntPtr.Zero is explicetly allowed
         /// It is recommended that you use av_freep() instead.
         /// </remarks>
-        [DllImport(AVUTIL_DLL_NAME)]
+        [DllImport(AVUTIL_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void av_free(ref IntPtr ptr);
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace FFmpegSharp.Interop
         /// ptr = IntPtr.Zero is explicetly allowed
         /// It is recommended that you use av_freep() instead.
         /// </remarks>
-        [DllImport(AVUTIL_DLL_NAME)]
+        [DllImport(AVUTIL_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void av_free(void* ptr);
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace FFmpegSharp.Interop
         /// sets the pointer to IntPtr.Zero.
         /// </summary>
         /// <param name="ptr">Pointer to the pointer which should be freed (void**)</param>
-        [DllImport(AVUTIL_DLL_NAME)]
+        [DllImport(AVUTIL_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void av_freep(ref IntPtr ptr);
 
 
@@ -64,7 +64,7 @@ namespace FFmpegSharp.Interop
         /// sets the pointer to IntPtr.Zero.
         /// </summary>
         /// <param name="ptr">Pointer to the pointer which should be freed (void**)</param>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void av_freep(void** ptr);
     }
 }

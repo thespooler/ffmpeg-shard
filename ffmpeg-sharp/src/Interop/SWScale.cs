@@ -33,14 +33,14 @@ namespace FFmpegSharp.Interop
     [SuppressUnmanagedCodeSecurity]
     public static partial class FFmpeg
     {
-        public const string AVSWSCALE_DLL_NAME = "swscale-0.dll";
+        public const string SWSCALE_DLL_NAME = "swscale-0.dll";
 
         #region Functions
 
-        [DllImport(AVSWSCALE_DLL_NAME)]
+        [DllImport(SWSCALE_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void sws_freeContext(ref SwsContext SwsContext);
 
-        [DllImport(AVSWSCALE_DLL_NAME, EntryPoint = "sws_getContext")]
+        [DllImport(SWSCALE_DLL_NAME, EntryPoint = "sws_getContext", CharSet = CharSet.Ansi)]
         private unsafe static extern IntPtr sws_getContext_internal(int source_width, int source_height,
             int source_pix_fmt, int dest_width, int dest_height, int dest_pix_fmt, int flags,
             ref SwsFilter srcFilter, ref SwsFilter destFilter, double* Param);
@@ -54,7 +54,7 @@ namespace FFmpegSharp.Interop
                 ref srcFilter, ref destFilter, Param);
         }
 
-        [DllImport(AVSWSCALE_DLL_NAME, EntryPoint = "sws_getContext")]
+        [DllImport(SWSCALE_DLL_NAME, EntryPoint = "sws_getContext", CharSet = CharSet.Ansi)]
         private unsafe static extern IntPtr sws_getContext_internal(int source_width, int source_height,
             int source_pix_fmt, int dest_width, int dest_height, int dest_pix_fmt, int flags,
             SwsFilter* srcFilter, SwsFilter* destFilter, double* Param);
@@ -67,7 +67,7 @@ namespace FFmpegSharp.Interop
                 null, null, null);
         }
 
-        [DllImport(AVSWSCALE_DLL_NAME)]
+        [DllImport(SWSCALE_DLL_NAME, CharSet = CharSet.Ansi)]
         public unsafe static extern int sws_scale(SwsContext* SwsContext,
             int* src,
             int* srcStride,
@@ -75,7 +75,7 @@ namespace FFmpegSharp.Interop
             int* dst,
             int* dstStride);
 
-        [DllImport(AVSWSCALE_DLL_NAME)]
+        [DllImport(SWSCALE_DLL_NAME, CharSet = CharSet.Ansi)]
         public unsafe static extern int sws_scale(SwsContext* SwsContext,
             byte*[] src,
             int[] srcStride,
@@ -83,7 +83,7 @@ namespace FFmpegSharp.Interop
             byte*[] dst,
             int[] dstStride);
 
-        [DllImport(AVSWSCALE_DLL_NAME)]
+        [DllImport(SWSCALE_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int sws_rgb2rgb_init(int flags);
 
         #endregion

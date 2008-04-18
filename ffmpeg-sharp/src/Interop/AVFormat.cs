@@ -40,20 +40,20 @@ namespace FFmpegSharp.Interop
 
         #region Functions
 
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void av_destruct_packet_nofree(ref AVPacket pAVPacket);
 
         /// <summary>
         /// Default packet destructor
         /// </summary>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void av_destruct_packet(ref AVPacket pAVPacket);
 
         /// <summary>
         /// Initialize optional fields of a packet.
         /// </summary>
         /// <param name="pAVPacket">packet</param>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void av_init_packet(ref AVPacket pAVPacket);
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace FFmpegSharp.Interop
         /// </summary>
         /// <param name="pAVPacket">packet</param>
         /// <param name="size">wanted payload size</param>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern AVError av_new_packet(ref AVPacket pAVPacket, int size);
 
         /// <summary>
@@ -71,14 +71,14 @@ namespace FFmpegSharp.Interop
         /// <param name="pAVPacket">packet</param>
         /// <param name="size">wanted payload size</param>
         /// <returns>>0 (read size) if OK.  AVError otherwise</returns>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int av_get_packet(ref ByteIOContext pByteIOContext, ref AVPacket pAVPacket, int size);
 
         /// <summary>
         /// <warning>This is a hack - the packet memory allocation stuff is broken.  The
         /// packet is allocated if it was not really allocated</warning>
         /// </summary>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern AVError av_dup_packet(ref AVPacket pAVPacket);
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace FFmpegSharp.Interop
         /// 
         /// </summary>
         /// <param name="pAVImageFormat"></param>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void av_register_image_format(IntPtr pAVImageFormat);
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace FFmpegSharp.Interop
         /// </summary>
         /// <param name="pAVProbeData"></param>
         /// <returns></returns>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern IntPtr av_probe_image_format(IntPtr pAVProbeData);
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace FFmpegSharp.Interop
         /// </summary>
         /// <param name="filename"></param>
         /// <returns></returns>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern IntPtr guess_image_format([MarshalAs(UnmanagedType.LPTStr)]byte* filename);
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace FFmpegSharp.Interop
         /// </summary>
         /// <param name="filename"></param>
         /// <returns></returns>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern CodecID av_guess_image2_codec([MarshalAs(UnmanagedType.LPTStr)]
                                                                     byte* filename);
 
@@ -138,7 +138,7 @@ namespace FFmpegSharp.Interop
         /// <param name="alloc_cb"></param>
         /// <param name="opaque"></param>
         /// <returns></returns>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int av_read_image(IntPtr pByteIOContext,
                                             [MarshalAs(UnmanagedType.LPTStr)]byte* filename,
                                             IntPtr pAVImageFormat,
@@ -153,39 +153,32 @@ namespace FFmpegSharp.Interop
         /// <param name="pAVImageFormat"></param>
         /// <param name="pAVImageInfo"></param>
         /// <returns></returns>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int av_write_image(IntPtr pByteIOContext, IntPtr pAVImageFormat, IntPtr pAVImageInfo);
 
         */
         #endregion
 
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void av_register_input_format(ref AVInputFormat pAVInputFormat);
 
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void av_register_output_format(ref AVOutputFormat pAVOutputFormat);
 
-        [DllImport(AVFORMAT_DLL_NAME)]
-        public static extern AVOutputFormat* guess_stream_format(
-                                           [MarshalAs(UnmanagedType.LPStr)]string short_name,
-                                           [MarshalAs(UnmanagedType.LPStr)]string filename,
-                                           [MarshalAs(UnmanagedType.LPStr)]string mime_type);
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
+        public static extern AVOutputFormat* guess_stream_format(string short_name, string filename, 
+                                                                 string mime_type);
 
-        [DllImport(AVFORMAT_DLL_NAME)]
-        public static extern AVOutputFormat* guess_format(
-                                           [MarshalAs(UnmanagedType.LPStr)]string short_name,
-                                           [MarshalAs(UnmanagedType.LPStr)]string filename,
-                                           [MarshalAs(UnmanagedType.LPStr)]string mime_type);
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
+        public static extern AVOutputFormat* guess_format(string short_name, string filename,
+                                                          string mime_type);
 
         /// <summary>
         /// Guesses the codec id based upon muxer and filename
         /// </summary>
-        [DllImport(AVFORMAT_DLL_NAME)]
-        public static extern CodecID av_guess_codec(ref AVOutputFormat pAVOutoutFormat,
-                                           [MarshalAs(UnmanagedType.LPStr)]string short_name,
-                                           [MarshalAs(UnmanagedType.LPStr)]string filename,
-                                           [MarshalAs(UnmanagedType.LPStr)]string mime_type,
-                                                                           CodecType type);
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
+        public static extern CodecID av_guess_codec(ref AVOutputFormat pAVOutoutFormat, string short_name,
+                                                    string filename, string mime_type, CodecType type);
 
         /// <summary>
         /// Send a nice hexadecimal dump of a buffer to the specified file stream.
@@ -193,7 +186,7 @@ namespace FFmpegSharp.Interop
         /// <param name="pFile">The file stream pointer where the dump should be sent to</param>
         /// <param name="buf">buffer</param>
         /// <param name="size">buffer size</param>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void av_hex_dump(IntPtr pFile, byte* buf, int size);
 
         /// <summary>
@@ -205,7 +198,7 @@ namespace FFmpegSharp.Interop
         /// higher importance</param>
         /// <param name="buf">buffer</param>
         /// <param name="size">buffer size</param>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void av_hex_dump_log(void* avcl, int level, byte* buf, int size);
 
         /// <summary>
@@ -214,13 +207,13 @@ namespace FFmpegSharp.Interop
         /// <param name="pFile">The file stream pointer where the dump should be sent to</param>
         /// <param name="pAVPacket">packet to dump</param>
         /// <param name="dump_payload">true if the payload must be displayed too</param>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void av_pkt_dump(IntPtr pFile, ref AVPacket pAVPacket, [MarshalAs(UnmanagedType.Bool)] bool dump_payload);
 
         /// <summary>
         /// Registers all codecs with the library.
         /// </summary>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void av_register_all();
 
 
@@ -228,8 +221,8 @@ namespace FFmpegSharp.Interop
         /// <summary>
         /// Finds ref AVInputFormat based on input format's short name
         /// </summary>
-        [DllImport(AVFORMAT_DLL_NAME)]
-        public static extern AVInputFormat* av_find_input_format([MarshalAs(UnmanagedType.LPStr)]string short_name);
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
+        public static extern AVInputFormat* av_find_input_format(string short_name);
 
         /// <summary>
         /// Guess file format.
@@ -238,19 +231,19 @@ namespace FFmpegSharp.Interop
         /// <param name="is_opened">whether the file is already opened, determines whether 
         /// demuxers with or without AVFMT_NOFILE are probed</param>
         /// <returns>ref AVInputFormat pointer</returns>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern AVInputFormat* av_probe_input_format(ref AVProbeData pAVProbeData, [MarshalAs(UnmanagedType.Bool)] bool is_opened);
 
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         private static extern AVError av_open_input_stream(out AVFormatContext* ic_ptr, ref ByteIOContext pb,
-                    [MarshalAs(UnmanagedType.LPStr)]string filename, ref AVInputFormat fmt, ref AVFormatParameters ap);
+                                                           string filename, ref AVInputFormat fmt, ref AVFormatParameters ap);
 
         /// <summary>
         /// Allocates all the structures needed to read an input stream.
         /// This does not open the needed codecs for decoding the stream[s].
         /// </summary>
         private static AVError av_open_input_stream(out AVFormatContext ctx, ref ByteIOContext pb,
-                    [MarshalAs(UnmanagedType.LPStr)]string filename, ref AVInputFormat fmt, ref AVFormatParameters ap)
+                                                    string filename, ref AVInputFormat fmt, ref AVFormatParameters ap)
         {
             AVFormatContext* ptr;
             AVError err = av_open_input_stream(out ptr, ref pb, filename, ref fmt, ref ap);
@@ -263,12 +256,12 @@ namespace FFmpegSharp.Interop
         }
 
 
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         private static extern AVError av_open_input_file(out IntPtr pFormatContext,
-                                [MarshalAs(UnmanagedType.LPStr)]string filename,
-                                IntPtr fmt,
-                                int buf_size,
-                                IntPtr ap);
+                                                         string filename,
+                                                         AVInputFormat* fmt,
+                                                         int buf_size,
+                                                         AVFormatParameters* ap);
 
         /// <summary>
         /// Opens a media file as input.  The codecs are not opened.  Only the file
@@ -296,12 +289,12 @@ namespace FFmpegSharp.Interop
         }
 
 
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         private static extern AVError av_open_input_file(out IntPtr pFormatContext,
-                                [MarshalAs(UnmanagedType.LPStr)]string filename,
-                                ref AVInputFormat fmt,
-                                int buf_size,
-                                ref AVFormatParameters ap);
+                                                         string filename,
+                                                         ref AVInputFormat fmt,
+                                                         int buf_size,
+                                                         ref AVFormatParameters ap);
 
         /// <summary>
         /// Opens a media file as input.  The codecs are not opened.  Only the file
@@ -336,7 +329,7 @@ namespace FFmpegSharp.Interop
         /// Allocates an empty AVFormatContext
         /// </summary>
         /// <remarks>This must be freed using <see cref="FFmpeg.av_free()">FFmpeg.av_free()</see> </remarks>
-        [DllImport("avformat-51.dll", EntryPoint = "av_alloc_format_context")]
+        [DllImport("avformat-51.dll", CharSet = CharSet.Ansi, EntryPoint = "av_alloc_format_context")]
         private static extern AVFormatContext* av_alloc_format_context_internal();
 
         /// <summary>
@@ -362,7 +355,7 @@ namespace FFmpegSharp.Interop
         /// </summary>
         /// <param name="pAVFormatContext">The media file handle</param>
         /// <returns>>=0 if OK.  AVError otherwise</returns>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int av_find_stream_info(ref AVFormatContext pAVFormatContext);
 
         /// <summary>
@@ -370,7 +363,7 @@ namespace FFmpegSharp.Interop
         /// </summary>
         /// <param name="pAVFormatContext">Media file handle</param>
         /// <param name="pAVPacket">packet to be filled</param>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         [Obsolete("This function is obsolete and should never be used. Use av_read_frame() instead.")]
         public static extern AVError av_read_packet(ref AVFormatContext pAVFormatContext, ref AVPacket pAVPacket);
 
@@ -392,7 +385,7 @@ namespace FFmpegSharp.Interop
         /// decompress the payload.
         /// </summary>
         /// <returns>0 if OK, < 0 if error or end of file.</returns>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int av_read_frame(ref AVFormatContext pAVFormatContext, ref AVPacket pAVPacket);
 
         /// <summary>
@@ -405,14 +398,14 @@ namespace FFmpegSharp.Interop
         /// or if there is no stream specified then in AV_TIME_BASE units</param>
         /// <param name="flags">Flags which select direction and seeking mode.</param>
         /// <returns>>=0 on success</returns>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern AVError av_seek_frame(ref AVFormatContext pAVFormatContext, int stream_index, long timestamp, int flags);
 
         /// <summary>
         /// Start playing a network based stream (e.g. RTSP stream) at the
         /// current position
         /// </summary>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern AVError av_read_play(ref AVFormatContext pAVFormatContext);
 
         /// <summary>
@@ -420,14 +413,14 @@ namespace FFmpegSharp.Interop
         /// 
         /// Use av_read_play() to resume it.
         /// </summary>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern AVError av_read_pause(ref AVFormatContext pAVFormatContext);
 
         /// <summary>
         /// Close a media file (but not its codecs).
         /// </summary>
         /// <param name="pAVFormatContext">Media file handle</param>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void av_close_input_file(ref AVFormatContext pAVFormatContext);
 
         /// <summary>
@@ -440,7 +433,7 @@ namespace FFmpegSharp.Interop
         /// <param name="pAVFormatContext">Media file handle</param>
         /// <param name="id">File format dependent stream id</param>
         /// <returns>AVStream pointer</returns>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern AVStream* av_new_stream(ref AVFormatContext pAVFormatContext, int id);
 
         /// <summary>
@@ -451,10 +444,10 @@ namespace FFmpegSharp.Interop
         /// (used for wrap control, 33 is the value for MPEG)</param>
         /// <param name="pts_num">numerator to convert to seconds (MPEG: 1)</param>
         /// <param name="pts_den">denominator to convert to seconds (MPEG: 90000)</param>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void av_set_pts_info(ref AVStream pAVStream, int pts_wrap_bits, int pts_num, int pts_den);
 
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern AVError av_find_default_stream_index(ref AVFormatContext pAVFormatContext);
 
         /// <summary>
@@ -466,14 +459,14 @@ namespace FFmpegSharp.Interop
         /// the timestamp which is <= the requested one, if backward is 0 then it will be >=
         /// if AVSEEK_FLAG_ANY seek to any frame, only keyframes otherwise</param>
         /// <returns>< 0 if no such timestamp could be found</returns>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern AVError av_index_search_timestamp(ref AVStream pAVStream, long timestamp, int flags);
 
         /// <summary>
         /// Add a index entry into a sorted list updateing if it is already there.
         /// </summary>
         /// <param name="timestamp">timestamp in the timebase of the given stream</param>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern AVError av_add_index_entry(ref AVStream pAVStream, long pos, long timestamp, int size, int distance, int flags);
 
         /// <summary>
@@ -482,7 +475,7 @@ namespace FFmpegSharp.Interop
         /// </summary>
         /// <param name="stream_index">stream number</param>
         /// <param name="target_ts">target timestamp in the time base of the given stream</param>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern AVError av_seek_frame_binary(ref AVFormatContext pAVFormatContext, int stream_index, long target_ts, int flags);
 
         /// <summary>
@@ -493,11 +486,11 @@ namespace FFmpegSharp.Interop
         /// unchanged, others set cur_dts in their native timebase
         /// only needed for timestamp wrapping or if (dts not set and pts!=dts).</param>
         /// <param name="timestamp">new dts expressed in time_base of param ref_st</param>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void av_update_cur_dts(ref AVFormatContext pAVFormatContext, ref AVStream pAVStream, long timestamp);
 
         /* media file output */
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern AVError av_set_parameters(ref AVFormatContext pAVFormatContext, AVFormatParameters* pAVFormatParameters);
 
         /// <summary>
@@ -505,7 +498,7 @@ namespace FFmpegSharp.Interop
         /// output media file.
         /// </summary>
         /// <param name="pAVFormatContext">Media file handle</param>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern AVError av_write_header(ref AVFormatContext pAVFormatContext);
 
         /// <summary>
@@ -518,7 +511,7 @@ namespace FFmpegSharp.Interop
         /// <param name="pAVFormatContext">media file handle</param>
         /// <param name="pAVPacket">the packet, which contains the stream_index, buf/buf_size, dts/pts, ...</param>
         /// <returns>1 if end of stream wanted, otherwise AVError</returns>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int av_write_frame(ref AVFormatContext pAVFormatContext, ref AVPacket pAVPacket);
 
         /// <summary>
@@ -534,7 +527,7 @@ namespace FFmpegSharp.Interop
         /// <param name="pAVFormatContext">media file handle</param>
         /// <param name="pAVPacket">the packet, which contains the stream_index, buf/buf_size, dts/pts, ...</param>
         /// <returns>1 if end of stream wanted, otherwise AVError</returns>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int av_interleaved_write_frame(ref AVFormatContext pAVFormatContext, ref AVPacket pAVPacket);
 
         /// <summary>
@@ -549,7 +542,7 @@ namespace FFmpegSharp.Interop
         /// <param name="flush">true if no further packets are available as input and all
         /// remaining packets should be output</param>
         /// <returns>1 if end of stream wanted, otherwise AVError</returns>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int av_interleave_packet_per_dts(ref AVFormatContext pAVFormatContext, ref AVPacket p_out_AVPacket,
                                                               ref AVPacket pAVPacket, [MarshalAs(UnmanagedType.Bool)]bool flush);
 
@@ -559,29 +552,25 @@ namespace FFmpegSharp.Interop
         /// </summary>
         /// <param name="pAVFormatContext">media file handle</param>
         /// <returns>0 if OK. AVERROR_xxx if error.</returns>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int av_write_trailer(ref AVFormatContext pAVFormatContext);
 
-        [DllImport(AVFORMAT_DLL_NAME)]
-        public static extern void dump_format(ref AVFormatContext pAVFormatContext, int index,
-                                                [MarshalAs(UnmanagedType.LPStr)]string url,
-                                                int is_output);
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
+        public static extern void dump_format(ref AVFormatContext pAVFormatContext, int index, string url, int is_output);
 
         /// <summary>
         /// parses width and height out of string str.
         /// </summary>
         [Obsolete("Use av_parse_video_frame_size instead.")]
-        [DllImport(AVFORMAT_DLL_NAME)]
-        public static extern int parse_image_size(ref int width_ptr, ref int height_ptr,
-                                                [MarshalAs(UnmanagedType.LPStr)]string arg);
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
+        public static extern int parse_image_size(ref int width_ptr, ref int height_ptr, string arg);
 
         /// <summary>
         /// Converts frame rate from string to a fraction.
         /// </summary>
         [Obsolete("Use av_parse_video_frame_rate instead.")]
-        [DllImport(AVFORMAT_DLL_NAME)]
-        public static extern int parse_frame_rate(ref int pFrame_rate, ref int pFrame_rate_base,
-                                                [MarshalAs(UnmanagedType.LPStr)]string arg);
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
+        public static extern int parse_frame_rate(ref int pFrame_rate, ref int pFrame_rate_base, string arg);
 
         /// <summary>
         /// Converts date string to number of seconds since Jan 1st, 1970.
@@ -597,19 +586,19 @@ namespace FFmpegSharp.Interop
         ///  HH[:MM[:SS[.m...]]]
         ///  S+[.m...]
         /// </code>
-        [DllImport(AVFORMAT_DLL_NAME)]
-        public static extern long parse_date([MarshalAs(UnmanagedType.LPStr)]string datestr, int duration);
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
+        public static extern long parse_date(string datestr, int duration);
 
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern long av_gettime();
 
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern long ffm_read_write_index(int fd);
 
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void ffm_write_write_index(int fd, long pos);
 
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void ffm_set_write_index(ref AVFormatContext pAVFormatContext, long pos, long file_size);
 
         /// <summary>
@@ -618,11 +607,8 @@ namespace FFmpegSharp.Interop
         /// syntax: '?tag1=val1&tag2=val2...'. Little URL decoding is done.
         /// </summary>
         /// <returns>1 if found</returns>
-        [DllImport(AVFORMAT_DLL_NAME)]
-        public static extern int find_info_tag([MarshalAs(UnmanagedType.LPStr)]string arg,
-                                               int arg_size,
-                                              [MarshalAs(UnmanagedType.LPStr)]string tag1,
-                                              [MarshalAs(UnmanagedType.LPStr)]string info);
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
+        public static extern int find_info_tag(string arg, int arg_size, string tag1, string info);
 
         /// <summary>
         /// Returns in 'buf' the path with '%d' replaced by number.
@@ -635,29 +621,29 @@ namespace FFmpegSharp.Interop
         /// <param name="path">numbered sequence string</param>
         /// <param name="number">frame number</param>
         /// <returns>0 if OK, -1 if format error.</returns>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int av_get_frame_filename([In, Out] StringBuilder buf, int buf_size,
-                                            [MarshalAs(UnmanagedType.LPStr)]string path, int number);
+                                            string path, int number);
 
         /// <summary>
         /// Check whether filename actually is a numbered sequence generator.
         /// </summary>
         /// <param name="filename">possible numbered sequence string</param>
         /// <returns>true if valid numbered sequence string, false otherwise</returns>
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool av_filename_number_test([MarshalAs(UnmanagedType.LPStr)]string filename);
+        public static extern bool av_filename_number_test(string filename);
 
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int video_grab_init();
 
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int audio_init();
 
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int dv1394_init();
 
-        [DllImport(AVFORMAT_DLL_NAME)]
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int dc1394_init();
 
         #endregion
