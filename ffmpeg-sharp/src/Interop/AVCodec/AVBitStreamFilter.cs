@@ -37,10 +37,10 @@ namespace FFmpegSharp.Interop.Codec
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct AVBitStreamFilter
     {
-        IntPtr name_ptr;
+        private sbyte* name_ptr;
         public string name
         {
-            get { return Utils.GetString(name_ptr); }
+            get { return new string(name_ptr); }
         }
 
         public int priv_data_size;

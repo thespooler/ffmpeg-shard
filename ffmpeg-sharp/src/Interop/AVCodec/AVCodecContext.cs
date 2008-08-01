@@ -316,17 +316,17 @@ namespace FFmpegSharp.Interop.Codec
          */
         public void* opaque;
 
-        private fixed byte codec_name_ptr[32];
+        private fixed sbyte codec_name_ptr[32];
         public string codec_name
         {
             get
             {
-                fixed (byte* ptr = codec_name_ptr)
-                    return Utils.GetString(ptr);
+                fixed (sbyte* ptr = codec_name_ptr)
+                    return new string(ptr);
             }
             set
             {
-                fixed (byte* ptr = codec_name_ptr)
+                fixed (sbyte* ptr = codec_name_ptr)
                     Utils.SetString(ptr, 32, value);
             }
         }
@@ -445,10 +445,10 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: set by lavc
          * - decoding: unused
          */
-        byte* stats_out_ptr; // char* stats_out
+        private sbyte* stats_out_ptr; // char* stats_out
         public string stats_out
         {
-            get { return Utils.GetString(stats_out_ptr); }
+            get { return new string(stats_out_ptr); }
         }
 
         /**
@@ -457,10 +457,10 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: allocated/set/freed by user
          * - decoding: unused
          */
-        byte* stats_in_ptr;// char *stats_in
+        private sbyte* stats_in_ptr;// char *stats_in
         public string stats_in
         {
-            get { return Utils.GetString(stats_in_ptr); }
+            get { return new string(stats_in_ptr); }
         }
 
         /**
@@ -489,10 +489,10 @@ namespace FFmpegSharp.Interop.Codec
          * - decoding: unused
          */
 
-        byte* rc_eq_ptr; // char* rc_eq;
+        private sbyte* rc_eq_ptr; // char* rc_eq;
         public string rc_eq
         {
-            get { return Utils.GetString(rc_eq_ptr); }
+            get { return new string(rc_eq_ptr); }
         }
 
         /**

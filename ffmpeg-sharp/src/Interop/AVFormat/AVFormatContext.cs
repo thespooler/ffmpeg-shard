@@ -54,7 +54,7 @@ namespace FFmpegSharp.Interop.Format
 
         public AVStreamArray20 streams;
 
-        private fixed byte filename_ptr[1024];
+        private fixed sbyte filename_ptr[1024];
         /// <summary>
         /// Input/Output filename
         /// </summary>
@@ -62,12 +62,12 @@ namespace FFmpegSharp.Interop.Format
         {
             get
             {
-                fixed (byte* ptr = filename_ptr)
-                    return Utils.GetString(ptr);
+                fixed (sbyte* ptr = filename_ptr)
+                    return new string(ptr);
             }
             set
             {
-                fixed (byte* ptr = filename_ptr)
+                fixed (sbyte* ptr = filename_ptr)
                     Utils.SetString(ptr, 1024, value);
             }
         }
@@ -75,77 +75,77 @@ namespace FFmpegSharp.Interop.Format
         /* stream info */
         public long timestamp;
 
-        private fixed byte title_ptr[512];
+        private fixed sbyte title_ptr[512];
         public string title
         {
             get
             {
-                fixed (byte* ptr = title_ptr)
-                    return Utils.GetString(ptr);
+                fixed (sbyte* ptr = title_ptr)
+                    return new string(ptr);
             }
             set
             {
-                fixed (byte* ptr = title_ptr)
+                fixed (sbyte* ptr = title_ptr)
                     Utils.SetString(ptr, 512, value);
             }
         }
 
-        private fixed byte author_ptr[512];
+        private fixed sbyte author_ptr[512];
         public string author
         {
             get
             {
-                fixed (byte* ptr = author_ptr)
-                    return Utils.GetString(ptr);
+                fixed (sbyte* ptr = author_ptr)
+                    return new string(ptr);
             }
             set
             {
-                fixed (byte* ptr = author_ptr)
+                fixed (sbyte* ptr = author_ptr)
                     Utils.SetString(ptr, 512, value);
             }
         }
 
-        private fixed byte copyright_ptr[512];
+        private fixed sbyte copyright_ptr[512];
         public string copyright
         {
             get
             {
-                fixed (byte* ptr = copyright_ptr)
-                    return Utils.GetString(ptr);
+                fixed (sbyte* ptr = copyright_ptr)
+                    return new string(ptr);
             }
             set
             {
-                fixed (byte* ptr = copyright_ptr)
+                fixed (sbyte* ptr = copyright_ptr)
                     Utils.SetString(ptr, 512, value);
             }
         }
 
-        private fixed byte comment_ptr[512];
+        private fixed sbyte comment_ptr[512];
         public string comment
         {
             get
             {
-                fixed (byte* ptr = comment_ptr)
-                    return Utils.GetString(ptr);
+                fixed (sbyte* ptr = comment_ptr)
+                    return new string(ptr);
             }
             set
             {
-                fixed (byte* ptr = comment_ptr)
+                fixed (sbyte* ptr = comment_ptr)
                     Utils.SetString(ptr, 512, value);
             }
         }
 
-        private fixed byte album_ptr[512];
+        private fixed sbyte album_ptr[512];
         public string album
         {
             get
             {
-                fixed (byte* ptr = album_ptr)
-                    return Utils.GetString(ptr);
+                fixed (sbyte* ptr = album_ptr)
+                    return new string(ptr);
             }
             set
             {
-                fixed (byte* ptr = album_ptr)
+                fixed (sbyte* ptr = album_ptr)
                     Utils.SetString(ptr, 512, value);
             }
         }
@@ -160,7 +160,7 @@ namespace FFmpegSharp.Interop.Format
         /// </summary>
         public int track;
 
-        private fixed byte genre_ptr[32];
+        private fixed sbyte genre_ptr[32];
         /// <summary>
         /// ID3 genre
         /// </summary>
@@ -168,12 +168,12 @@ namespace FFmpegSharp.Interop.Format
         {
             get
             {
-                fixed (byte* ptr = genre_ptr)
-                    return Utils.GetString(ptr);
+                fixed (sbyte* ptr = genre_ptr)
+                    return new string(ptr);
             }
             set
             {
-                fixed (byte* ptr = genre_ptr)
+                fixed (sbyte* ptr = genre_ptr)
                     Utils.SetString(ptr, 32, value);
             }
         }

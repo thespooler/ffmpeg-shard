@@ -9,22 +9,22 @@ namespace FFmpegSharp.Interop.Format
     {
         public int id;
 
-        private byte* provider_name_ptr;
+        private sbyte* provider_name_ptr;
         /// <summary>
         /// Network name for DVB streams
         /// </summary>
         public string provider_name
         {
-            get { return Utils.GetString(provider_name_ptr); }
+            get { return new string(provider_name_ptr); }
         }
 
-        private byte* name_ptr;
+        private sbyte* name_ptr;
         /// <summary>
         /// Service name for DVB streams
         /// </summary>
         public string name
         {
-            get { return Utils.GetString(name_ptr); }
+            get { return new string(name_ptr); }
         }
 
         public int flags;

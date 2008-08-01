@@ -80,17 +80,17 @@ namespace FFmpegSharp.Interop.Format
         // decoding: duration of the stream, in AV_TIME_BASE fractional seconds. 
         public long duration;
 
-        private fixed byte language_ptr[4]; // ISO 639 3-letter language code (empty string if undefined)
+        private fixed sbyte language_ptr[4]; // ISO 639 3-letter language code (empty string if undefined)
         public string language
         {
             get
             {
-                fixed (byte* ptr = language_ptr)
-                    return Utils.GetString(ptr);
+                fixed (sbyte* ptr = language_ptr)
+                    return new string(ptr);
             }
             set
             {
-                fixed (byte* ptr = language_ptr)
+                fixed (sbyte* ptr = language_ptr)
                     Utils.SetString(ptr, 4, value);
             }
         }

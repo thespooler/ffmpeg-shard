@@ -33,8 +33,11 @@ namespace FFmpegSharp.Interop.Util
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct AVClass
     {
-        IntPtr class_name_ptr;
-        public string class_name { get { return Utils.GetString(class_name_ptr); } }
+        sbyte* class_name_ptr;
+        public string class_name
+        {
+            get { return new string(class_name_ptr); }
+        }
 
         private IntPtr item_name_ptr;
         public ItemNameCallback item_name

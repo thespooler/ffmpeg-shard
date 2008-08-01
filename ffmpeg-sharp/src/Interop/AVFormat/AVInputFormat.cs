@@ -40,11 +40,17 @@ namespace FFmpegSharp.Interop.Format
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct AVInputFormat
     {
-        IntPtr name_ptr;
-        public string name { get { return Utils.GetString(name_ptr); } }
+        private sbyte* name_ptr;
+        public string name
+        {
+            get { return new string(name_ptr); }
+        }
 
-        IntPtr long_name_ptr;
-        public string long_name { get { return Utils.GetString(long_name_ptr); } }
+        private sbyte* long_name_ptr;
+        public string long_name
+        {
+            get { return new string(long_name_ptr); }
+        }
 
         public int priv_data_size;
 
@@ -86,8 +92,11 @@ namespace FFmpegSharp.Interop.Format
 
         public InputFormatFlags flags;
 
-        IntPtr extensions_ptr;
-        public string extensions { get { return Utils.GetString(extensions_ptr); } }
+        private sbyte* extensions_ptr;
+        public string extensions
+        {
+            get { return new string(extensions_ptr); }
+        }
 
         public int value;
 

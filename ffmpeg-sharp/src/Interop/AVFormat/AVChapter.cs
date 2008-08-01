@@ -27,13 +27,13 @@ namespace FFmpegSharp.Interop.Format
         /// </summary>
         public long end;
 
-        private byte* title_ptr;
+        private sbyte* title_ptr;
         /// <summary>
         /// Chapter title
         /// </summary>
         public string title
         {
-            get { return Utils.GetString(title_ptr); }
+            get { return new string(title_ptr); }
         }
     }
 }

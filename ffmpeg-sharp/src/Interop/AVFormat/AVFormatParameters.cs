@@ -52,17 +52,17 @@ namespace FFmpegSharp.Interop.Format
         /// </summary>
         public string device
         {
-            get { return Utils.GetString(device_ptr); }
+            get { return new string(device_ptr); }
         }
 #endif
 
-        public IntPtr standard_ptr;
+        private sbyte*  standard_ptr;
         /// <summary>
         /// TV standard: NTSC, PAL, SECAM
         /// </summary>
         public string standard
         {
-            get { return Utils.GetString(standard_ptr); }
+            get { return new string(standard_ptr); }
         }
 
         private int bitFieldMask;

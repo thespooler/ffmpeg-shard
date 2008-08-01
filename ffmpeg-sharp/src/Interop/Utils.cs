@@ -34,30 +34,10 @@ namespace FFmpegSharp.Interop
         public unsafe static string GetString(IntPtr buf) { return GetString((byte*)buf); }
         public unsafe static string GetString(byte* buf)
         {
-            if ((IntPtr)buf == IntPtr.Zero)
-                return null;
-
-            StringBuilder s = new StringBuilder();
-
-            for (int i = 0; ; i++)
-            {
-                try
-                {
-                    if (buf[i] == '\0')
-                        break;
-
-                    s.Append((char)buf[i]);
-                }
-                catch (AccessViolationException e)
-                {
-                    throw new ArgumentException("Data in buffer not null terminated or bad pointer", e);
-                }
-            }
-
-            return s.ToString();
+            return new string((sbyte*)buf);
         }
 
-        public unsafe static void SetString(byte* buf, int buf_length, string str)
+        public unsafe static void SetString(sbyte* buf, int buf_length, string str)
         {
             byte[] str_bytes = Encoding.ASCII.GetBytes(str);
 

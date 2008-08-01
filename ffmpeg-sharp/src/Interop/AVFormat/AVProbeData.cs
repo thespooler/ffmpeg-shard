@@ -34,10 +34,10 @@ namespace FFmpegSharp.Interop.Format
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct AVProbeData
     {
-        IntPtr filename_ptr;
+        private sbyte* filename_ptr;
         public string filename
         {
-            get { return Utils.GetString(filename_ptr); }
+            get { return new string(filename_ptr); }
         }
 
         public byte* buf;

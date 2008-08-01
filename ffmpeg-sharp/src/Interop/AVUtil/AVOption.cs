@@ -31,16 +31,16 @@ namespace FFmpegSharp.Interop.Util
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct AVOption
     {
-        IntPtr name_ptr;
+        sbyte* name_ptr;
         public string name
         {
-            get { return Utils.GetString(name_ptr); }
+            get { return new string(name_ptr); }
         }
 
-        IntPtr help_ptr;
+        sbyte* help_ptr;
         public string help
         {
-            get { return Utils.GetString(help_ptr); }
+            get { return new string(help_ptr); }
         }
 
         public int offset;

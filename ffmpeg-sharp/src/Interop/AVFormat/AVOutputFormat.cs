@@ -38,28 +38,28 @@ namespace FFmpegSharp.Interop.Format
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct AVOutputFormat
     {
-        byte* name_ptr;
+        private sbyte* name_ptr;
         public string name
         {
-            get { return Utils.GetString(name_ptr); }
+            get { return new string(name_ptr); }
         }
 
-        byte* long_name_ptr;
+        private sbyte* long_name_ptr;
         public string long_name
         {
-            get { return Utils.GetString(long_name_ptr); }
+            get { return new string(long_name_ptr); }
         }
 
-        byte* mime_type_ptr;
+        private sbyte* mime_type_ptr;
         public string mime_type
         {
-            get { return Utils.GetString(mime_type_ptr); }
+            get { return new string(mime_type_ptr); }
         }
 
-        byte* extensions_ptr;
+        private sbyte* extensions_ptr;
         public string extensions
         {
-            get { return Utils.GetString(extensions_ptr); }
+            get { return new string(extensions_ptr); }
         }
 
         public int priv_data_size;

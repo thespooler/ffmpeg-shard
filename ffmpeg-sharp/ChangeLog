@@ -1,4 +1,8 @@
 2008-04-17  Justin Cherniak <justin.cherniak@gmail.com>
+	* Interop/Utils.cs: Remove GetString and changed all classes to use 
+	string(sbyte*) constructor.
+	
+2008-04-17  Justin Cherniak <justin.cherniak@gmail.com>
 	* Interop/* : 
 		- Redid interops to match FFmpeg rev. 13712
 		- Added enums to make most consts typesafe

@@ -50,10 +50,10 @@ namespace FFmpegSharp.Interop.Codec
          * encoder and a decoder can share the same name).
          * This is the primary way to find a codec from the user perspective.
          */
-        byte* name_ptr;
+        private sbyte* name_ptr;
         public string name
         {
-            get { return Utils.GetString(name_ptr); }
+            get { return new string(name_ptr); }
         }
 
         public CodecType type;
