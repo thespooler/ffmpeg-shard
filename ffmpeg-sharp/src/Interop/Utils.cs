@@ -31,12 +31,6 @@ namespace FFmpegSharp.Interop
 {
     public static class Utils
     {
-        public unsafe static string GetString(IntPtr buf) { return GetString((byte*)buf); }
-        public unsafe static string GetString(byte* buf)
-        {
-            return new string((sbyte*)buf);
-        }
-
         public unsafe static void SetString(sbyte* buf, int buf_length, string str)
         {
             byte[] str_bytes = Encoding.ASCII.GetBytes(str);
