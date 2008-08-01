@@ -84,8 +84,7 @@ namespace FFmpegSharp.Interop.Format
             get { return Utils.GetDelegate<ReadTimestampCallback>(read_timestamp_ptr); }
         }
 
-        // can use flags: AVFMT_NOFILE, AVFMT_NEEDNUMBER
-        public int flags;
+        public InputFormatFlags flags;
 
         IntPtr extensions_ptr;
         public string extensions { get { return Utils.GetString(extensions_ptr); } }

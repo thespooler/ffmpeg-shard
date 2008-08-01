@@ -28,11 +28,17 @@ using System;
 
 namespace FFmpegSharp.Interop.Codec
 {
+    /// <summary>
+    /// four components are given, that's all.
+    /// the last component is alpha
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct AVPicture
     {
-        [BrokenPointer]
-        public fixed int data[4];
+        public IntPtrArray4 data;
+        /// <summary>
+        /// number of bytes per line
+        /// </summary>
         public fixed int linesize[4];
     };
 }

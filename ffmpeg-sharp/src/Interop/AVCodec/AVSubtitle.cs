@@ -37,6 +37,6 @@ namespace FFmpegSharp.Interop.Codec
         public uint end_display_time; /* relative to packet pts, in ms */
 
         public uint num_rects;
-        public AVSubtitleRect rects; // AVSubtitleRect *rects;
+        public AVSubtitleRect* rects; // AVSubtitleRect *rects;
     };
 }

@@ -26,110 +26,13 @@
 using System;
 using System.Runtime.InteropServices;
 using FFmpegSharp.Interop.Util;
+using FFmpegSharp.Interop.Codec;
 
 namespace FFmpegSharp.Interop.SWScale
 {
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct SwsContext
     {
-        /// <summary>
-        /// info on struct for av_log
-        /// </summary>
-        public AVClass* av_class;
-
-        /// <summary>
-        /// Note that src, dst, srcStride, dstStride will be copied in the sws_scale() wrapper so they can be freely modified here.
-        /// </summary>
-        public IntPtr draw_horiz_band_ptr;
-
-        public int srcW, srcH, dstH;
-        public int chrSrcW, chrSrcH, chrDstW, chrDstH;
-        public int lumXInc, chrXInc;
-        public int lumYInc, chrYInc;
-        public int dstFormat;
-
-        /// <summary>
-        /// format 4:2:0 type is always YV12
-        /// </summary>
-        public int srcFormat;
-
-        public int origDstFormat, origSrcFormat;
-        public int chrSrcHSubSample, chrSrcVSubSample;
-        public int chrIntHSubSample, chrIntVSubSample;
-        public int chrDstHSubSample, chrDstVSubSample;
-        public int vChrDrop;
-        public int sliceDir;
-        public fixed double param[2];
-
-        public IntPtr lumPixBuf;
-        public IntPtr chrPixBuf;
-        public IntPtr hLumFilter;
-        public IntPtr hLumFilterPos;
-        public IntPtr hChrFilter;
-        public IntPtr hChrFilterPos;
-        public IntPtr vLumFilter;
-        public IntPtr vLumFilterPos;
-        public IntPtr vChrFilter;
-        public IntPtr vChrFilterPos;
-
-        public fixed byte formatConvBuffer[4000];
-
-        public int hLumFilterSize;
-        public int hChrFilterSize;
-        public int vLumFilterSize;
-        public int vChrFilterSize;
-        public int vLumBufSize;
-        public int vChrBufSize;
-
-        public byte* funnyYCode;
-        public byte* funnyUVCode;
-        public int* lumMmx2FilterPos;
-        public int* chrMmx2FilterPos;
-        public short* lumMmx2Filter;
-        public short* chrMmx2Filter;
-
-        public int canMMX2BeUsed;
-
-        public int lastInLumBuf;
-        public int lastInChrBuf;
-        public int lumBufIndex;
-        public int chrBufIndex;
-        public int dstY;
-        public int flags;
-        public void* yuvTable;
-        [BrokenPointer]
-        public fixed int table_rV[256];
-        public fixed int table_gU[256];
-        [BrokenPointer]
-        public fixed int table_gV[256];
-        [BrokenPointer]
-        public fixed int table_bU[256];
-
-        //Colorspace stuff
-        public int contrast, brightness, saturation;    // for sws_getColorspaceDetails
-        public fixed int srcColorspaceTable[4];
-        public fixed int dstColorspaceTable[4];
-        public int srcRange, dstRange;
-
-        // ulongs below have , so they are probably being marshalled wrong
-        public ulong redDither;
-        public ulong greenDither;
-        public ulong blueDither;
-
-        public ulong yCoeff;
-        public ulong vrCoeff;
-        public ulong ubCoeff;
-        public ulong vgCoeff;
-        public ulong ugCoeff;
-        public ulong yOffset;
-        public ulong uOffset;
-        public ulong vOffset;
-        public fixed int lumMmxFilter[4 * FFmpeg.MAX_FILTER_SIZE];
-        public fixed int chrMmxFilter[4 * FFmpeg.MAX_FILTER_SIZE];
-        public int dstW;
-        public ulong esp;
-        public ulong vRounder;
-        public ulong u_temp;
-        public ulong v_temp;
+        // Structure is not defined in any public header files.
     }
 }

@@ -32,18 +32,23 @@ namespace FFmpegSharp.Interop.Util
     public unsafe struct AVOption
     {
         IntPtr name_ptr;
-        public string name { get { return Utils.GetString(name_ptr); } }
+        public string name
+        {
+            get { return Utils.GetString(name_ptr); }
+        }
 
         IntPtr help_ptr;
-        public string help { get { return Utils.GetString(help_ptr); } }
+        public string help
+        {
+            get { return Utils.GetString(help_ptr); }
+        }
 
         public int offset;
-        [MarshalAs(UnmanagedType.I4)]
         public AVOptionType type;
         public double default_val;
         public double min;
         public double max;
-        public int flags;
+        public AV_OPT_FLAG flags;
         public IntPtr unit;
     };
 }

@@ -28,6 +28,7 @@ using System.Runtime.InteropServices;
 
 namespace FFmpegSharp.Interop.Codec
 {
+#if LIBAVCODEC_51
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ImgReSampleContext
     {
@@ -40,4 +41,5 @@ namespace FFmpegSharp.Interop.Codec
         public IntPtr v_filters; /* vertical filters */
         public byte* line_buf;
     }
+#endif
 }

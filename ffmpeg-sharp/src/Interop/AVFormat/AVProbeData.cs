@@ -28,26 +28,19 @@ using System.Runtime.InteropServices;
 
 namespace FFmpegSharp.Interop.Format
 {
+    /// <summary>
+    /// this structure contains the data a format has to probe a file
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct AVProbeData
     {
         IntPtr filename_ptr;
-        public string filename { get { return Utils.GetString(filename_ptr); } }
-
-        public IntPtr buf_ptr;
-        public int buf_size;
-
-        public byte[] Data
+        public string filename
         {
-            get
-            {
-                byte[] buf = new byte[buf_size];
-
-                if (buf_size > 0)
-                    Marshal.Copy(buf_ptr, buf, 0, buf_size);
-
-                return buf;
-            }
+            get { return Utils.GetString(filename_ptr); }
         }
-    };
+
+        public byte* buf;
+        public int buf_size;
+    }
 }

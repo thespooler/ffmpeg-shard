@@ -79,7 +79,7 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: set by user.
          * - decoding: set by user.
          */
-        public int flags;
+        public CODEC_FLAG flags;
 
         /**
          * some codecs needs additionnal format info. It is stored here
@@ -108,7 +108,7 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: set/allocated/freed by lavc.
          * - decoding: set/allocated/freed by user.
          */
-        public IntPtr extradata; // void* extradata;
+        public byte* extradata; // void* extradata;
 
         public int extradata_size;
 
@@ -243,8 +243,7 @@ namespace FFmpegSharp.Interop.Codec
          */
         public float b_quant_factor;
 
-        /** obsolete FIXME remove */
-        public int rc_strategy;
+        public FF_RC_STRATEGY rc_strategy;
 
         public int b_frame_strategy;
 
@@ -254,14 +253,17 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: unused
          * - decoding: set by user. 1-> skip b frames, 2-> skip idct/dequant too, 5-> skip everything except header
          */
+        [Obsolete("Deprecated in favor of skip_idct and skip_frame.")]
         public int hurry_up;
 
         public AVCodec* codec;
 
-        private IntPtr priv_data;
+        public void* priv_data;
 
+#if LIBAVCODEC_51
         /* unused, FIXME remove*/
         public int rtp_mode;
+#endif
 
         /* The size of the RTP payload: the coder will  */
         /* do it's best to deliver a chunk with size    */
@@ -312,7 +314,7 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: set by user
          * - decoding: set by user
          */
-        public IntPtr opaque;
+        public void* opaque;
 
         private fixed byte codec_name_ptr[32];
         public string codec_name
@@ -322,6 +324,11 @@ namespace FFmpegSharp.Interop.Codec
                 fixed (byte* ptr = codec_name_ptr)
                     return Utils.GetString(ptr);
             }
+            set
+            {
+                fixed (byte* ptr = codec_name_ptr)
+                    Utils.SetString(ptr, 32, value);
+            }
         }
 
         public CodecType codec_type; /* see CODEC_TYPE_xxx */
@@ -329,7 +336,7 @@ namespace FFmpegSharp.Interop.Codec
         public CodecID codec_id; /* see CODEC_ID_xxx */
 
         /**
-         * fourcc (LSB first, so "ABCD" -> ('D'<<24) + ('C'<<16) + ('B'<<8) + 'A').
+         * fourcc (LSB first, so "ABCD" -> ('D'&lt&lt24) + ('C'&lt&lt16) + ('B'&lt&lt8) + 'A').
          * this is used to workaround some encoder bugs
          * - encoding: set by user, if not then the default based on codec_id will be used
          * - decoding: set by user, will be converted to upper case by lavc during init
@@ -341,7 +348,7 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: set by user
          * - decoding: set by user
          */
-        public int workaround_bugs;
+        public FF_BUG workaround_bugs;
 
         /**
          * luma single coeff elimination threshold.
@@ -362,12 +369,12 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: set by user
          * - decoding: unused
          */
-        public int strict_std_compliance;
+        public FF_COMPLIANCE strict_std_compliance;
 
         /**
          * qscale offset between ip and b frames.
-         * if > 0 then the last p frame quantizer will be used (q= lastp_q*factor+offset)
-         * if < 0 then normal ratecontrol will be done (q= -normal_q*factor+offset)
+         * if &gt 0 then the last p frame quantizer will be used (q= lastp_q*factor+offset)
+         * if &lt 0 then normal ratecontrol will be done (q= -normal_q*factor+offset)
          * - encoding: set by user.
          * - decoding: unused
          */
@@ -379,7 +386,7 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: unused
          * - decoding: set by user
          */
-        public int error_resilience;
+        public FF_ER error_resilience;
 
         /**
           * called at the beginning of each frame to get a buffer for it.
@@ -413,7 +420,7 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: set by lavc
          * - decoding: set by lavc
          */
-        public int has_b_frames;
+        public bool has_b_frames;
 
         /**
          * number of bytes per packet if constant and known or 0
@@ -424,7 +431,6 @@ namespace FFmpegSharp.Interop.Codec
         /* - decoding only: if true, only parsing is done
                    (function avcodec_parse_frame()). The frame
                    data is returned. Only MPEG codecs support this now. */
-        [MarshalAs(UnmanagedType.Bool)]
         public bool parse_only;
 
         /**
@@ -432,15 +438,14 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: set by user.
          * - decoding: unused
          */
-        public int mpeg_quant;
+        public MpegQuant mpeg_quant;
 
         /**
          * pass1 encoding statistics output buffer.
          * - encoding: set by lavc
          * - decoding: unused
          */
-
-        IntPtr stats_out_ptr; // char* stats_out
+        byte* stats_out_ptr; // char* stats_out
         public string stats_out
         {
             get { return Utils.GetString(stats_out_ptr); }
@@ -452,8 +457,7 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: allocated/set/freed by user
          * - decoding: unused
          */
-
-        IntPtr stats_in_ptr;// char *stats_in
+        byte* stats_in_ptr;// char *stats_in
         public string stats_in
         {
             get { return Utils.GetString(stats_in_ptr); }
@@ -476,7 +480,7 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: allocated/set/freed by user.
          * - decoding: unused
          */
-        public RcOverride* rc_override; // RcOverride* rc_override;
+        public RcOverride* rc_override;
         public int rc_override_count;
 
         /**
@@ -485,7 +489,7 @@ namespace FFmpegSharp.Interop.Codec
          * - decoding: unused
          */
 
-        IntPtr rc_eq_ptr; // char* rc_eq;
+        byte* rc_eq_ptr; // char* rc_eq;
         public string rc_eq
         {
             get { return Utils.GetString(rc_eq_ptr); }
@@ -516,8 +520,8 @@ namespace FFmpegSharp.Interop.Codec
 
         /**
          * qscale factor between p and i frames.
-         * if > 0 then the last p frame quantizer will be used (q= lastp_q*factor+offset)
-         * if < 0 then normal ratecontrol will be done (q= -normal_q*factor+offset)
+         * if &gt 0 then the last p frame quantizer will be used (q= lastp_q*factor+offset)
+         * if &lt 0 then normal ratecontrol will be done (q= -normal_q*factor+offset)
          * - encoding: set by user.
          * - decoding: unused
          */
@@ -542,7 +546,7 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: set by user
          * - decoding: unused
          */
-        public int dct_algo;
+        public FF_DCT dct_algo;
 
         /**
          * luminance masking (0-> disabled).
@@ -579,15 +583,17 @@ namespace FFmpegSharp.Interop.Codec
          */
         public float dark_masking;
 
+#if LIBAVCODEC_51
         /* for binary compatibility */
         public int unused;
+#endif
 
         /**
          * idct algorithm, see FF_IDCT_* below.
          * - encoding: set by user
          * - decoding: set by user
          */
-        public int idct_algo;
+        public FF_IDCT idct_algo;
 
         /**
          * slice count.
@@ -601,14 +607,14 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: set/allocated by lavc
          * - decoding: set/allocated by user (or NULL)
          */
-        public int* slice_offset; // int *slice_offset
+        public int* slice_offset;
 
         /**
          * error concealment flags.
          * - encoding: unused
          * - decoding: set by user
          */
-        public int error_concealment;
+        public FF_EC error_concealment;
 
         /**
          * dsp_mask could be add used to disable unwanted CPU features
@@ -618,7 +624,7 @@ namespace FFmpegSharp.Interop.Codec
          * (Dangerous: usable in case of misdetection, improper usage however will
          * result into program crash)
          */
-        public uint dsp_mask;
+        public FF_MM dsp_mask;
 
         /**
          * bits per sample/pixel from the demuxer (needed for huffyuv).
@@ -632,7 +638,7 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: set by user
          * - decoding: unused
          */
-        public int prediction_method;
+        public FF_PRED prediction_method;
 
         /**
          * sample aspect ratio (0 if unknown).
@@ -654,14 +660,14 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: set by user.
          * - decoding: set by user.
          */
-        public int debug;
+        public FF_DEBUG debug;
 
         /**
          * debug.
          * - encoding: set by user.
          * - decoding: set by user.
          */
-        public int debug_mv;
+        public FF_DEBUG_VIS debug_mv;
 
         /**
          * error.
@@ -711,7 +717,7 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: set by user.
          * - decoding: unused
          */
-        public int ildct_cmp;
+        public FF_CMP ildct_cmp;
 
         /**
          * ME diamond size & shape.
@@ -778,7 +784,7 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: unused.
          * - decoding: set by decoder
          */
-        public int dtg_active_format;
+        public FF_DTG dtg_active_format;
 
         /**
          * Maximum motion estimation search range in subpel units.
@@ -821,7 +827,7 @@ namespace FFmpegSharp.Interop.Codec
          * internal_buffers.
          * Don't touch, used by lavc default_get_buffer()
          */
-        private IntPtr internal_buffer; // void* internal_buffer;
+        public void* internal_buffer; // void* internal_buffer;
 
         /**
          * global quality for codecs which cannot change it per frame.
@@ -829,14 +835,14 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: set by user.
          * - decoding: unused
          */
-        public int global_quality;
+        public GlobalQuality global_quality;
 
         /**
          * coder type
          * - encoding: set by user.
          * - decoding: unused
          */
-        public int coder_type;
+        public FF_CODER_TYPE coder_type;
 
         /**
          * context model
@@ -850,7 +856,7 @@ namespace FFmpegSharp.Interop.Codec
           * - encoding: unused
           * - decoding: set by user.
           */
-        public int slice_flags;
+        public SLICE_FLAG slice_flags;
 
         /**
          * XVideo Motion Acceleration
@@ -864,24 +870,24 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: set by user.
          * - decoding: unused
          */
-        public int mb_decision;
+        public FF_MB_DECISION mb_decision;
 
         /**
          * custom intra quantization matrix
          * - encoding: set by user, can be NULL
          * - decoding: set by lavc
          */
-        public IntPtr intra_matrix; // uint16_t* intra_matrix;
+        public ushort* intra_matrix;
 
         /**
          * custom inter quantization matrix
          * - encoding: set by user, can be NULL
          * - decoding: set by lavc
          */
-        public IntPtr inter_matrix; // uint16_t* inter_matrix;
+        public ushort* inter_matrix;
 
         /**
-         * fourcc from the AVI stream header (LSB first, so "ABCD" -> ('D'<<24) + ('C'<<16) + ('B'<<8) + 'A').
+         * fourcc from the AVI stream header (LSB first, so "ABCD" -> ('D'&lt&lt24) + ('C'&lt&lt16) + ('B'&lt&lt8) + 'A').
          * this is used to workaround some encoder bugs
          * - encoding: unused
          * - decoding: set by user, will be converted to upper case by lavc during init
@@ -915,7 +921,9 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: ??? (no palette-enabled encoder yet)
          * - decoding: set by user.
          */
+#pragma warning disable 618
         public AVPaletteControl* palctrl;
+#pragma warning restore 618
 
         /**
          * noise reduction strength
@@ -958,7 +966,7 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: set by user.
          * - decoding: set by user.
          */
-        public int flags2;
+        public CODEC_FLAG2 flags2;
 
         /**
          * simulates errors in the bitstream to test error concealment.
@@ -972,7 +980,7 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: unused
          * - decoding: set by user
          */
-        public int antialias_algo;
+        public FF_AA antialias_algo;
 
         /**
          * Quantizer noise shaping.
@@ -1009,7 +1017,7 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: set by execute()
          * - decoding: set by execute()
          */
-        public IntPtr thread_opaque; // void* thread_opaque;
+        public void* thread_opaque; // void* thread_opaque;
 
         /**
          * Motion estimation threshold. under which no motion estimation is
@@ -1060,7 +1068,7 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: set by user
          * - decoding: set by lavc
          */
-        public int profile;
+        public FF_PROFILE profile;
 
         /**
          * level
@@ -1255,7 +1263,7 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: set by user.
          * - decoding: unused
          */
-        public int partitions;
+        public X264_PART partitions;
 
         /**
          * direct mv prediction mode - 0 (none), 1 (spatial), 2 (temporal)
@@ -1350,5 +1358,20 @@ namespace FFmpegSharp.Interop.Codec
         * - decoding: unused
         */
         public long timecode_frame_start;
+
+        /**
+        * Decoder should decode to this many channels if it can (0 for default)
+        * - encoding: unused
+        * - decoding: Set by user.
+        */
+        public int request_channels;
+
+        /**
+         * Percentage of dynamic range compression to be applied by the decoder.
+         * The default value is 1.0, corresponding to full compression.
+         * - encoding: unused
+         * - decoding: Set by user.
+         */
+        public float drc_scale;
     };
 }

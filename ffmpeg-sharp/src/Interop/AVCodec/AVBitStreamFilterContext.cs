@@ -31,7 +31,7 @@ namespace FFmpegSharp.Interop.Codec
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct AVBitStreamFilterContext
     {
-        private IntPtr priv_data;
+        public IntPtr priv_data;
         public AVBitStreamFilter* filter;
         public AVCodecParserContext* parser;
         public AVBitStreamFilterContext* next;

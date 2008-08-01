@@ -45,6 +45,7 @@ namespace FFmpegSharp.Interop.Format
         /// </summary>
         public int channel;
 
+#if LIBAVFORMAT_51
         public IntPtr device_ptr;
         /// <summary>
         /// Video, audio or DV device
@@ -53,6 +54,7 @@ namespace FFmpegSharp.Interop.Format
         {
             get { return Utils.GetString(device_ptr); }
         }
+#endif
 
         public IntPtr standard_ptr;
         /// <summary>
@@ -99,7 +101,9 @@ namespace FFmpegSharp.Interop.Format
             set { bitFieldMask &= (value ? 8 : ~8); }
         }
 
+#if !LIBAVFORMAT_53
         public CodecID video_codec_id;
         public CodecID audio_codec_id;
+#endif
     };
 }

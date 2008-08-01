@@ -42,6 +42,6 @@ namespace FFmpegSharp.Interop.Util
             get { return Utils.GetDelegate<ItemNameCallback>(item_name_ptr); }
         }
 
-        public AVOption* pAVOption;
+        public AVOption* option;
     };
 }

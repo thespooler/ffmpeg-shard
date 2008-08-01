@@ -31,14 +31,6 @@ namespace FFmpegSharp.Interop.Codec
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ReSampleContext
     {
-        public AVResampleContext resample_context;
-
-        public IntPtr temp;
-
-        public int temp_len;
-
-        public float ratio;
-
-        public int input_channels, output_channels, filter_channels;
+        // No public interface in avcodec.h
     }
 }

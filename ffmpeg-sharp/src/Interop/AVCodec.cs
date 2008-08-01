@@ -34,14 +34,20 @@ namespace FFmpegSharp.Interop
     [SuppressUnmanagedCodeSecurity]
     public unsafe partial class FFmpeg
     {
+        // #if LIBAVCODEC_51
         public const string AVCODEC_DLL_NAME = "avcodec-51.dll";
+        // #else
+        //         public const string AVCODEC_DLL_NAME = "avcodec-52.dll";
+        // #endif
+
+        #region "Functions"
 
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern ReSampleContext* audio_resample_init(int output_channels, int input_channels,
                                                     int output_rate, int input_rate);
 
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern int audio_resample(ref ReSampleContext pResampleContext, [In, Out]short[] output, short[] intput, int nb_samples);
+        public static extern int audio_resample(ref ReSampleContext pResampleContext, [In, Out]short[] output, [In, Out]short[] intput, int nb_samples);
 
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void audio_resample_close(ref ReSampleContext pResampleContext);
@@ -50,8 +56,8 @@ namespace FFmpegSharp.Interop
         public static extern AVResampleContext* av_resample_init(int out_rate, int in_rate, int filter_length, int log2_phase_count, int linear, double cutoff);
 
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern int av_resample(ref AVResampleContext pAVResampleContext, [In, Out]byte[] dst, [In, Out]byte[] src,
-                                             ref int consumed, int src_size, int dst_size, int udpate_ctx);
+        public static extern int av_resample(ref AVResampleContext pAVResampleContext, [In, Out]short[] dst, [In, Out]short[] src,
+                                              ref int consumed, int src_size, int dst_size, int udpate_ctx);
 
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void av_resample_compensate(ref AVResampleContext pAVResampleContext, int sample_delta, int compensation_distance);
@@ -62,6 +68,7 @@ namespace FFmpegSharp.Interop
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void av_resample_close(ref AVResampleContext pAVResampleContext);
 
+#if LIBAVCODEC_51
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern ImgReSampleContext* img_resample_init(int output_width, int output_height,
                                       int input_width, int input_height);
@@ -80,8 +87,10 @@ namespace FFmpegSharp.Interop
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void img_resample_close(ref ImgReSampleContext pImgReSampleContext);
 
+#endif
+
         /// <summary>
-        /// Allocate the picture to be filled in.  Call avpicture_free to free it.
+        /// Allocate memory for a picture.  Call avpicture_free to free it.
         /// </summary>
         /// <param name="picture">the picture to be filled in</param>
         /// <param name="pix_fmt">the format of the picture</param>
@@ -99,7 +108,7 @@ namespace FFmpegSharp.Interop
         public static extern void avpicture_free(ref AVPicture pAVPicture);
 
         /// <summary>
-        ///  Fill in the AVPicture fields.
+        /// Fill in the AVPicture fields.
         /// The fields of the given AVPicture are filled in by using the 'ptr' address
         /// which points to the image data buffer. Depending on the specified picture
         /// format, one or multiple image data pointers and line sizes will be set.
@@ -124,11 +133,15 @@ namespace FFmpegSharp.Interop
         /// Calculate the size in bytes that a picture of the given width and height
         /// would occupy in stored in the given picture format
         /// </summary>
+        /// <param name="pix_fmt">the given picture format</param>
+        /// <param name="width">the width of the image</param>
+        /// <param name="height">the height of the image</param>
+        /// <returns>Image data size in bytes</returns>
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int avpicture_get_size(PixelFormat pix_fmt, int width, int height);
 
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern void avcodec_get_chroma_sub_sample(PixelFormat pix_fmt, out short h_shift, out short v_shift);
+        public static extern void avcodec_get_chroma_sub_sample(PixelFormat pix_fmt, out int h_shift, out int v_shift);
 
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         [return: MarshalAs(UnmanagedType.LPStr)]
@@ -140,8 +153,9 @@ namespace FFmpegSharp.Interop
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern PixelFormat avcodec_get_pix_fmt(string name);
 
+        /// <returns>Returns a fourcc value</returns>
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern CodecID avcodec_pix_fmt_to_codec_tag(PixelFormat p);
+        public static extern uint avcodec_pix_fmt_to_codec_tag(PixelFormat p);
 
         /// <summary>
         /// Computes what kind of losses will occur when converting from one specific
@@ -156,7 +170,7 @@ namespace FFmpegSharp.Interop
         /// which will occur when converting from one pixel format to another.
         /// </summary>
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern int avcodec_get_pix_fmt_loss(int dst_pix_fmt, int src_pix_fmt, int has_alpha);
+        public static extern FF_LOSS avcodec_get_pix_fmt_loss(int dst_pix_fmt, int src_pix_fmt, int has_alpha);
 
         /// <summary>
         /// Finds the best pixel format to convert to given a certain source pixel
@@ -170,7 +184,7 @@ namespace FFmpegSharp.Interop
         ///
         /// <code>
         /// src_pix_fmt = PIX_FMT_YUV420P;
-        /// pix_fmt_mask = (1 << PIX_FMT_YUV422P) || (1 << PIX_FMT_RGB24);
+        /// pix_fmt_mask = (1 &lt&lt PIX_FMT_YUV422P) || (1 &lt&lt PIX_FMT_RGB24);
         /// dst_pix_fmt = avcodec_find_best_pix_fmt(pix_fmt_mask, src_pix_fmt, alpha, &loss);
         /// </code>
         /// </summary>
@@ -180,34 +194,60 @@ namespace FFmpegSharp.Interop
         /// <param name="loss_ptr">Combination of flags informing you what kind of losses will occur.</param>
         /// <returns>The best pixel format to convert to or -1 if none was found.</returns>
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern int avcodec_find_best_pix_fmt(int pix_fmt_mask, int src_pix_fmt, int has_alpha, ref int loss_ptr);
+        public static extern int avcodec_find_best_pix_fmt(int pix_fmt_mask, int src_pix_fmt, int has_alpha, out int loss_ptr);
+
+        /// <summary>
+        /// Print in buf the string corresponding to the pixel format with
+        /// number pix_fmt, or an header if pix_fmt is negative.
+        /// </summary>
+        /// <param name="buf">the buffer where to write the string</param>
+        /// <param name="buf_size">the size of buf</param>
+        /// <param name="pix_fmt">
+        /// the number of the pixel format to print the corresponding info string, or
+        /// a negative value to print the corresponding header.
+        /// </param>
+        /// <remarks>
+        /// Meaningful values for obtaining a pixel format info vary from 0 to PIX_FMT_NB -1.
+        /// </remarks>
+        [DllImport(AVCODEC_DLL_NAME)]
+        public static extern void avcodec_pix_fmt_string(char* buf, int buf_size, PixelFormat pix_fmt);
 
         /// <summary>
         /// Tell if an image really has transparent alpha values.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>ored mask of FF_ALPHA_xxx constants</returns>
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool img_get_alpha_info(ref AVPicture pAVPicture, int pix_fmt, int width, int height);
+        public static extern FF_ALPHA img_get_alpha_info(ref AVPicture pAVPicture, PixelFormat pix_fmt, int width, int height);
 
+#if LIBAVCODEC_51
         /// <summary>
         /// Convert among pixel formats
         /// </summary>
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int img_convert(ref AVPicture dst, PixelFormat dst_pix_fmt,
-                                             AVPicture* src, PixelFormat src_pix_fmt,
+                                             ref AVPicture src, PixelFormat src_pix_fmt,
                                              int width, int height);
+#endif
 
         /// <summary>
         /// Deinterlace a picture
         /// </summary>
+        /// <returns>If not supported, -1</returns>
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int avpicture_deinterlace(ref AVPicture dst, ref AVPicture src,
                             int pix_fmt, int width, int height);
 
+        /// <summary>
+        /// returns LIBAVCODEC_VERSION_INT constant
+        /// </summary>
+        /// <returns></returns>
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern uint avcodec_version();
 
+        /// <summary>
+        /// returns LIBAVCODEC_BUILD constant
+        /// </summary>
+        /// <returns></returns>
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern uint avcodec_build();
 
@@ -256,6 +296,9 @@ namespace FFmpegSharp.Interop
         /// <summary>
         /// Sets the fiels of the given AVCodecContext to default values.
         /// </summary>
+        /// <param name="pAVCodecContext">
+        /// The AVCodecContext of which the fields should be set to default values.
+        /// </param>
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void avcodec_get_context_defaults(ref AVCodecContext pAVCodecContext);
 
@@ -263,7 +306,7 @@ namespace FFmpegSharp.Interop
         /// Allocates an AVCodecContext and sets its fields to default values.
         /// </summary>
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
-        internal static extern AVCodecContext avcodec_alloc_context();
+        public static extern AVCodecContext* avcodec_alloc_context();
 
         /// <summary>
         /// Sets the fields of the given AVFrame to default values.
@@ -275,16 +318,8 @@ namespace FFmpegSharp.Interop
         /// <summary>
         /// Allocates a AVFrame and sets its fields to default values.
         /// </summary>
-        public static AVFrame* avcodec_alloc_frame()
-        {
-            return (AVFrame*)avcodec_alloc_frame_internal();
-        }
-
-        /// <summary>
-        /// Allocates a AVFrame and sets its fields to default values.
-        /// </summary>
-        [DllImport(AVCODEC_DLL_NAME, EntryPoint = "avcodec_alloc_frame")]
-        private static extern IntPtr avcodec_alloc_frame_internal();
+        [DllImport(AVCODEC_DLL_NAME)]
+        public static extern AVFrame* avcodec_alloc_frame();
 
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int avcodec_default_get_buffer(ref AVCodecContext pAVCodecContext, ref AVFrame pAVFrame);
@@ -308,10 +343,10 @@ namespace FFmpegSharp.Interop
         /// <param name="height">Height of the picture</param>
         /// <returns>Zero if valid, a negative value if invalid</returns>
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern int avcodec_check_dimensions(ref object av_log_ctx, ref uint width, ref uint height);
+        public static extern int avcodec_check_dimensions(object av_log_ctx, uint width, uint height);
 
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern PixelFormat avcodec_default_get_format(ref AVCodecContext pAVCodecContext, PixelFormat fmt);
+        public static extern PixelFormat avcodec_default_get_format(ref AVCodecContext pAVCodecContext, ref PixelFormat fmt);
 
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int avcodec_thread_init(ref AVCodecContext pAVCodecContext, int thread_count);
@@ -322,22 +357,42 @@ namespace FFmpegSharp.Interop
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int avcodec_thread_execute(ref AVCodecContext pAVCodecContext,
                                 [MarshalAs(UnmanagedType.FunctionPtr)]FuncCallback func,
-                                IntPtr arg, ref int ret, int count);
+                                void** arg, ref int ret, int count);
 
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int avcodec_default_execute(ref AVCodecContext pAVCodecContext,
                                [MarshalAs(UnmanagedType.FunctionPtr)]FuncCallback func,
-                              IntPtr arg, ref int ret, int count);
+                               void** arg, ref int ret, int count);
 
         /// <summary>
         /// Initializes the AVCodecContext to use the given AVCodec. Prior to using this
         /// function the context has to be allocated.
         /// </summary>
+        /// <remarks>
+        /// The functions avcodec_find_decoder_by_name(), avcodec_find_encoder_by_name(),
+        /// avcodec_find_decoder() and avcodec_find_encoder() provide an easy way for
+        /// retrieving a codec.
+        /// </remarks>
+        /// <warning>This function is not thread safe!</warning>
+        /// <example><code>
+        /// avcodec_register_all();
+        /// codec = avcodec_find_decoder(CODEC_ID_H264);
+        /// if (!codec)
+        ///     exit(1);
+        ///
+        /// context = avcodec_alloc_context();
+        ///
+        /// if (avcodec_open(context, codec) &lt 0)
+        ///     exit(1);
+        /// </code></example>
         /// <param name="pAVCodecContext">The context which will be set up to use the given codec.</param>
         /// <param name="pAVCodec">The codec to use within the context.</param>
         /// <returns>Zero on success, a negative value on error</returns>
+        /// <seealso cref="avcodec_alloc_context"/>
+        /// <seealso cref="avcodec_find_decoder"/>
+        /// <seealso cref="avcodec_find_encoder"/>
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern int avcodec_open(ref AVCodecContext pAVCodecContext, ref AVCodec pAVCodec);
+        public static extern int avcodec_open(ref AVCodecContext pAVCodecContext, AVCodec* pAVCodec);
 
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         [Obsolete("Depreciated, use avcodec_decode_audio2() instead")]
@@ -354,24 +409,32 @@ namespace FFmpegSharp.Interop
         /// decompressed frame size in bytes.
         /// </summary>
         /// 
-        /// <warning>You must set frame_size_ptr to the allocated size of the
-        /// output buffer before calling avcodec_decode_audio2().</warning>
+        /// <warning>
+        /// You must set frame_size_ptr to the allocated size of the
+        /// output buffer before calling avcodec_decode_audio2().
+        /// </warning>
         ///
-        /// <warning>The input buffer must be FF_INPUT_BUFFER_PADDING_SIZE larger than
+        /// <warning>
+        /// The input buffer must be FF_INPUT_BUFFER_PADDING_SIZE larger than
         /// the actual read bytes because some optimized bitstream readers read 32 or 64
-        /// bits at once and could read over the end.</warning>
+        /// bits at once and could read over the end.
+        /// </warning>
         ///
-        /// <warning>The end of the input buffer buf should be set to 0 to ensure that
-        /// no overreading happens for damaged MPEG streams.</warning>
+        /// <warning>
+        /// The end of the input buffer buf should be set to 0 to ensure that
+        /// no overreading happens for damaged MPEG streams.
+        /// </warning>
         ///
-        /// <remarks>You might have to align the input buffer buf and output buffer \p
+        /// <remarks>
+        /// You might have to align the input buffer buf and output buffer \p
         /// samples. The alignment requirements depend on the CPU: On some CPUs it isn't
         /// necessary at all, on others it won't work at all if not aligned and on others
         /// it will work but it will have an impact on performance. In practice, the
         /// bitstream should have 4 byte alignment at minimum and all sample data should
         /// be 16 byte aligned unless the CPU doesn't need it (AltiVec and SSE do). If
         /// the linesize is not a multiple of 16 then there's no sense in aligning the
-        /// start of the buffer to 16.</remarks>
+        /// start of the buffer to 16.
+        /// </remarks>
         /// <param name="pAVCodecContext">The codec context</param>
         /// <param name="samples">The output buffer.</param>
         /// <param name="frame_size_ptr">The used output buffer size in bytes (must be 
@@ -384,6 +447,8 @@ namespace FFmpegSharp.Interop
         public static extern int avcodec_decode_audio2(ref AVCodecContext avctx, [In, Out]short[] samples,
                                                         ref int frame_size_ptr, byte[] buf, int buf_size);
 
+        /// <summary>
+        /// Decodes a video frame from buf into picture.
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         public unsafe static extern int avcodec_decode_audio2(ref AVCodecContext avctx, short* samples,
                                                         ref int frame_size_ptr, byte* buf, int buf_size);
@@ -392,30 +457,39 @@ namespace FFmpegSharp.Interop
         /// The avcodec_decode_video() function decodes a video frame from the input
         /// buffer buf of size buf_size. To decode it, it makes use of the
         /// video codec which was coupled with avctx using avcodec_open(). The
-        /// resulting decoded frame is stored in picture.</summary>
+        /// resulting decoded frame is stored in picture.
+        /// </summary>
         /// 
         /// <warning>The input buffer must be FF_INPUT_BUFFER_PADDING_SIZE larger than
         /// the actual read bytes because some optimized bitstream readers read 32 or 64
-        /// bits at once and could read over the end.</warning>
+        /// bits at once and could read over the end.
+        /// </warning>
         /// 
-        /// <warning>The end of the input buffer buf must be set to 0 to ensure that
-        /// no overreading happens for damaged MPEG streams.</warning>
+        /// <warning>
+        /// The end of the input buffer buf must be set to 0 to ensure that
+        /// no overreading happens for damaged MPEG streams.
+        /// </warning>
         /// 
-        /// <remarks> You might have to align the input buffer buf and output buffer \p
+        /// <remarks> 
+        /// You might have to align the input buffer buf and output buffer \p
         /// samples. The alignment requirements depend on the CPU: on some CPUs it isn't
         /// necessary at all, on others it won't work at all if not aligned and on others
         /// it will work but it will have an impact on performance. In practice, the
         /// bitstream should have 4 byte alignment at minimum and all sample data should
         /// be 16 byte aligned unless the CPU doesn't need it (AltiVec and SSE do). If
         /// the linesize is not a multiple of 16 then there's no sense in aligning the
-        /// start of the buffer to 16.</remarks>
+        /// start of the buffer to 16.
+        /// </remarks>
         /// 
         /// <param name="pAVCodecContext">The codec context</param>
         /// <param name="pAVFrame">The AVFrame in which the decoded video frame will be stored</param>
         /// <param name="got_picture_ptr">True if a frame could be decompressed</param>
         /// <param name="buf">The input buffer</param>
         /// <param name="buf_size">The size of the input buffer in bytes</param>
-        /// <returns></returns>
+        /// <returns>
+        /// On error a negative value is returned, otherwise the number of bytes
+        /// used or zero if no frame could be decompressed.
+        /// </returns>
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int avcodec_decode_video(ref AVCodecContext pAVCodecContext, ref AVFrame pAVFrame,
                                                       [MarshalAs(UnmanagedType.Bool)]out bool got_picture_ptr,
@@ -454,17 +528,18 @@ namespace FFmpegSharp.Interop
                                                       [MarshalAs(UnmanagedType.Bool)]out bool got_picture_ptr,
                                                       byte* buf, int buf_size);
 
-
         /// <summary>
-        /// Decode a subtitle message. Return -1 if error, otherwise return the
-        /// number of bytes used.
+        /// Decode a subtitle message. If no subtitle could be decompressed,
+        /// got_sub_ptr is zero. Otherwise, the subtitle is stored in *sub
         /// </summary>
         /// <param name="pAVCodecContext">The codec context</param>
         /// <param name="pAVSubtitle">The decoded subtitle it (got_sub_ptr) is true or null</param>
         /// <param name="got_sub_ptr">True if a subtitle could be decompressed</param>
         /// <param name="buf">The input buffer</param>
         /// <param name="buf_size">The input buffer's size in bytes</param>
-        /// <returns></returns>
+        /// <returns>
+        /// Return -1 if error, otherwise return the number of bytes used.
+        /// </returns>
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int avcodec_decode_subtitle(ref AVCodecContext pAVCodecContext, ref AVSubtitle pAVSubtitle,
                                            [MarshalAs(UnmanagedType.Bool)]out bool got_sub_ptr, byte[] buf, int buf_size);
@@ -565,11 +640,20 @@ namespace FFmpegSharp.Interop
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int av_get_bits_per_sample(CodecID codec_id);
 
+        /// <summary>Returns sample format bits per sample.</summary>
+        /// <param ref="sample_fmt">the sample format</param>
+        /// <returns>Number of bits per sample or zero if unknown for the given sample format.</returns>
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
+        public static extern int av_get_bits_per_sample_format(SampleFormat sample_fmt);
+
+        [DllImport(AVCODEC_DLL_NAME)]
+        public static extern AVCodecParser* av_parser_next(AVCodecParser* c);
+
+        [DllImport(AVCODEC_DLL_NAME)]
         public static extern void av_register_codec_parser(ref AVCodecParser pAVcodecParser);
 
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern AVCodecParserContext av_parser_init(CodecID codec_id);
+        public static extern AVCodecParserContext* av_parser_init(CodecID codec_id);
 
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int av_parser_parse(ref AVCodecParserContext pAVCodecParserContext,
@@ -604,6 +688,28 @@ namespace FFmpegSharp.Interop
         public static extern void av_bitstream_filter_close(ref AVBitStreamFilterContext pAVBitStreamFilterContext);
 
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
+        public static extern AVBitStreamFilter* av_bitstream_filter_next(AVBitStreamFilter* f);
+
+#if !LIBAVCODEC_51
+        ///<summary>Copy image 'src' to 'dst'.</summary>
+        [DllImport(AVCODEC_DLL_NAME)]
+        public static extern void av_picture_copy(ref AVPicture dst, ref AVPicture src,
+                                                  int pix_fmt, int width, int height);
+
+        ///<summary>Crop image top and left side.</summary>
+        [DllImport(AVCODEC_DLL_NAME)]
+        [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(ZeroTrueBoolMarshaller))]
+        public static extern bool av_picture_crop(ref AVPicture dst, ref AVPicture src,
+                                                 int pix_fmt, int top_band, int left_band);
+
+        ///<summary>Pad image.</summary>
+        [DllImport(AVCODEC_DLL_NAME)]
+        [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(ZeroTrueBoolMarshaller))]
+        public static extern bool av_picture_pad(ref AVPicture dst, ref AVPicture src, int height,
+                                                int width, int pix_fmt, int padtop, int padbottom,
+                                                int padleft, int padright, int[] color);
+#else
+        [DllImport(AVCODEC_DLL_NAME)]
         public static extern void img_copy(ref AVPicture dst, ref AVPicture src,
                             PixelFormat pix_fmt, int width, int height);
 
@@ -615,10 +721,44 @@ namespace FFmpegSharp.Interop
         public static extern int img_pad(ref AVPicture dst, ref AVPicture src,
                             int height, int width, int pix_fmt, int padtop, int padbottom,
                             int padleft, int padright, ref int color);
+#endif
 
-        // *********************************************************************************
-        // Constants
-        // *********************************************************************************
+#if !LIBAVCODEC_51
+        [DllImport(AVCODEC_DLL_NAME)]
+        public static extern uint av_xiphlacing(string s, uint v);
+
+        /**
+         * Parses \p str and put in \p width_ptr and \p height_ptr the detected values.
+         *
+         * @return 0 in case of a successful parsing, a negative value otherwise
+         * @param[in] str the string to parse: it has to be a string in the format
+         * <width>x<height> or a valid video frame size abbreviation.
+         * @param[in,out] width_ptr pointer to the variable which will contain the detected
+         * frame width value
+         * @param[in,out] height_ptr pointer to the variable which will contain the detected
+         * frame height value
+         */
+        [DllImport(AVCODEC_DLL_NAME)]
+        public static extern int av_parse_video_frame_size(ref int width_ptr, ref int height_ptr,
+                                       string str);
+
+        /**
+         * Parses \p str and put in \p frame_rate the detected values.
+         *
+         * @return 0 in case of a successful parsing, a negative value otherwise
+         * @param[in] str the string to parse: it has to be a string in the format
+         * <frame_rate_nom>/<frame_rate_den>, a float number or a valid video rate abbreviation
+         * @param[in,out] frame_rate pointer to the AVRational which will contain the detected
+         * frame rate
+         */
+        [DllImport(AVCODEC_DLL_NAME)]
+        public static extern int av_parse_video_frame_rate(ref AVRational frame_rate,
+                                      string str);
+#endif
+
+        #endregion
+
+        #region "Consts"
 
         /// <summary>
         /// 1 second of 48khz 32bit audio in bytes
@@ -673,7 +813,9 @@ namespace FFmpegSharp.Interop
         public const int CODEC_FLAG_GLOBAL_HEADER = 0x00400000; // place global headers in extradata instead of every keyframe
         public const int CODEC_FLAG_BITEXACT = 0x00800000; // use only bitexact stuff (except (i)dct)
         /* Fx : Flag for h263+ extra options */
+#if LIBAVCODEC_51
         public const int CODEC_FLAG_H263P_AIC = 0x01000000; // H263 Advanced intra coding / MPEG4 AC prediction (remove this)
+#endif
         public const int CODEC_FLAG_AC_PRED = 0x01000000; // H263 Advanced intra coding / MPEG4 AC prediction
         public const int CODEC_FLAG_H263P_UMV = 0x02000000; // Unlimited motion vector
         public const int CODEC_FLAG_CBP_RD = 0x04000000; // use rate distortion optimization for cbp
@@ -698,6 +840,11 @@ namespace FFmpegSharp.Interop
         public const int CODEC_FLAG2_BRDO = 0x00000400; // b-frame rate-distortion optimization
         public const int CODEC_FLAG2_INTRA_VLC = 0x00000800; // use MPEG-2 intra VLC table
         public const int CODEC_FLAG2_MEMC_ONLY = 0x00001000; // only do ME/MC (I frames -> ref, P frame -> ME+MC)
+        public const int CODEC_FLAG2_DROP_FRAME_TIMECODE = 0x00002000; ///< timecode is in drop frame format.
+        public const int CODEC_FLAG2_SKIP_RD = 0x00004000; ///< RD optimal MB level residual skipping
+        public const int CODEC_FLAG2_CHUNKS = 0x00008000; ///< Input bitstream might be truncated at a packet boundaries instead of only at frame boundaries.
+        public const int CODEC_FLAG2_NON_LINEAR_QUANT = 0x00010000; ///< Use MPEG-2 nonlinear quantizer.
+        public const int CODEC_FLAG2_BIT_RESERVOIR = 0x00020000; ///< Use a bit reservoir when encoding if possible
 
         /* Unsupported options :
          * Syntax Arithmetic coding (SAC)
@@ -766,15 +913,21 @@ namespace FFmpegSharp.Interop
         public const int FF_BUFFER_TYPE_SHARED = 4; // buffer from somewhere else, don't dealloc image (data/base), all other tables are not shared
         public const int FF_BUFFER_TYPE_COPY = 8; // just a (modified) copy of some other buffer, don't dealloc anything
 
-        public const int FF_BUFFER_HINTS_VALID = 0x01; // Buffer hints value is meaningful (if 0 ignore)
-        public const int FF_BUFFER_HINTS_READABLE = 0x02; // Codec will read from buffer
-        public const int FF_BUFFER_HINTS_PRESERVE = 0x04; // User must not alter buffer content
-        public const int FF_BUFFER_HINTS_REUSABLE = 0x08; // Codec will reuse the buffer (update)
+        public const int FF_I_TYPE = 1; ///< Intra
+        public const int FF_P_TYPE = 2; ///< Predicted
+        public const int FF_B_TYPE = 3; ///< Bi-dir predicted
+        public const int FF_S_TYPE = 4; ///< S(GMC)-VOP MPEG4
+        public const int FF_SI_TYPE = 5; ///< Switching Intra
+        public const int FF_SP_TYPE = 6; ///< Switching Predicted
+        public const int FF_BI_TYPE = 7;
+
+        public const int FF_BUFFER_HINTS_VALID = 0x01;// Buffer hints value is meaningful (if 0 ignore).
+        public const int FF_BUFFER_HINTS_READABLE = 0x02;// Codec will read from buffer.
+        public const int FF_BUFFER_HINTS_PRESERVE = 0x04;// User must not alter buffer content.
+        public const int FF_BUFFER_HINTS_REUSABLE = 0x08;// Codec will reuse the buffer (update).
 
         public const int DEFAULT_FRAME_RATE_BASE = 1001000;
-
         public const int FF_ASPECT_EXTENDED = 15;
-
         public const int FF_RC_STRATEGY_XVID = 1;
 
         public const int FF_BUG_AUTODETECT = 1;  // autodetection
@@ -792,7 +945,6 @@ namespace FFmpegSharp.Interop
         public const int FF_BUG_HPEL_CHROMA = 2048;
         public const int FF_BUG_DC_CLIP = 4096;
         public const int FF_BUG_MS = 8192; // workaround various bugs in microsofts broken decoders
-        // public const int FF_BUG_FAKE_SCALABILITY =16; //autodetection should work 100%
 
         public const int FF_COMPLIANCE_VERY_STRICT = 2; // strictly conform to a older more strict version of the spec or reference software
         public const int FF_COMPLIANCE_STRICT = 1; // strictly conform to all the things in the spec no matter what consequences
@@ -829,6 +981,11 @@ namespace FFmpegSharp.Interop
         public const int FF_IDCT_IPP = 13;
         public const int FF_IDCT_XVIDMMX = 14;
         public const int FF_IDCT_CAVS = 15;
+        public const int FF_IDCT_SIMPLEARMV5TE = 16;
+        public const int FF_IDCT_SIMPLEARMV6 = 17;
+        public const int FF_IDCT_SIMPLEVIS = 18;
+        public const int FF_IDCT_WMV2 = 19;
+        public const int FF_IDCT_FAAN = 20;
 
         public const int FF_EC_GUESS_MVS = 1;
         public const int FF_EC_DEBLOCK = 2;
@@ -842,6 +999,8 @@ namespace FFmpegSharp.Interop
         public const int FF_MM_SSE = 0x0008; /* SSE functions */
         public const int FF_MM_SSE2 = 0x0010;/* PIV SSE2 functions */
         public const int FF_MM_3DNOWEXT = 0x0020;/* AMD 3DNowExt */
+        public const int FF_MM_SSE3 = 0x0040; ///< Prescott SSE3 functions
+        public const int FF_MM_SSSE3 = 0x0080; ///< Conroe SSSE3 functions
 
         public const int FF_MM_IWMMXT = 0x0100; /* XScale IWMMXT */
 
@@ -901,8 +1060,13 @@ namespace FFmpegSharp.Interop
         public const int FF_QP2LAMBDA = 118; // factor to convert from H.263 QP to lambda
         public const int FF_LAMBDA_MAX = (256 * 128 - 1);
 
+        public const int FF_QUALITY_SCALE = FF_LAMBDA_SCALE;//FIXME maybe remove
+
         public const int FF_CODER_TYPE_VLC = 0;
         public const int FF_CODER_TYPE_AC = 1;
+        public const int FF_CODER_TYPE_RAW = 2;
+        public const int FF_CODER_TYPE_RLE = 3;
+        public const int FF_CODER_TYPE_DEFLATE = 4;
 
         public const int SLICE_FLAG_CODED_ORDER = 0x0001; // draw_horiz_band() is called in coded order instead of display
         public const int SLICE_FLAG_ALLOW_FIELD = 0x0002; // allow draw_horiz_band() with field slices (MPEG2 field pics)
@@ -919,6 +1083,10 @@ namespace FFmpegSharp.Interop
         public const int FF_AA_FLOAT = 3;
 
         public const int FF_PROFILE_UNKNOWN = -99;
+        public const int FF_PROFILE_AAC_MAIN = 0;
+        public const int FF_PROFILE_AAC_LOW = 1;
+        public const int FF_PROFILE_AAC_SSR = 2;
+        public const int FF_PROFILE_AAC_LTP = 3;
 
         public const int FF_LEVEL_UNKNOWN = -99;
 
@@ -946,5 +1114,15 @@ namespace FFmpegSharp.Interop
         public const int AV_PARSER_PTS_NB = 4;
 
         public const int PARSER_FLAG_COMPLETE_FRAMES = 0x0001;
+        public const int AVERROR_UNKNOWN = -22;  /**< unknown error */
+        public const int AVERROR_IO = -5;  /**< I/O error */
+        public const int AVERROR_NUMEXPECTED = -33;   /**< Number syntax expected in filename. */
+        public const int AVERROR_INVALIDDATA = -22; /**< invalid data found */
+        public const int AVERROR_NOMEM = -12; /**< not enough memory */
+        public const int AVERROR_NOFMT = -42; /**< unknown format */
+        public const int AVERROR_NOTSUPP = -40; /**< Operation not supported. */
+        public const int AVERROR_NOENT = -2; /**< No such file or directory. */
+
+        #endregion
     }
 }

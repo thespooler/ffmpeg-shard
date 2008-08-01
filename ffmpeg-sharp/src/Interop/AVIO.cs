@@ -35,7 +35,6 @@ namespace FFmpegSharp.Interop
     public unsafe partial class FFmpeg
     {
         public const string AVUTIL_DLL_NAME = "avutil-49.dll";
-        public const string PTHREAD_DLL_NAME = "pthreadGC2.dll";
 
         public const int URL_RDONLY = 0;
         public const int URL_WRONLY = 1;
@@ -51,7 +50,7 @@ namespace FFmpegSharp.Interop
 
             h = *(URLContext*)ptr.ToPointer();
 
-            av_free(ref ptr);
+            av_free(ptr);
 
             return ret;
         }

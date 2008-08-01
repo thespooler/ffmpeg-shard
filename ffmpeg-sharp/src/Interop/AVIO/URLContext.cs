@@ -40,7 +40,13 @@ namespace FFmpegSharp.Interop.AVIO
 
         public IntPtr priv_data;
 
+#pragma warning disable 649
         private byte* filename_ptr; /** specified filename */
-        public string filename { get { return Utils.GetString(filename_ptr); } }
+#pragma warning restore 649
+
+        public string filename
+        {
+            get { return Utils.GetString(filename_ptr); }
+        }
     }
 }

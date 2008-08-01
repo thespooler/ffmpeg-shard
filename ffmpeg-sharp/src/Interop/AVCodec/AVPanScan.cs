@@ -49,6 +49,7 @@ namespace FFmpegSharp.Interop.Codec
          * - decoding: set by lavc
          */
         // [3][2] = 3 x 2 = 6
+        [Broken("Possibly wrong size")]
         public fixed short position[6];
     };
 

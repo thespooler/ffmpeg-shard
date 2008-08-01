@@ -36,7 +36,11 @@ namespace FFmpegSharp.Interop
     [SuppressUnmanagedCodeSecurity]
     public unsafe partial class FFmpeg
     {
+#if LIBAVFORMAT_51
         public const string AVFORMAT_DLL_NAME = "avformat-51.dll";
+#else
+        public const string AVFORMAT_DLL_NAME = "avformat-52.dll";
+#endif
 
         #region Functions
 
@@ -166,7 +170,7 @@ namespace FFmpegSharp.Interop
         public static extern void av_register_output_format(ref AVOutputFormat pAVOutputFormat);
 
         [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern AVOutputFormat* guess_stream_format(string short_name, string filename, 
+        public static extern AVOutputFormat* guess_stream_format(string short_name, string filename,
                                                                  string mime_type);
 
         [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
@@ -273,7 +277,7 @@ namespace FFmpegSharp.Interop
         public static AVError av_open_input_file(out AVFormatContext pFormatContext, string filename)
         {
             IntPtr ptr;
-            AVError err = av_open_input_file(out ptr, filename, IntPtr.Zero, 0, IntPtr.Zero);
+            AVError err = av_open_input_file(out ptr, filename, null, 0, null);
 
             if (ptr == IntPtr.Zero)
             {
@@ -356,7 +360,7 @@ namespace FFmpegSharp.Interop
         /// <param name="pAVFormatContext">The media file handle</param>
         /// <returns>>=0 if OK.  AVError otherwise</returns>
         [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern int av_find_stream_info(ref AVFormatContext pAVFormatContext);
+        public static extern AVError av_find_stream_info(ref AVFormatContext pAVFormatContext);
 
         /// <summary>
         ///Read a transport packet from a media file.
@@ -399,7 +403,7 @@ namespace FFmpegSharp.Interop
         /// <param name="flags">Flags which select direction and seeking mode.</param>
         /// <returns>>=0 on success</returns>
         [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern AVError av_seek_frame(ref AVFormatContext pAVFormatContext, int stream_index, long timestamp, int flags);
+        public static extern AVError av_seek_frame(ref AVFormatContext pAVFormatContext, int stream_index, long timestamp, AVSEEK_FLAG flags);
 
         /// <summary>
         /// Start playing a network based stream (e.g. RTSP stream) at the
@@ -456,18 +460,18 @@ namespace FFmpegSharp.Interop
         /// <param name="pAVStream"></param>
         /// <param name="timestamp"></param>
         /// <param name="flags">if AVSEEK_FLAG_BACKWARD then the returned index will correspond to
-        /// the timestamp which is <= the requested one, if backward is 0 then it will be >=
+        /// the timestamp which is &lt= the requested one, if backward is 0 then it will be &gt=
         /// if AVSEEK_FLAG_ANY seek to any frame, only keyframes otherwise</param>
-        /// <returns>< 0 if no such timestamp could be found</returns>
+        /// <returns>&lt 0 if no such timestamp could be found</returns>
         [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern AVError av_index_search_timestamp(ref AVStream pAVStream, long timestamp, int flags);
+        public static extern AVError av_index_search_timestamp(ref AVStream pAVStream, long timestamp, AVSEEK_FLAG flags);
 
         /// <summary>
         /// Add a index entry into a sorted list updateing if it is already there.
         /// </summary>
         /// <param name="timestamp">timestamp in the timebase of the given stream</param>
         [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern AVError av_add_index_entry(ref AVStream pAVStream, long pos, long timestamp, int size, int distance, int flags);
+        public static extern AVError av_add_index_entry(ref AVStream pAVStream, long pos, long timestamp, int size, int distance, AVSEEK_FLAG flags);
 
         /// <summary>
         /// Does a binary search using av_index_search_timestamp() and AVCodec.read_timestamp().
@@ -476,7 +480,7 @@ namespace FFmpegSharp.Interop
         /// <param name="stream_index">stream number</param>
         /// <param name="target_ts">target timestamp in the time base of the given stream</param>
         [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern AVError av_seek_frame_binary(ref AVFormatContext pAVFormatContext, int stream_index, long target_ts, int flags);
+        public static extern AVError av_seek_frame_binary(ref AVFormatContext pAVFormatContext, int stream_index, long target_ts, AVSEEK_FLAG flags);
 
         /// <summary>
         /// Updates cur_dts of all streams based on given timestamp and AVStream.
@@ -623,7 +627,7 @@ namespace FFmpegSharp.Interop
         /// <returns>0 if OK, -1 if format error.</returns>
         [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int av_get_frame_filename([In, Out] StringBuilder buf, int buf_size,
-                                            string path, int number);
+                                                        string path, int number);
 
         /// <summary>
         /// Check whether filename actually is a numbered sequence generator.
@@ -634,17 +638,22 @@ namespace FFmpegSharp.Interop
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool av_filename_number_test(string filename);
 
+        /// <summary>
+        /// Generate an SDP for an RTP session.
+        /// </summary>
+        /// <param name="ac">
+        /// Array of AVFormatContexts describing the RTP streams. If the
+        /// array is composed by only one context, such context can contain
+        /// multiple AVStreams (one AVStream per RTP stream). Otherwise,
+        /// all the contexts in the array (an AVCodecContext per RTP stream)
+        /// must contain only one AVStream.
+        /// </param> 
+        /// <param name="n_files">Number of AVCodecContexts contained in ac</param> 
+        /// <param name="buff">Buffer where the SDP will be stored</param> 
+        /// <param name="size">Size of the buffer</param> 
+        /// <returns>0 if OK. AVERROR_xxx if error.</returns>
         [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern int video_grab_init();
-
-        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern int audio_init();
-
-        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern int dv1394_init();
-
-        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern int dc1394_init();
+        public static extern AVError avf_sdp_create(AVFormatContext** ac, int n_files, [In,Out]StringBuilder buff, int size);
 
         #endregion
 

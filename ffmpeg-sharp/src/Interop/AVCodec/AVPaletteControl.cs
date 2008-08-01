@@ -24,10 +24,16 @@
 #endregion
 
 using System.Runtime.InteropServices;
+using System;
 
 namespace FFmpegSharp.Interop.Codec
 {
+    /// <summary>
+    /// This structure defines a method for communicating palette changes
+    /// between and demuxer and a decoder
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
+    [Obsolete("Use AVPacket to send palette changes instead. This is totally broken.")]
     public unsafe struct AVPaletteControl
     {
         /* demuxer sets this to 1 to indicate the palette has changed;

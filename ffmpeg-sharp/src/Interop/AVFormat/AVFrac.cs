@@ -24,10 +24,19 @@
 #endregion
 
 using System.Runtime.InteropServices;
+using System;
 
 namespace FFmpegSharp.Interop.Format
 {
+    /// <summary>
+    /// Fractional numbers for exact pts handling
+    /// </summary>
+    /// <remarks>
+    /// the exact value of the fractional number is: 'val + num / den'.
+    /// * num is assumed to be such as 0 &lt= num &lt den
+    /// </remarks>
     [StructLayout(LayoutKind.Sequential)]
+    [Obsolete("Use AVRational instead")]
     public unsafe struct AVFrac
     {
         long val;

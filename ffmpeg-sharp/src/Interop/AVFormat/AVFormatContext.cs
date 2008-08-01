@@ -27,6 +27,7 @@ using System;
 using System.Runtime.InteropServices;
 using FFmpegSharp.Interop.AVIO;
 using FFmpegSharp.Interop.Util;
+using FFmpegSharp.Interop.Codec;
 
 namespace FFmpegSharp.Interop.Format
 {
@@ -41,26 +42,17 @@ namespace FFmpegSharp.Interop.Format
         public AVInputFormat* iformat; // can only be iformat or oformat, not both at the same time 
         public AVOutputFormat* oformat;
 
-        public IntPtr priv_data;
+        public void* priv_data;
 
+#if LIBAVFORMAT_51
         public ByteIOContext pb;
+#else
+        public ByteIOContext* pb;
+#endif
 
-        public int nb_streams;
+        public uint nb_streams;
 
-        AVStream* stream_ptrs1, stream_ptrs2, stream_ptrs3, stream_ptrs4,
-                    stream_ptrs5, stream_ptrs6, stream_ptrs7, stream_ptrs8, stream_ptrs9,
-                    stream_ptrs10, stream_ptrs11, stream_ptrs12, stream_ptrs13, stream_ptrs14,
-                    stream_ptrs15, stream_ptrs16, stream_ptrs17, stream_ptrs18, stream_ptrs19, stream_ptrs20;
-        public AVStream*[] streams
-        {
-            get
-            {
-                return new AVStream*[] { stream_ptrs1, stream_ptrs2, stream_ptrs3, stream_ptrs4,
-            stream_ptrs5,stream_ptrs6,stream_ptrs7,stream_ptrs8,stream_ptrs9,
-            stream_ptrs10,stream_ptrs11,stream_ptrs12,stream_ptrs13,stream_ptrs14,
-            stream_ptrs15,stream_ptrs16,stream_ptrs17,stream_ptrs18,stream_ptrs19,stream_ptrs20};
-            }
-        }
+        public AVStreamArray20 streams;
 
         private fixed byte filename_ptr[1024];
         /// <summary>
@@ -72,6 +64,11 @@ namespace FFmpegSharp.Interop.Format
             {
                 fixed (byte* ptr = filename_ptr)
                     return Utils.GetString(ptr);
+            }
+            set
+            {
+                fixed (byte* ptr = filename_ptr)
+                    Utils.SetString(ptr, 1024, value);
             }
         }
 
@@ -86,6 +83,11 @@ namespace FFmpegSharp.Interop.Format
                 fixed (byte* ptr = title_ptr)
                     return Utils.GetString(ptr);
             }
+            set
+            {
+                fixed (byte* ptr = title_ptr)
+                    Utils.SetString(ptr, 512, value);
+            }
         }
 
         private fixed byte author_ptr[512];
@@ -95,6 +97,11 @@ namespace FFmpegSharp.Interop.Format
             {
                 fixed (byte* ptr = author_ptr)
                     return Utils.GetString(ptr);
+            }
+            set
+            {
+                fixed (byte* ptr = author_ptr)
+                    Utils.SetString(ptr, 512, value);
             }
         }
 
@@ -106,6 +113,11 @@ namespace FFmpegSharp.Interop.Format
                 fixed (byte* ptr = copyright_ptr)
                     return Utils.GetString(ptr);
             }
+            set
+            {
+                fixed (byte* ptr = copyright_ptr)
+                    Utils.SetString(ptr, 512, value);
+            }
         }
 
         private fixed byte comment_ptr[512];
@@ -115,6 +127,11 @@ namespace FFmpegSharp.Interop.Format
             {
                 fixed (byte* ptr = comment_ptr)
                     return Utils.GetString(ptr);
+            }
+            set
+            {
+                fixed (byte* ptr = comment_ptr)
+                    Utils.SetString(ptr, 512, value);
             }
         }
 
@@ -126,6 +143,11 @@ namespace FFmpegSharp.Interop.Format
                 fixed (byte* ptr = album_ptr)
                     return Utils.GetString(ptr);
             }
+            set
+            {
+                fixed (byte* ptr = album_ptr)
+                    Utils.SetString(ptr, 512, value);
+            }
         }
 
         /// <summary>
@@ -136,7 +158,7 @@ namespace FFmpegSharp.Interop.Format
         /// <summary>
         /// Track number, 0 if none
         /// </summary>
-        public int tract;
+        public int track;
 
         private fixed byte genre_ptr[32];
         /// <summary>
@@ -149,9 +171,14 @@ namespace FFmpegSharp.Interop.Format
                 fixed (byte* ptr = genre_ptr)
                     return Utils.GetString(ptr);
             }
+            set
+            {
+                fixed (byte* ptr = genre_ptr)
+                    Utils.SetString(ptr, 32, value);
+            }
         }
 
-        public int ctx_flags; // format specific flags, see AVFMTCTX_xx
+        public FormatSpecificFlags ctx_flags; // format specific flags, see AVFMTCTX_xx
 
         /// <summary>
         /// This buffer is only needed when packets were already buffered but
@@ -180,9 +207,6 @@ namespace FFmpegSharp.Interop.Format
         /// </summary>
         public long file_size;
 
-        /* decoding: total stream bitrate in bit/s, 0 if not
-           available. Never set it directly if the file_size and the
-           duration are known as ffmpeg can compute it automatically. */
         /// <summary>
         /// decoding: total stream bitrate in bit/s, 0 if not
         /// available. Never set it directly if the file_size and the
@@ -191,6 +215,7 @@ namespace FFmpegSharp.Interop.Format
         public int bit_rate;
 
         /* av_read_frame() support */
+
         public AVStream* cur_st;
 
         public byte* cur_ptr; // byte
@@ -218,9 +243,9 @@ namespace FFmpegSharp.Interop.Format
         /// <summary>
         /// Number of times to loop output in formats that support it
         /// </summary>
-        public int loop_output;
+        public OutputLoop loop_output;
 
-        public int flags;
+        public AVFMT_FLAG flags;
 
         public int loop_input;
 
@@ -238,5 +263,45 @@ namespace FFmpegSharp.Interop.Format
 
         public byte* key;
         public int keylen;
+
+        public uint nb_programs;
+        AVProgram** programs;
+
+        /**
+         * Forced video codec_id.
+         * demuxing: set by user
+         */
+        public CodecID video_codec_id;
+        /**
+         * Forced audio codec_id.
+         * demuxing: set by user
+         */
+        public CodecID audio_codec_id;
+        /**
+         * Forced subtitle codec_id.
+         * demuxing: set by user
+         */
+        public CodecID subtitle_codec_id;
+
+        /**
+         * Maximum amount of memory in bytes to use per stream for the index.
+         * If the needed index exceeds this size entries will be discarded as
+         * needed to maintain a smaller size. This can lead to slower or less
+         * accurate seeking (depends on demuxer).
+         * Demuxers for which a full in memory index is mandatory will ignore
+         * this.
+         * muxing  : unused
+         * demuxing: set by user
+         */
+        public uint max_index_size;
+
+        /**
+         * Maximum amount of memory in bytes to use for buffering frames
+         * obtained from real-time capture devices.
+         */
+        public uint max_picture_buffer;
+
+        public uint nb_chapters;
+        public AVChapter** chapters;
     };
 }

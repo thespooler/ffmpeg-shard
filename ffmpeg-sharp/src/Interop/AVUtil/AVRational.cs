@@ -24,18 +24,65 @@
 #endregion
 
 using System.Runtime.InteropServices;
+using System;
 
 namespace FFmpegSharp.Interop.Util
 {
+    /// <summary>
+    /// Rational number num/den.
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe struct AVRational
+    public unsafe struct AVRational : IComparable<AVRational>, IEquatable<AVRational>
     {
+        /// <summary>
+        /// numerator
+        /// </summary>
         public int num;
+
+        /// <summary>
+        /// denominator
+        /// </summary>
         public int den;
 
-        public static implicit operator float(AVRational a)
+        public bool Equals(AVRational other)
         {
-            return a.num / (float)a.den;
+            return this.num == other.num &&
+                this.den == other.den;
+        }
+
+        public int CompareTo(AVRational other)
+        {
+            return FFmpeg.av_cmp_q(this, other);
+        }
+
+        public static implicit operator double(AVRational a)
+        {
+            return FFmpeg.av_q2d(a);
+        }
+
+        public static AVRational operator *(AVRational a, AVRational b)
+        {
+            return FFmpeg.av_mul_q(a, b);
+        }
+
+        public static AVRational operator /(AVRational a, AVRational b)
+        {
+            return FFmpeg.av_div_q(a, b);
+        }
+
+        public static AVRational operator +(AVRational a, AVRational b)
+        {
+            return FFmpeg.av_add_q(a, b);
+        }
+
+        public static AVRational operator -(AVRational a, AVRational b)
+        {
+            return FFmpeg.av_sub_q(a, b);
+        }
+
+        public static AVRational FromDouble(double d, int max)
+        {
+            return FFmpeg.av_d2q(d, max);
         }
     };
 }

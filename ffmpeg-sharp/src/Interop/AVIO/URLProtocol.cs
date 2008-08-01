@@ -36,7 +36,9 @@ namespace FFmpegSharp.Interop.AVIO
 
     public unsafe struct URLProtocol
     {
+#pragma warning disable 649
         private byte* name_ptr;
+#pragma warning restore 649
         public string name
         {
             get { return Utils.GetString(name_ptr); }

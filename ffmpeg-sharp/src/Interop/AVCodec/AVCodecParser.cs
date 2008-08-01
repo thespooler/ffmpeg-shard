@@ -43,8 +43,10 @@ namespace FFmpegSharp.Interop.Codec
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct AVCodecParser
     {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-        public int codec_ids; /* several codec IDs are permitted */
+        /// <summary>
+        /// CodecIDs
+        /// </summary>
+        public fixed int codec_ids[5]; /* several codec IDs are permitted */
 
         public int priv_data_size;
 

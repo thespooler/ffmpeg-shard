@@ -28,13 +28,13 @@ using System;
 namespace FFmpegSharp.Interop.Util
 {
     [Flags]
-    public enum AvOptionFlag
+    public enum AV_OPT_FLAG
     {
-        AV_OPT_FLAG_ENCODING_PARAM = 1,   ///< a generic parameter which can be set by the user for muxing or encoding
-        AV_OPT_FLAG_DECODING_PARAM = 2,   ///< a generic parameter which can be set by the user for demuxing or decoding
-        AV_OPT_FLAG_METADATA = 4,   ///< some data extracted or inserted into the file like title, comment, ...
-        AV_OPT_FLAG_AUDIO_PARAM = 8,
-        AV_OPT_FLAG_VIDEO_PARAM = 16,
-        AV_OPT_FLAG_SUBTITLE_PARAM = 32,
+        AudioParam = FFmpeg.AV_OPT_FLAG_AUDIO_PARAM,
+        DecodingParam = FFmpeg.AV_OPT_FLAG_DECODING_PARAM,
+        EncodingParam = FFmpeg.AV_OPT_FLAG_ENCODING_PARAM,
+        Metadata = FFmpeg.AV_OPT_FLAG_METADATA,
+        SubtitleParam = FFmpeg.AV_OPT_FLAG_SUBTITLE_PARAM,
+        VideoParam = FFmpeg.AV_OPT_FLAG_VIDEO_PARAM
     }
 }

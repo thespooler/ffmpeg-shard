@@ -44,7 +44,13 @@ namespace FFmpegSharp.Interop.Codec
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct AVCodec
     {
-        IntPtr name_ptr;
+        /**
+         * Name of the codec implementation.
+         * The name is globally unique among encoders and among decoders (but an
+         * encoder and a decoder can share the same name).
+         * This is the primary way to find a codec from the user perspective.
+         */
+        byte* name_ptr;
         public string name
         {
             get { return Utils.GetString(name_ptr); }
@@ -80,7 +86,7 @@ namespace FFmpegSharp.Interop.Codec
             get { return (Utils.GetDelegate<DecodeCallback>(decode_ptr)); }
         }
 
-        public int capabilities;
+        public CODEC_CAP capabilities;
 
         public AVCodec* next;
 
@@ -90,54 +96,14 @@ namespace FFmpegSharp.Interop.Codec
             get { return (Utils.GetDelegate<FlushCallback>(flush_ptr)); }
         }
 
-        // array of supported framerates, or NULL if any, array is terminated by {0,0}
-        private IntPtr _supported_framerates;
-        public AVRational[] supported_framerates
-        {
-            get
-            {
-                List<AVRational> lst = new List<AVRational>();
+        /// <summary>
+        /// Array of supported framerates, or null.  If any, array is terminated by {0,0}
+        /// </summary>
+        public AVRational* supported_framerates;
 
-                if (Marshal.ReadInt32(_supported_framerates) != 0)
-                    try
-                    {
-                        IntPtr current = _supported_framerates;
-                        for (int i = 0; Marshal.ReadInt16(current = Marshal.ReadIntPtr(_supported_framerates, i * Marshal.SizeOf(typeof(AVRational)))) != 0; i++)
-                        {
-                            lst.Add((AVRational)Marshal.PtrToStructure(current, typeof(AVRational)));
-                        }
-                    }
-                    catch (AccessViolationException) { }
-
-                return lst.ToArray();
-            }
-        }
-
-        // array of supported pixel formats, or NULL if unknown, array is terminanted by -1
-        private IntPtr pix_fmts_ptr; // enum PixelFormat *pix_fmts
-        public PixelFormat[] pix_fmts
-        {
-            get
-            {
-                List<PixelFormat> lst = new List<PixelFormat>();
-
-                try
-                {
-                    IntPtr current = _supported_framerates;
-                    for (int i = 0; ; i++)
-                    {
-                        if (Marshal.ReadInt32(current) == -1)
-                            break;
-
-                        lst.Add((PixelFormat)Marshal.ReadInt32(current));
-
-                        current = Marshal.ReadIntPtr(_supported_framerates, i * Marshal.SizeOf(typeof(AVRational)));
-                    }
-                }
-                catch (AccessViolationException) { }
-
-                return lst.ToArray();
-            }
-        }
+        /// <summary>
+        /// Array of supported pixel formats, or null.  If unknown, array is terminanted by -1
+        /// </summary>
+        public PixelFormat* pix_fmts;
     };
 }

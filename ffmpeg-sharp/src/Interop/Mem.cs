@@ -38,7 +38,7 @@ namespace FFmpegSharp.Interop
         /// It is recommended that you use av_freep() instead.
         /// </remarks>
         [DllImport(AVUTIL_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern void av_free(ref IntPtr ptr);
+        public static extern void av_free(IntPtr ptr);
 
         /// <summary>
         /// Frees memory which has been allocated with av_malloc(z)() or av_realloc().
@@ -57,7 +57,6 @@ namespace FFmpegSharp.Interop
         /// <param name="ptr">Pointer to the pointer which should be freed (void**)</param>
         [DllImport(AVUTIL_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern void av_freep(ref IntPtr ptr);
-
 
         /// <summary>
         /// Frees memory which has been allocated with av_malloc(z)() or av_realloc() and 

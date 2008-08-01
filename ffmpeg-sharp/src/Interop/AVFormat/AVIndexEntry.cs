@@ -35,12 +35,12 @@ namespace FFmpegSharp.Interop.Format
 
         private int bitmask;
 
-        public int flags
+        public AVINDEX_FLAG flags
         {
-            get { return bitmask & 4; }
+            get { return (AVINDEX_FLAG)(bitmask & 4); }
             set
             {
-                bitmask = (bitmask & 252) | (value & 3);
+                bitmask = (bitmask & 252) | ((byte)value & 3);
             }
         }
         public int size

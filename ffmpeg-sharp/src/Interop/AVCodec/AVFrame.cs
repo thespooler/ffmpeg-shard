@@ -35,8 +35,7 @@ namespace FFmpegSharp.Interop.Codec
         /// Pointer to the picture planes.
         /// This might be different from the first allocated byte
         /// </summary>
-        [BrokenPointer]
-        public fixed int data[4];
+        public IntPtrArray4 data;
 
         public fixed int linesize[4];
 
@@ -44,8 +43,7 @@ namespace FFmpegSharp.Interop.Codec
         /// Pointer to the first allocated byte of the picture.  Can be used in get_buffer/release_buffer.
         /// This isn't used by libavcodec unless the default get/release_buffer() is used.
         /// </summary>
-        [BrokenPointer]
-        public fixed int @base[4];
+        public IntPtrArray4 @base;
 
         /// <summary>
         /// Keyframe.  Set by libavcodec

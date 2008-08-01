@@ -65,6 +65,9 @@ namespace FFmpegSharp.Interop.Codec
 
         public fixed long cur_frame_dts[FFmpeg.AV_PARSER_PTS_NB];
 
-        public int flags;
+        public PARSER_FLAG flags;
+
+        public long offset;      // byte offset from starting packet start
+        public long last_offset;
     };
 }

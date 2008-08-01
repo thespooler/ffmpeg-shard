@@ -38,7 +38,7 @@ namespace FFmpegSharp.Interop.Format
         public IntPtr data;
         public int size;
         public int stream_index;
-        public int flags;
+        public PacketFlags flags;
         public int duration;
 
         private IntPtr destruct_ptr;

@@ -27,64 +27,89 @@ using System;
 using System.Runtime.InteropServices;
 using System.Security;
 using FFmpegSharp.Interop.SWScale;
+using FFmpegSharp.Interop.Util;
 
 namespace FFmpegSharp.Interop
 {
     [SuppressUnmanagedCodeSecurity]
-    public static partial class FFmpeg
+    public static unsafe partial class FFmpeg
     {
         public const string SWSCALE_DLL_NAME = "swscale-0.dll";
 
         #region Functions
 
-        [DllImport(SWSCALE_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern void sws_freeContext(ref SwsContext SwsContext);
+        [DllImport(SWSCALE_DLL_NAME)]
+        public static extern void sws_freeContext(SwsContext* swsContext);
 
-        [DllImport(SWSCALE_DLL_NAME, EntryPoint = "sws_getContext", CharSet = CharSet.Ansi)]
-        private unsafe static extern IntPtr sws_getContext_internal(int source_width, int source_height,
-            int source_pix_fmt, int dest_width, int dest_height, int dest_pix_fmt, int flags,
-            ref SwsFilter srcFilter, ref SwsFilter destFilter, double* Param);
+        [DllImport(SWSCALE_DLL_NAME)]
+        public static extern SwsContext* sws_getContext(int srcW, int srcH, PixelFormat srcFormat, int dstW, int dstH, PixelFormat dstFormat,
+                                                        SwsFlags flags, SwsFilter* srcFilter, SwsFilter* dstFilter, double* param);
 
-        public unsafe static SwsContext* sws_getContext(int source_width, int source_height,
-            int source_pix_fmt, int dest_width, int dest_height, int dest_pix_fmt, int flags,
-            ref SwsFilter srcFilter, ref SwsFilter destFilter, double* Param)
-        {
-            return (SwsContext*)sws_getContext_internal(source_width, source_height,
-                source_pix_fmt, dest_width, dest_height, dest_pix_fmt, flags,
-                ref srcFilter, ref destFilter, Param);
-        }
+        [DllImport(SWSCALE_DLL_NAME)]
+        public static extern int sws_scale(SwsContext* context, byte** src, int* srcStride, int srcSliceY,
+                                           int srcSliceH, byte** dst, int* dstStride);
+        [DllImport(SWSCALE_DLL_NAME)]
+        [Obsolete]
+        public static extern int sws_scale_ordered(SwsContext* context, byte** src, int* srcStride, int srcSliceY,
+                                                   int srcSliceH, byte** dst, int dstStride);
 
-        [DllImport(SWSCALE_DLL_NAME, EntryPoint = "sws_getContext", CharSet = CharSet.Ansi)]
-        private unsafe static extern IntPtr sws_getContext_internal(int source_width, int source_height,
-            int source_pix_fmt, int dest_width, int dest_height, int dest_pix_fmt, int flags,
-            SwsFilter* srcFilter, SwsFilter* destFilter, double* Param);
+        [DllImport(SWSCALE_DLL_NAME)]
+        public static extern int sws_setColorspaceDetails(SwsContext* c, int* inv_table, int srcRange, int* table, int dstRange, 
+                                                          int brightness, int contrast, int saturation);
 
-        public unsafe static SwsContext* sws_getContext(int source_width, int source_height,
-            int source_pix_fmt, int dest_width, int dest_height, int dest_pix_fmt, int flags)
-        {
-            return (SwsContext*)sws_getContext_internal(source_width, source_height,
-                source_pix_fmt, dest_width, dest_height, dest_pix_fmt, flags,
-                null, null, null);
-        }
+        [DllImport(SWSCALE_DLL_NAME)]
+        public static extern int sws_getColorspaceDetails(SwsContext* c, int** inv_table, int* srcRange, int** table, int* dstRange, 
+                                                          int* brightness, int* contrast, int* saturation);
 
-        [DllImport(SWSCALE_DLL_NAME, CharSet = CharSet.Ansi)]
-        public unsafe static extern int sws_scale(SwsContext* SwsContext,
-            int* src,
-            int* srcStride,
-            int srcSliceY, int srcSliceH,
-            int* dst,
-            int* dstStride);
+        [DllImport(SWSCALE_DLL_NAME)]
+        public static extern SwsVector* sws_getGaussianVec(double variance, double quality);
 
-        [DllImport(SWSCALE_DLL_NAME, CharSet = CharSet.Ansi)]
-        public unsafe static extern int sws_scale(SwsContext* SwsContext,
-            byte*[] src,
-            int[] srcStride,
-            int srcSliceY, int srcSliceH,
-            byte*[] dst,
-            int[] dstStride);
+        [DllImport(SWSCALE_DLL_NAME)]
+        public static extern SwsVector* sws_getConstVec(double c, int length);
 
-        [DllImport(SWSCALE_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern int sws_rgb2rgb_init(int flags);
+        [DllImport(SWSCALE_DLL_NAME)]
+        public static extern SwsVector* sws_getIdentityVec();
+
+        [DllImport(SWSCALE_DLL_NAME)]
+        public static extern void sws_scaleVec(SwsVector* a, double scalar);
+
+        [DllImport(SWSCALE_DLL_NAME)]
+        public static extern void sws_normalizeVec(SwsVector* a, double height);
+
+        [DllImport(SWSCALE_DLL_NAME)]
+        public static extern void sws_convVec(SwsVector* a, SwsVector* b);
+
+        [DllImport(SWSCALE_DLL_NAME)]
+        public static extern void sws_addVec(SwsVector* a, SwsVector* b);
+
+        [DllImport(SWSCALE_DLL_NAME)]
+        public static extern void sws_subVec(SwsVector* a, SwsVector* b);
+
+        [DllImport(SWSCALE_DLL_NAME)]
+        public static extern void sws_shiftVec(SwsVector* a, int shift);
+
+        [DllImport(SWSCALE_DLL_NAME)]
+        public static extern SwsVector* sws_cloneVec(SwsVector* a);
+
+        [DllImport(SWSCALE_DLL_NAME)]
+        public static extern void sws_printVec(SwsVector* a);
+
+        [DllImport(SWSCALE_DLL_NAME)]
+        public static extern void sws_freeVec(SwsVector* a);
+
+        [DllImport(SWSCALE_DLL_NAME)]
+        public static extern SwsFilter* sws_getDefaultFilter(float lumaGBlur, float chromaGBlur,
+                                                             float lumaSarpen, float chromaSharpen,
+                                                             float chromaHShift, float chromaVShift,
+                                                             int verbose);
+
+        [DllImport(SWSCALE_DLL_NAME)]
+        public static extern void sws_freeFilter(SwsFilter* filter);
+
+        [DllImport(SWSCALE_DLL_NAME)]
+        public static extern SwsContext* sws_getCachedContext(SwsContext* context, int srcW, int srcH, PixelFormat srcFormat,
+                                                              int dstW, int dstH, int dstFormat, SwsFlags flags, SwsFilter* srcFilter, 
+                                                              SwsFilter* dstFilter, double* param);
 
         #endregion
 
@@ -123,15 +148,23 @@ namespace FFmpegSharp.Interop
 
         public const int SWS_ACCURATE_RND = 0x40000;
 
-        // public const int SWS_CPU_CAPS_MMX     = 0x80000000;
-        // public const int SWS_CPU_CAPS_MMX2    = 0x20000000;
-        // public const int SWS_CPU_CAPS_3DNOW   = 0x40000000;
-        //public const int SWS_CPU_CAPS_ALTIVEC = 0x10000000;
-        //public const int SWS_CPU_CAPS_BFIN    = 0x01000000;
+        public const uint SWS_CPU_CAPS_MMX = 0x80000000;
+        public const int SWS_CPU_CAPS_MMX2 = 0x20000000;
+        public const int SWS_CPU_CAPS_3DNOW = 0x40000000;
+        public const int SWS_CPU_CAPS_ALTIVEC = 0x10000000;
+        public const int SWS_CPU_CAPS_BFIN = 0x01000000;
 
         public const double SWS_MAX_REDUCE_CUTOFF = 0.002;
 
         public const int MAX_FILTER_SIZE = 256;
+
+        public const int SWS_CS_ITU709 = 1;
+        public const int SWS_CS_FCC = 4;
+        public const int SWS_CS_ITU601 = 5;
+        public const int SWS_CS_ITU624 = 5;
+        public const int SWS_CS_SMPTE170M = 5;
+        public const int SWS_CS_SMPTE240M = 7;
+        public const int SWS_CS_DEFAULT = 5;
 
         #endregion
     }

@@ -64,6 +64,19 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Audio\FifoMemoryStream.cs" />
+    <Compile Include="Interop\AVFormat\AVChapter.cs" />
+    <Compile Include="Interop\AVFormat\AVCodecTag.cs" />
+    <Compile Include="Interop\AVFormat\AVProgram.cs" />
+    <Compile Include="Interop\AVFormat\Enums.cs" />
+    <Compile Include="Interop\AVStreamArray20.cs" />
+    <Compile Include="Interop\AVUtil\AVRounding.cs" />
+    <Compile Include="Interop\BrokenAttribute.cs" />
+    <Compile Include="Interop\IntFloat_ReadWrite.cs" />
+    <Compile Include="Interop\IntPtrArray4.cs" />
+    <Compile Include="Interop\Log.cs" />
+    <Compile Include="Interop\Mathematics.cs" />
+    <Compile Include="Interop\Opt.cs" />
+    <Compile Include="Interop\Rational.cs" />
     <Compile Include="DecoderStream.cs" />
     <Compile Include="DecoderException.cs" />
     <Compile Include="Interop\AVCodec.cs">
@@ -176,7 +189,7 @@
     <Compile Include="Interop\AVIO\URLProtocol.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Interop\BrokenPointer.cs" />
+    <Compile Include="Interop\SWScale\Enums.cs" />
     <Compile Include="Interop\SWScale\SwsContext.cs" />
     <Compile Include="Interop\SWScale\SwsFilter.cs" />
     <Compile Include="Interop\SWScale\SwsVector.cs" />
@@ -187,7 +200,7 @@
     <Compile Include="Interop\AVUtil\AVOption.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Interop\AVUtil\AVOptionFlag.cs">
+    <Compile Include="Interop\AVUtil\Enums.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Interop\AVUtil\AVOptionType.cs">
@@ -207,6 +220,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Video\VideoDecoderStream.cs" />
+    <Compile Include="Interop\ZeroTrueBoolMarshaller.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ChangeLog">

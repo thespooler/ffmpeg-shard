@@ -30,16 +30,15 @@ namespace FFmpegSharp.Interop.Codec
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct RcOverride
     {
-        [MarshalAs(UnmanagedType.I4)]
         public int start_frame;
 
-        [MarshalAs(UnmanagedType.I4)]
         public int end_frame;
 
-        [MarshalAs(UnmanagedType.I4)]
+        /// <summary>
+        /// If this is 0 then quality_factor will be used instead.
+        /// </summary>
         public int qscale;
 
-        [MarshalAs(UnmanagedType.R4)]
         public float quality_factor;
     };
 }

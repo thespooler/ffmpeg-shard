@@ -25,10 +25,28 @@
 
 namespace FFmpegSharp.Interop.Util
 {
+    /// <summary>
+    /// Pixel format. 
+    /// </summary>
+    /// <remarks>
+    /// PIX_FMT_RGB32 is handled in an endian-specific manner. A RGBA
+    /// color is put together as:
+    ///  (A &lt&lt 24) | (R &lt&lt 16) | (G &lt&lt 8) | B
+    /// This is stored as BGRA on little endian CPU architectures and ARGB on
+    /// big endian CPUs.
+    ///
+    /// When the pixel format is palettized RGB (PIX_FMT_PAL8), the palettized
+    /// image data is stored in AVFrame.data[0]. The palette is transported in
+    /// AVFrame.data[1] and, is 1024 bytes long (256 4-byte entries) and is
+    /// formatted the same as in PIX_FMT_RGB32 described above (i.e., it is
+    /// also endian-specific). Note also that the individual RGB palette
+    /// components stored in AVFrame.data[1] should be in the range 0..255.
+    /// This is important as many custom PAL8 video codecs that were designed
+    /// to run on the IBM VGA graphics adapter use 6-bit palette components.
+    /// </remarks>    
     public enum PixelFormat
     {
         PIX_FMT_NONE = -1,
-        Unknown = 0,
         PIX_FMT_YUV420P,   // Planar YUV 4:2:0, 12bpp, (1 Cr & Cb sample per 2x2 Y samples)
         PIX_FMT_YUYV422,   // Packed YUV 4:2:2, 16bpp, Y0 Cb Y1 Cr
         PIX_FMT_RGB24,     // Packed RGB 8:8:8, 24bpp, RGBRGB...

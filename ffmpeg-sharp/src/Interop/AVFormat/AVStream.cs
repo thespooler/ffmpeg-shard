@@ -53,7 +53,9 @@ namespace FFmpegSharp.Interop.Format
 
         public int codec_info_nb_frames;
 
+#pragma warning disable 618
         public AVFrac pts; // encoding: PTS generation when outputing stream 
+#pragma warning restore 618
 
         /**
          * this is the fundamental unit of time (in seconds) in terms
@@ -85,6 +87,11 @@ namespace FFmpegSharp.Interop.Format
             {
                 fixed (byte* ptr = language_ptr)
                     return Utils.GetString(ptr);
+            }
+            set
+            {
+                fixed (byte* ptr = language_ptr)
+                    Utils.SetString(ptr, 4, value);
             }
         }
 

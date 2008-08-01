@@ -38,22 +38,40 @@ namespace FFmpegSharp.Interop.Format
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct AVOutputFormat
     {
-        IntPtr name_ptr;
-        public string name { get { return Utils.GetString(name_ptr); } }
+        byte* name_ptr;
+        public string name
+        {
+            get { return Utils.GetString(name_ptr); }
+        }
 
-        IntPtr long_name_ptr;
-        public string long_name { get { return Utils.GetString(long_name_ptr); } }
+        byte* long_name_ptr;
+        public string long_name
+        {
+            get { return Utils.GetString(long_name_ptr); }
+        }
 
-        IntPtr mime_type_ptr;
-        public string mime_type { get { return Utils.GetString(mime_type_ptr); } }
+        byte* mime_type_ptr;
+        public string mime_type
+        {
+            get { return Utils.GetString(mime_type_ptr); }
+        }
 
-        IntPtr extensions_ptr;
-        public string extensions { get { return Utils.GetString(extensions_ptr); } }
+        byte* extensions_ptr;
+        public string extensions
+        {
+            get { return Utils.GetString(extensions_ptr); }
+        }
 
         public int priv_data_size;
 
+        /// <summary>
+        /// default audio codec 
+        /// </summary>
         public CodecID audio_codec;
 
+        /// <summary>
+        /// default video codec
+        /// </summary>
         public CodecID video_codec;
 
         private IntPtr write_header_ptr;
@@ -74,9 +92,12 @@ namespace FFmpegSharp.Interop.Format
             get { return Utils.GetDelegate<WriteTrailer>(write_trailer_ptr); }
         }
 
-        public int flags;
+        public OutputFormatFlags flags;
 
         private IntPtr set_parameters_ptr;
+        /// <summary>
+        /// currently only used to set pixel format if not YUV420P
+        /// </summary>
         public SetParametersCallback set_parameters
         {
             get { return Utils.GetDelegate<SetParametersCallback>(set_parameters_ptr); }
@@ -87,6 +108,17 @@ namespace FFmpegSharp.Interop.Format
         {
             get { return Utils.GetDelegate<InterleavePacketCallback>(interleave_packet_ptr); }
         }
+
+        /// <summary>
+        /// list of supported codec_id-codec_tag pairs, ordered by "better choice first"
+        /// the arrays are all CODEC_ID_NONE terminated
+        /// </summary>
+        AVCodecTag** codec_tag;
+
+        /// <summary>
+        /// default subtitle codec
+        /// </summary>
+        CodecID subtitle_codec;
 
         public AVOutputFormat* next;
     };
