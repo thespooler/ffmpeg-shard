@@ -1,3 +1,8 @@
+2008-04-17  Justin Cherniak <justin.cherniak@gmail.com>
+	* Interop/* : 
+		- Redid interops to match FFmpeg rev. 13712
+		- Added enums to make most consts typesafe
+
 2008-03-29  Justin Cherniak <justin.cherniak@gmail.com>
 	* DecoderStream.cs: 
 		- Refactored Height and Width to VideoDecoderStream
