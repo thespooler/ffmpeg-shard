@@ -68,7 +68,7 @@ namespace FFmpegSharp.Audio
                 offset += readLength;
                 count -= readLength;
                 m_readCursor = (m_readCursor + readLength) % m_array.Length;
-            } while (length > 0);
+            } while (count > 0);
 
             return length;
         }

@@ -1,3 +1,10 @@
+2012-01-05  Justin Cherniak <justin.cherniak@gmail.com>
+    * Major rewrite to support reading multiple streams (such as audio and 
+	video) per file
+	* Add VideoScalingStream to convert videos from one format to another
+	* Add video decoding example
+	* Only support LIBAVCODEC version 51 for the time being.  Future update to come
+
 2008-04-17  Justin Cherniak <justin.cherniak@gmail.com>
 	* Interop/Utils.cs: Remove GetString and changed all classes to use 
 	string(sbyte*) constructor.

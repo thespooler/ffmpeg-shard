@@ -34,11 +34,7 @@ namespace FFmpegSharp.Interop
     [SuppressUnmanagedCodeSecurity]
     public unsafe partial class FFmpeg
     {
-        // #if LIBAVCODEC_51
         public const string AVCODEC_DLL_NAME = "avcodec-51.dll";
-        // #else
-        //         public const string AVCODEC_DLL_NAME = "avcodec-52.dll";
-        // #endif
 
         #region "Functions"
 
@@ -96,9 +92,9 @@ namespace FFmpegSharp.Interop
         /// <param name="pix_fmt">the format of the picture</param>
         /// <param name="width">the width of the picture</param>
         /// <param name="height">the height of the picture</param>
-        /// <returns></returns>        
+        /// <returns>0 on success, &lt0 if invalid</returns>        
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern int avpicture_alloc(ref AVPicture picture, int pix_fmt, int width, int height);
+        public static extern int avpicture_alloc(out AVPicture picture, PixelFormat pix_fmt, int width, int height);
 
         /// <summary>
         /// Free a picture previously allocated by avpicture_alloc()
@@ -123,11 +119,11 @@ namespace FFmpegSharp.Interop
         /// <param name="height">The height of the image in pixels</param>
         /// <returns>Size of the image data in bytes</returns> 
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern int avpicture_fill(ref AVPicture pAVPicture, [In, Out]byte[] ptr, PixelFormat pix_fmt, int width, int height);
+        public static extern int avpicture_fill(out AVPicture pAVPicture, byte[] ptr, PixelFormat pix_fmt, int width, int height);
 
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern int avpicture_layout(ref AVPicture src, PixelFormat pix_fmt, int width, int height,
-                                           [In, Out]byte[] dest, int dest_size);
+        public static extern int avpicture_layout(AVPicture* src, PixelFormat pix_fmt, int width, int height,
+                                                  [In,Out]byte[] dest, int dest_size);
 
         /// <summary>
         /// Calculate the size in bytes that a picture of the given width and height

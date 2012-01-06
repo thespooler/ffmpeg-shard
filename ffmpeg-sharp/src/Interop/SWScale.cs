@@ -28,6 +28,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using FFmpegSharp.Interop.SWScale;
 using FFmpegSharp.Interop.Util;
+using FFmpegSharp.Interop.Codec;
 
 namespace FFmpegSharp.Interop
 {
@@ -45,6 +46,7 @@ namespace FFmpegSharp.Interop
         public static extern SwsContext* sws_getContext(int srcW, int srcH, PixelFormat srcFormat, int dstW, int dstH, PixelFormat dstFormat,
                                                         SwsFlags flags, SwsFilter* srcFilter, SwsFilter* dstFilter, double* param);
 
+        /// <returns>0 on success, -1 on failure</returns>
         [DllImport(SWSCALE_DLL_NAME)]
         public static extern int sws_scale(SwsContext* context, byte** src, int* srcStride, int srcSliceY,
                                            int srcSliceH, byte** dst, int* dstStride);

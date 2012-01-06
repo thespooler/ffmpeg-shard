@@ -33,17 +33,15 @@ using FFmpegSharp.Interop.Format;
 using FFmpegSharp.Interop.SWScale;
 using FFmpegSharp.Interop.Util;
 
-namespace FFmpegSharp.Video
+namespace FFmpegSharp
 {
-    public unsafe class VideoDecoderStream : DecoderStream
+    public unsafe class VideoDecoderStream : DecoderStream, IVideoStream
     {
         #region Fields
 
-        private PixelFormat m_pixelFormat;
-        private AVFrame* m_avFrame;
+        private AVFrame* m_avFrame = null;
         private AVPicture m_avPicture;
-        private SwsContext* m_swsContext;
-
+        private bool m_avPicture_allocated = false;
         private byte[] m_frameBuffer;
 
         #endregion
@@ -60,15 +58,10 @@ namespace FFmpegSharp.Video
             get { return m_avCodecCtx.height; }
         }
 
-        public override long Length
-        {
-            get { return (long)(Math.Ceiling(Duration.TotalSeconds * FrameRate * m_buffer.Length)); }
-        }
-
         /// <summary>
         /// Frame rate of video stream in frames/second
         /// </summary>
-        public float FrameRate
+        public double FrameRate
         {
             get
             {
@@ -81,7 +74,7 @@ namespace FFmpegSharp.Video
 
         public long FrameCount
         {
-            get { return (long)(FrameRate * RawDuration); }
+            get { return (long)(FrameRate * m_file.RawDuration); }
         }
 
         /// <summary>
@@ -92,6 +85,16 @@ namespace FFmpegSharp.Video
             get { return m_buffer.Length; }
         }
 
+        public override int UncompressedBytesPerSecond
+        {
+            get { return (int)Math.Ceiling(FrameRate * FrameSize); }
+        }
+
+        public PixelFormat PixelFormat
+        {
+            get { return m_avCodecCtx.pix_fmt; }
+        }
+
         #endregion
 
         #region Constructors
@@ -99,46 +102,28 @@ namespace FFmpegSharp.Video
         /// <summary>
         /// Constructs a new VideoDecoderStream over a specific filename.
         /// </summary>
-        /// <param name="File">File to decode</param>
-        public VideoDecoderStream(FileInfo File) : this(File.FullName) { }
-
-        /// <summary>
-        /// Constructs a new VideoDecoderStream over a specific filename.
-        /// </summary>
-        /// <param name="File">File to decode</param>
-        public VideoDecoderStream(FileStream File) : this(File.Name) { }
-
-        /// <summary>
-        /// Constructs a new VideoDecoderStream over a specific filename.
-        /// </summary>
         /// <param name="Filename">File to decode</param>
-        public VideoDecoderStream(string Filename)
-            : base(Filename, CodecType.CODEC_TYPE_VIDEO)
+        internal VideoDecoderStream(MediaFile file, ref AVStream stream)
+            : base(file, ref stream)
         {
-            m_pixelFormat = PixelFormat.PIX_FMT_RGB24;
-
             // allocate video frame
             m_avFrame = FFmpeg.avcodec_alloc_frame();
-
-            // allocate some space for the converted frame
-            m_avPicture = new AVPicture();
-            if (FFmpeg.avpicture_alloc(ref m_avPicture, (int)m_pixelFormat, m_avCodecCtx.width, m_avCodecCtx.height) != 0)
+            if (FFmpeg.avpicture_alloc(out m_avPicture, m_avCodecCtx.pix_fmt, m_avCodecCtx.width, m_avCodecCtx.height) != 0)
                 throw new DecoderException("Error allocating AVPicture");
+            m_avPicture_allocated = true;
 
-            // determine required buffer size and allocate buffer
-            int numBytes = FFmpeg.avpicture_get_size(m_pixelFormat, this.Width, this.Height);
-            m_buffer = new byte[numBytes];
+            int buffersize = FFmpeg.avpicture_get_size(m_avCodecCtx.pix_fmt, m_avCodecCtx.width, m_avCodecCtx.height);
+            if (buffersize <= 0)
+                throw new DecoderException("Invalid size returned by avpicture_get_size");
 
-            // allocate SWS context, which is used for scaling and converting image formats
-            m_swsContext = FFmpeg.sws_getContext(m_avCodecCtx.width, m_avCodecCtx.height, (int)m_avCodecCtx.pix_fmt,
-                m_avCodecCtx.width, m_avCodecCtx.height, (int)m_pixelFormat, FFmpeg.SWS_BICUBIC);
+            m_buffer = new byte[buffersize];
         }
 
         #endregion
 
         #region Methods
 
-        protected override bool DecodeNextPacket(ref AVPacket packet)
+        protected override bool DecodePacket(ref AVPacket packet)
         {
             // decode video frame
             bool frameFinished = false;
@@ -146,29 +131,16 @@ namespace FFmpegSharp.Video
             if (byteCount < 0)
                 throw new DecoderException("Couldn't decode frame");
 
-            // did we get a video frame?
-            if (frameFinished)
-            {
-                // convert the image from its native format to RGB
-                fixed (AVPicture* pPict = &m_avPicture)
-                {
-                    if (FFmpeg.sws_scale(m_swsContext, m_avFrame->data, m_avFrame->linesize, 0, m_avCodecCtx.height, pPict->data, pPict->linesize) != 0)
-                        ;// throw new DecoderException("Error during image conversion");
-                }
-
-                // copy RGB frame from unmanaged to managed memory
-                // We should be able to eliminate this!
-                fixed (int* pictureData = m_avPicture.data)
-                    Marshal.Copy(new IntPtr(pictureData[0]), m_buffer, 0, m_buffer.Length);
-
-                m_bufferUsedSize = m_buffer.Length;
-
-                return false;
-            }
+            // copy data into our managed buffer
+            if (m_avFrame->data[0] == IntPtr.Zero)
+                m_bufferUsedSize = 0;
             else
-            {
-                return true;
-            }
+                m_bufferUsedSize = FFmpeg.avpicture_layout((AVPicture*)m_avFrame, PixelFormat, Width, Height, m_buffer, m_buffer.Length);
+            
+            if (m_bufferUsedSize < 0)
+                throw new DecoderException("Error copying decoded frame into managed memory");
+
+            return frameFinished;
         }
 
         public bool ReadFrame(out byte[] frame)
@@ -191,14 +163,19 @@ namespace FFmpegSharp.Video
 
         protected override void Dispose(bool disposing)
         {
+            if (m_avFrame != null)
+            {
+                FFmpeg.av_free(m_avFrame);
+                m_avFrame = null;
+            }
+
+            if (m_avPicture_allocated)
+            {
+                FFmpeg.avpicture_free(ref m_avPicture);
+                m_avPicture_allocated = false;
+            }
+
             base.Dispose(disposing);
-
-            FFmpeg.avpicture_free(ref m_avPicture);
-        }
-
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            throw new NotImplementedException();
         }
 
         #endregion

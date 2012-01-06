@@ -29,45 +29,56 @@ using System.IO;
 using FFmpegSharp.Interop;
 using FFmpegSharp.Interop.Codec;
 using FFmpegSharp.Interop.Format;
+using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace FFmpegSharp
 {
-    public unsafe abstract class DecoderStream : Stream
+    public unsafe abstract class DecoderStream : Stream, IMediaStream
     {
         #region Fields
 
-        protected AVFormatContext m_avFormatCtx;
+        protected MediaFile m_file;
         protected AVCodecContext m_avCodecCtx;
         protected AVStream m_avStream;
         protected uint m_streamIdx;
         protected bool m_disposed;
-        protected byte[] m_buffer;
-        protected int m_bufferUsedSize;
+        protected byte[] m_buffer = null;
+        protected int m_bufferUsedSize = 0;
         protected long m_position;
+        private bool m_codecOpen = false;
+        private TimeSpan m_timestamp = TimeSpan.Zero;
+
+        private Queue<AVPacket> m_packetQueue = new Queue<AVPacket>();
+
+        private long m_rawPts;
+        private long m_rawDts;
 
         #endregion
 
         #region Properties
 
-        /// <summary>
-        /// Duration of the stream
-        /// </summary>
-        public TimeSpan Duration
+        internal Queue<AVPacket> PacketQueue
         {
-            get { return new TimeSpan((long)(RawDuration * 1e7)); }
+            get { return m_packetQueue; }
         }
 
-        public float RawDuration
+        public override long Length
         {
-            get
-            {
-                float duration = 0;
-                duration = (float)(m_avFormatCtx.duration / (double)FFmpeg.AV_TIME_BASE);
-                if (duration < 0)
-                    duration = 0;
-                return duration;
-            }
+            get { return (long)(Math.Ceiling(Duration.TotalSeconds * UncompressedBytesPerSecond)); }
         }
+
+        public TimeSpan Duration
+        {
+            get { return m_file.Duration; }
+        }
+
+        public TimeSpan Timestamp
+        {
+            get { return m_timestamp; }
+        }
+
+        public abstract int UncompressedBytesPerSecond { get; }
 
         public override bool CanRead
         {
@@ -90,68 +101,60 @@ namespace FFmpegSharp
             set { this.Seek(value, SeekOrigin.Begin); }
         }
 
+        public long Pts
+        {
+            get { return m_rawPts; }
+        }
+
+        public long Dts
+        {
+            get { return m_rawDts; }
+        }
+
         #endregion
 
         #region Constructors / destructor
 
-        /// <summary>
-        /// Constructs a new AudioDecoderStream over a specific filename.
-        /// </summary>
-        /// <param name="File">File to decode</param>
-        public DecoderStream(FileInfo File, CodecType codecType) : this(File.FullName, codecType) { }
-
-        /// <summary>
-        /// Constructs a new AudioDecoderStream over a specific filename.
-        /// </summary>
-        /// <param name="File">File to decode</param>
-        public DecoderStream(FileStream File, CodecType codecType) : this(File.Name, codecType) { }
-
-        /// <summary>
-        /// Constructs a new AudioDecoderStream over a specific filename.
-        /// </summary>
-        /// <param name="Filename">File to decode</param>
-        public DecoderStream(string Filename, CodecType codecType)
+        public DecoderStream(MediaFile file, AVStream* stream)
         {
             // Initialize instance variables
             m_disposed = false;
             m_position = m_bufferUsedSize = 0;
+            m_file = file;
+            m_avStream = *stream;
 
-            // Open FFmpeg
-            FFmpeg.av_register_all();
-
-            // Open the file with FFmpeg
-            if (FFmpeg.av_open_input_file(out m_avFormatCtx, Filename) != 0)
-                throw new DecoderException("Couldn't open file");
-
-            if (FFmpeg.av_find_stream_info(ref m_avFormatCtx) < 0)
-                throw new DecoderException("Couldn't find stream info");
-
-            if (m_avFormatCtx.nb_streams < 1)
-                throw new DecoderException("No streams found");
-
-            // Find the first stream in the file of the specified type 
-            // (eventually might support selecting streams)
-            m_avCodecCtx = *m_avFormatCtx.streams[0]->codec;
-
-            for (m_streamIdx = 0; m_streamIdx < m_avFormatCtx.nb_streams; m_streamIdx++)
-            {
-                m_avStream = *m_avFormatCtx.streams[m_streamIdx];
-                m_avCodecCtx = *m_avFormatCtx.streams[m_streamIdx]->codec;
-
-                if (m_avCodecCtx.codec_type == codecType)
-                    break;
-            }
-
-            if (m_avCodecCtx.codec_type != codecType)
-                throw new DecoderException("No stream of specified type found");
+            m_avCodecCtx = *m_avStream.codec;
 
             // Open the decoding codec
             AVCodec* avCodec = FFmpeg.avcodec_find_decoder(m_avCodecCtx.codec_id);
             if (avCodec == null)
                 throw new DecoderException("No decoder found");
 
-            if (FFmpeg.avcodec_open(ref m_avCodecCtx, ref *avCodec) < 0)
+            if (FFmpeg.avcodec_open(ref m_avCodecCtx, avCodec) < 0)
                 throw new DecoderException("Error opening codec");
+
+            m_codecOpen = true;
+        }
+
+        public DecoderStream(MediaFile file, ref AVStream stream)
+        {
+            // Initialize instance variables
+            m_disposed = false;
+            m_position = m_bufferUsedSize = 0;
+            m_file = file;
+            m_avStream = stream;
+
+            m_avCodecCtx = *m_avStream.codec;
+
+            // Open the decoding codec
+            AVCodec* avCodec = FFmpeg.avcodec_find_decoder(m_avCodecCtx.codec_id);
+            if (avCodec == null)
+                throw new DecoderException("No decoder found");
+
+            if (FFmpeg.avcodec_open(ref m_avCodecCtx, avCodec) < 0)
+                throw new DecoderException("Error opening codec");
+
+            m_codecOpen = true;
         }
 
         ~DecoderStream()
@@ -165,27 +168,10 @@ namespace FFmpegSharp
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            int totalWritten = 0;
+            int totalRead = 0;
 
             while (count > 0)
             {
-                if (m_bufferUsedSize > 0)
-                {
-                    int len = Math.Min(count, m_bufferUsedSize);
-
-                    Buffer.BlockCopy(m_buffer, 0, buffer, offset, len);
-
-                    m_bufferUsedSize -= len;
-                    offset += len;
-                    count -= len;
-                    totalWritten += len;
-
-                    if (m_bufferUsedSize > 0)
-                        Buffer.BlockCopy(m_buffer, len, m_buffer, 0, m_bufferUsedSize);
-                }
-
-                Debug.Assert(m_bufferUsedSize >= 0);
-
                 if (m_bufferUsedSize == 0)
                 {
                     try
@@ -197,14 +183,32 @@ namespace FFmpegSharp
                         break;
                     }
                 }
+
+                if (m_bufferUsedSize > 0)
+                {
+                    int len = Math.Min(count, m_bufferUsedSize);
+
+                    Utils.CopyArray(m_buffer, 0, buffer, offset, len);
+
+                    m_bufferUsedSize -= len;
+                    offset += len;
+                    count -= len;
+                    totalRead += len;
+
+                    if (m_bufferUsedSize > 0)
+                        Utils.CopyArray(m_buffer, len, m_buffer, 0, m_bufferUsedSize);
+                }
+
+                Debug.Assert(m_bufferUsedSize >= 0);
             }
 
-            m_position += totalWritten;
+            m_position += totalRead;
+            m_timestamp += TimeSpan.FromSeconds(totalRead / UncompressedBytesPerSecond);
 
-            if (totalWritten == 0)
+            if (totalRead == 0)
                 return -1;
 
-            return totalWritten;
+            return totalRead;
         }
 
         private void ReadNextPacket()
@@ -215,40 +219,79 @@ namespace FFmpegSharp
             if (m_disposed)
                 return;
 
-            AVPacket packet = new AVPacket();
-
-            FFmpeg.av_init_packet(ref packet);
-
+            AVPacket packet;
             bool retry = false;
-
             do
             {
-                // Read a frame of compressed audio data
-                int r;
-                if ((r = FFmpeg.av_read_frame(ref m_avFormatCtx, ref packet)) < 0)
-                    throw new System.IO.EndOfStreamException();
+                while (PacketQueue.Count == 0)
+                    m_file.EnqueueNextPacket();
+
+                packet = PacketQueue.Dequeue();
 
                 try
                 {
-                    // Make sure the packet is a packet of the correct type and has data
-                    if (packet.stream_index != m_streamIdx ||
-                            packet.data == IntPtr.Zero)
-                    {
-                        retry = true;
-                        continue;
-                    }
-
-                    retry = DecodeNextPacket(ref packet);
+                    retry = !DecodePacket(ref packet);
                 }
                 finally
                 {
                     FFmpeg.av_free_packet(ref packet);
                 }
-
             } while (retry);
+
+            m_rawDts = packet.dts;
+            m_rawPts = packet.pts;
         }
 
-        protected abstract bool DecodeNextPacket(ref AVPacket packet);
+        protected abstract bool DecodePacket(ref AVPacket packet);
+
+        public override long Seek(long offset, SeekOrigin origin)
+        {
+            TimeSpan position = Seek(TimeSpan.FromSeconds(offset / UncompressedBytesPerSecond), origin);
+
+            return (long)(position.TotalSeconds * UncompressedBytesPerSecond);
+        }
+
+        public TimeSpan Seek(TimeSpan offset, SeekOrigin origin)
+        {
+            TimeSpan newPosition = TimeSpan.Zero;
+
+            switch (origin)
+            {
+                case SeekOrigin.Begin:
+                    newPosition = offset;
+                    break;
+                case SeekOrigin.Current:
+                    newPosition = offset + Timestamp;
+                    break;
+                case SeekOrigin.End:
+                    newPosition = Duration - Timestamp;
+                    break;
+            }
+
+            if (newPosition < TimeSpan.Zero)
+                newPosition = TimeSpan.Zero;
+            else if (newPosition > Duration)
+                newPosition = Duration;
+
+            bool backward = newPosition > Timestamp;
+
+            AVSEEK_FLAG flags = AVSEEK_FLAG.Any | (backward ? AVSEEK_FLAG.Backward: 0);
+            long position = (long)(newPosition.TotalSeconds * FFmpeg.AV_TIME_BASE);
+
+            if (FFmpeg.av_seek_frame(ref m_file.FormatContext, -1, position, flags) < 0)
+            {
+                m_position = Length;
+                m_timestamp = Duration;
+                return Duration;
+            }
+
+            FFmpeg.avcodec_flush_buffers(ref m_avCodecCtx);
+
+            m_timestamp = offset;
+            m_position = (long)(m_timestamp.TotalSeconds * UncompressedBytesPerSecond);
+
+            return m_timestamp;
+        }
 
         public override void Flush()
         {
@@ -269,15 +312,11 @@ namespace FFmpegSharp
         {
             if (!m_disposed)
             {
-                if (disposing)
-                    m_buffer = null;
-
                 m_disposed = true;
 
-                if (m_avCodecCtx.codec != null)
-                    FFmpeg.avcodec_close(ref m_avCodecCtx);
-
-                FFmpeg.av_close_input_file(ref m_avFormatCtx);
+                // BROKEN: Throwing exception on video codec close with MPEG4
+//                if (m_codecOpen)
+//                    FFmpeg.avcodec_close(ref m_avCodecCtx);
             }
         }
 

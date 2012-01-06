@@ -53,6 +53,12 @@ namespace FFmpegSharp.Interop
                 return Marshal.GetDelegateForFunctionPointer(ptr, typeof(T)) as T;
         }
 
+        public unsafe static void CopyArray(byte[] source, int sourceStartIdx, byte[] dest, int destStartIdx, int length)
+        {
+            fixed (byte* pSource = source)
+                CopyArray(pSource, sourceStartIdx, dest, destStartIdx, length);
+        }
+
         public unsafe static void CopyArray(IntPtr source, int sourceStartIdx, byte[] dest, int destStartIdx, int length)
         {
             CopyArray((byte*)source, sourceStartIdx, dest, destStartIdx, length);

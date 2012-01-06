@@ -3,16 +3,15 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using FFmpegSharp.Video;
 
 namespace FFmpegSharp.Examples
 {
     public partial class VideoPlayerControl : Control
     {
-        VideoDecoderStream m_stream;
+        IVideoStream m_stream;
         Timer m_timer;
 
-        public VideoDecoderStream Stream
+        public IVideoStream Stream
         {
             get { return m_stream; }
             set
@@ -27,6 +26,8 @@ namespace FFmpegSharp.Examples
                 }
                 else
                 {
+                    if (m_timer != null)
+                        m_timer.Stop();
                     m_timer = null;
                 }
             }
@@ -57,7 +58,7 @@ namespace FFmpegSharp.Examples
                     Bitmap image = new Bitmap(m_stream.Width, m_stream.Height);
 
                     BitmapData data = image.LockBits(new Rectangle(0, 0, image.Width, image.Height),
-                        ImageLockMode.WriteOnly, PixelFormat.Format24bppRgb);
+                        ImageLockMode.WriteOnly, PixelFormat.Format32bppRgb);
 
                     Marshal.Copy(frame, 0, data.Scan0, frame.Length);
 

@@ -30,8 +30,9 @@ using System.Xml.Serialization;
 using FFmpegSharp.Interop;
 using FFmpegSharp.Interop.Codec;
 using FFmpegSharp.Interop.Format;
+using FFmpegSharp.Util;
 
-namespace FFmpegSharp.Audio
+namespace FFmpegSharp
 {
     public unsafe class AudioEncoderStream : Stream
     {
@@ -122,7 +123,7 @@ namespace FFmpegSharp.Audio
             if (outCodec == null)
                 throw new EncoderException("Could not find encoder");
 
-            if (FFmpeg.avcodec_open(ref m_avCodecCtx, ref *outCodec) < 0)
+            if (FFmpeg.avcodec_open(ref m_avCodecCtx, outCodec) < 0)
                 throw new EncoderException("Could not open codec.");
 
             // Open and prep file
@@ -203,7 +204,7 @@ namespace FFmpegSharp.Audio
                 if (m_avCodecCtx.codec != null)
                     FFmpeg.avcodec_close(ref m_avCodecCtx);
 
-                for (uint i = 0; i < m_avFormatCtx.nb_streams; i++)
+                for (int i = 0; i < m_avFormatCtx.nb_streams; i++)
                 {
                     IntPtr ptr = (IntPtr)m_avFormatCtx.streams[i]->codec;
                     FFmpeg.av_freep(ref ptr);

@@ -260,7 +260,7 @@ namespace FFmpegSharp.Interop.Codec
 
         public void* priv_data;
 
-#if LIBAVCODEC_51
+#if !LIBAVCODEC_52
         /* unused, FIXME remove*/
         public int rtp_mode;
 #endif
@@ -583,7 +583,7 @@ namespace FFmpegSharp.Interop.Codec
          */
         public float dark_masking;
 
-#if LIBAVCODEC_51
+#if !LIBAVCODEC_52
         /* for binary compatibility */
         public int unused;
 #endif
