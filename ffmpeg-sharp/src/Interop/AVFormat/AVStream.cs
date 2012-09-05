@@ -49,10 +49,6 @@ namespace FFmpegSharp.Interop.Format
 
         public IntPtr priv_data;
 
-        public long codec_info_duration; // internal data used in av_find_stream_info()
-
-        public int codec_info_nb_frames;
-
 #pragma warning disable 618
         public AVFrac pts; // encoding: PTS generation when outputing stream 
 #pragma warning restore 618
@@ -66,53 +62,82 @@ namespace FFmpegSharp.Interop.Format
 
         public AVRational time_base;
 
-        public int pts_wrap_bits; // number of bits in pts (used for wrapping control) 
-
-        public int stream_copy; // if TRUE, just copy stream 
-
-
-        public AVDiscard discard; // selects which packets can be discarded at will and dont need to be demuxed
-
-        public float quality;
-
         public long start_time;
 
         // decoding: duration of the stream, in AV_TIME_BASE fractional seconds. 
         public long duration;
 
-        private fixed sbyte language_ptr[4]; // ISO 639 3-letter language code (empty string if undefined)
-        public string language
-        {
-            get
-            {
-                fixed (sbyte* ptr = language_ptr)
-                    return new string(ptr);
-            }
-            set
-            {
-                fixed (sbyte* ptr = language_ptr)
-                    Utils.SetString(ptr, 4, value);
-            }
-        }
+        public long nb_frames; // number of frames in this stream if known or 0
 
-        public int need_parsing;
+        public AVDisposition disposition;
 
-        public AVCodecParserContext* AVCodecParserContext;
+        public AVDiscard discard;
+
+        public AVRational sample_aspect_ratio;
+
+        public AVDictionary* metadata;
+
+        public AVRational avg_frame_rate;
+
+        public AVPacket attached_pic;
+
+        IntPtr stream_info_priv;
+
+        public int pts_wrap_bits;
+
+        public long reference_dts;
+
+        public long first_dts;
 
         public long cur_dts;
 
-        public int last_IP_duration;
-
         public long last_IP_pts;
 
-        public AVIndexEntry* index_entries; // only used if the format does not support seeking natively
+        public int last_IP_duration;
+
+        public int probe_packets;
+
+        public int codec_info_nb_frames;
+
+        public int stream_identifier;
+
+        public long interleaver_chunk_size;
+        public long interleaver_chunk_duration;
+
+        public AVStreamParseType need_parsing;
+
+        public AVCodecParserContext* parser;
+
+        public AVPacketList* last_in_packet_buffer;
+
+        AVProbeData probe_data;
+        
+        const int MAX_REORDER_DELAY = 16;
+        public fixed long pts_buffer[MAX_REORDER_DELAY+1];
+
+        public AVIndexEntry* index_entries;
 
         public int nb_index_entries;
-
         public uint index_entries_allocated_size;
 
-        public long nb_frames; // number of frames in this stream if known or 0
-
-        public fixed long pts_buffer[FFmpeg.MAX_REORDER_DELAY + 1]; // pts_buffer[MAX_REORDER_DELAY+1]
+        public int request_probe;
+        public int skip_to_keyframe;
+        public int skip_samples;
     };
+
+    public enum AVStreamParseType
+    { }
+
+    public enum AVDisposition
+    { }
+
+    public enum AVDiscard
+    {
+        AVDISCARD_NONE = -16, ///< discard nothing
+        AVDISCARD_DEFAULT = 0, ///< discard useless packets like 0 size packets in avi
+        AVDISCARD_NONREF = 8, ///< discard all non reference
+        AVDISCARD_BIDIR = 16, ///< discard all bidirectional frames
+        AVDISCARD_NONKEY = 32, ///< discard all frames except keyframes
+        AVDISCARD_ALL = 48, ///< discard all
+    }
 }

@@ -26,9 +26,10 @@ namespace FFmpegSharp.Interop.Format
     [Flags]
     public enum AVSEEK_FLAG : int
     {
-        Any = FFmpeg.AVSEEK_FLAG_ANY,
-        Backward = FFmpeg.AVSEEK_FLAG_BACKWARD,
-        Byte = FFmpeg.AVSEEK_FLAG_BYTE,
+        Any = FFmpeg.AVSeekFlag.AVSEEK_FLAG_ANY,
+        Backward = FFmpeg.AVSeekFlag.AVSEEK_FLAG_BACKWARD,
+        Byte = FFmpeg.AVSeekFlag.AVSEEK_FLAG_BYTE,
+        Frame = FFmpeg.AVSeekFlag.AVSEEK_FLAG_FRAME,
     }
 
     [Flags]

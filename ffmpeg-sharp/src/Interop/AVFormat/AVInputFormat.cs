@@ -25,17 +25,19 @@
 
 using System;
 using System.Runtime.InteropServices;
+using FFmpegSharp.Interop.Util;
 
-namespace FFmpegSharp.Interop.Format
+namespace FFmpegSharp.Interop.Format.Input
 {
     public delegate int ReadProbeCallback([In, Out]AVProbeData pAVProbeData);
-    public delegate int ReadHeaderCallback([In, Out]AVFormatContext pAVFormatContext, AVFormatParameters pAVFormatParameters);
+    public delegate int ReadHeaderCallback([In, Out]AVFormatContext pAVFormatContext);
     public delegate int ReadPacketCallback([In, Out]AVFormatContext pAVFormatContext, [In, Out]AVPacket pAVPacket);
     public delegate int ReadCloseCallback([In, Out]AVFormatContext pAVFormatContext);
     public delegate int ReadSeekCallback([In, Out]AVFormatContext pAVFormatContext, int stream_index, long timestamp, int flags);
     public delegate long ReadTimestampCallback([In, Out]AVFormatContext pAVFormatContext, int stream_index, ref long pos, long pos_limit);
     public delegate int ReadPlayCallback([In, Out]AVFormatContext pAVFormatContext);
     public delegate int ReadPauseCallback([In, Out]AVFormatContext pAVFormatContext);
+    public delegate int ReadSeek2Callback([In, Out]AVFormatContext pAVFormatContext, int stream_index, long min_ts, long ts, long max_ts, int flags);
 
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct AVInputFormat
@@ -52,7 +54,29 @@ namespace FFmpegSharp.Interop.Format
             get { return new string(long_name_ptr); }
         }
 
-        public int priv_data_size;
+        public int flags;
+
+        private sbyte* extensions_ptr;
+        public string extensions
+        {
+            get { return new string(extensions_ptr); }
+        }
+
+        public AVCodecTag** codec_tag;
+
+        public AVClass* priv_class;
+
+        public AVInputFormat* next;
+
+        /**
+         * Raw demuxers store their codec ID here.
+         */
+        int raw_codec_id;
+
+        /**
+         * Size of private data so that it can be allocated in the wrapper.
+         */
+        int priv_data_size;
 
         private IntPtr read_probe_ptr;
         public ReadProbeCallback read_probe
@@ -89,17 +113,7 @@ namespace FFmpegSharp.Interop.Format
         {
             get { return Utils.GetDelegate<ReadTimestampCallback>(read_timestamp_ptr); }
         }
-
-        public InputFormatFlags flags;
-
-        private sbyte* extensions_ptr;
-        public string extensions
-        {
-            get { return new string(extensions_ptr); }
-        }
-
-        public int value;
-
+        
         private IntPtr read_play_ptr;
         public ReadPlayCallback read_play
         {
@@ -112,6 +126,11 @@ namespace FFmpegSharp.Interop.Format
             get { return Utils.GetDelegate<ReadPauseCallback>(read_pause_ptr); }
         }
 
-        public AVInputFormat* next;
+        private IntPtr read_seek2_ptr;
+        public ReadSeek2Callback read_seek2
+        {
+            get { return Utils.GetDelegate<ReadSeek2Callback>(read_seek2_ptr); }
+        }
+
     };
 }

@@ -66,13 +66,11 @@ namespace FFmpegSharp
             {
                 switch (m_avCodecCtx.sample_fmt)
                 {
-                    case SampleFormat.SAMPLE_FMT_U8:
+                    case AVSampleFormat.AV_SAMPLE_FMT_U8:
                         return 8;
-                    case SampleFormat.SAMPLE_FMT_S16:
+                    case AVSampleFormat.AV_SAMPLE_FMT_S16:
                         return 16;
-                    case SampleFormat.SAMPLE_FMT_S24:
-                        return 24;
-                    case SampleFormat.SAMPLE_FMT_S32:
+                    case AVSampleFormat.AV_SAMPLE_FMT_S32:
                         return 32;
                     default:
                         throw new Exception("Unknown sample size.");

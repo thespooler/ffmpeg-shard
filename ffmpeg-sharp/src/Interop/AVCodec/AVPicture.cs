@@ -35,10 +35,10 @@ namespace FFmpegSharp.Interop.Codec
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct AVPicture
     {
-        public IntPtrArray4 data;
+        public fixed int data[8];
         /// <summary>
         /// number of bytes per line
         /// </summary>
-        public fixed int linesize[4];
+        public fixed int linesize[8];
     };
 }

@@ -39,7 +39,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;LIBAVFORMAT_54</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -66,14 +66,17 @@
     <None Include="AudioEncoderStream.cs">
       <SubType>Code</SubType>
     </None>
+    <Compile Include="Interop\AVUtil.cs" />
     <Compile Include="FifoMemoryStream.cs" />
     <Compile Include="IAudioStream.cs" />
     <Compile Include="IMediaStream.cs" />
+    <Compile Include="Interop\AVCodec\AVProfile.cs" />
     <Compile Include="Interop\AVFormat\AVChapter.cs" />
     <Compile Include="Interop\AVFormat\AVCodecTag.cs" />
     <Compile Include="Interop\AVFormat\AVProgram.cs" />
     <Compile Include="Interop\AVFormat\Enums.cs" />
-    <Compile Include="Interop\AVStreamArray20.cs" />
+    <Compile Include="Interop\AVFormat\AVIOContext.cs" />
+    <Compile Include="Interop\AVUtil\AVDictionary.cs" />
     <Compile Include="Interop\AVUtil\AVRounding.cs" />
     <Compile Include="Interop\BrokenAttribute.cs" />
     <Compile Include="Interop\IntFloat_ReadWrite.cs" />
@@ -150,9 +153,6 @@
     <Compile Include="Interop\AVFormat\AVFormatContext.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Interop\AVFormat\AVFormatParameters.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Interop\AVFormat\AVFrac.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -179,19 +179,13 @@
     <Compile Include="Interop\AVFormat\AVStream.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Interop\AVIO.cs">
+    <Compile Include="Interop\AVFormat\URLContext.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Interop\AVIO\ByteIOContext.cs">
+    <Compile Include="Interop\AVFormat\URLPoolEntry.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Interop\AVIO\URLContext.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interop\AVIO\URLPoolEntry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interop\AVIO\URLProtocol.cs">
+    <Compile Include="Interop\AVFormat\URLProtocol.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Interop\SWScale\Enums.cs" />

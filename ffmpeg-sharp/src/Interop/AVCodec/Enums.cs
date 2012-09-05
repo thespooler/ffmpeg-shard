@@ -34,7 +34,7 @@ namespace FFmpegSharp.Interop.Codec
     /// There may be slight deviations from the principle due to implementation
     /// details.
     /// </summary>
-    public enum CodecID
+    public enum AVCodecID
     {
         CODEC_ID_NONE,
         CODEC_ID_MPEG1VIDEO,
@@ -289,14 +289,16 @@ namespace FFmpegSharp.Interop.Codec
 
     public enum AVDiscard
     {
-        //we leave some space between them for extensions (drop some keyframes for intra only or drop just some bidir frames)
+        /* We leave some space between them for extensions (drop some
+         * keyframes for intra-only or drop just some bidir frames). */
         AVDISCARD_NONE = -16, ///< discard nothing
         AVDISCARD_DEFAULT = 0, ///< discard useless packets like 0 size packets in avi
         AVDISCARD_NONREF = 8, ///< discard all non reference
         AVDISCARD_BIDIR = 16, ///< discard all bidirectional frames
         AVDISCARD_NONKEY = 32, ///< discard all frames except keyframes
-        AVDISCARD_ALL = 48, ///< discard all
-    };
+        AVDISCARD_ALL = 48 ///< discard all
+    }
+
 
     public enum FF_LOSS : int
     {
@@ -634,5 +636,126 @@ namespace FFmpegSharp.Interop.Codec
         SkipRD = FFmpeg.CODEC_FLAG2_SKIP_RD,
         StrictGOP = FFmpeg.CODEC_FLAG2_STRICT_GOP,
         WPred = FFmpeg.CODEC_FLAG2_WPRED
+    }
+
+
+    public enum AVAudioServiceType
+    {
+        AV_AUDIO_SERVICE_TYPE_MAIN = 0,
+        AV_AUDIO_SERVICE_TYPE_EFFECTS = 1,
+        AV_AUDIO_SERVICE_TYPE_VISUALLY_IMPAIRED = 2,
+        AV_AUDIO_SERVICE_TYPE_HEARING_IMPAIRED = 3,
+        AV_AUDIO_SERVICE_TYPE_DIALOGUE = 4,
+        AV_AUDIO_SERVICE_TYPE_COMMENTARY = 5,
+        AV_AUDIO_SERVICE_TYPE_EMERGENCY = 6,
+        AV_AUDIO_SERVICE_TYPE_VOICE_OVER = 7,
+        AV_AUDIO_SERVICE_TYPE_KARAOKE = 8,
+        AV_AUDIO_SERVICE_TYPE_NB                    ///< Not part of ABI
+    }
+
+    public enum AVChromaLocation
+    {
+        AVCHROMA_LOC_UNSPECIFIED = 0,
+        AVCHROMA_LOC_LEFT = 1, ///< mpeg2/4, h264 default
+        AVCHROMA_LOC_CENTER = 2, ///< mpeg1, jpeg, h263
+        AVCHROMA_LOC_TOPLEFT = 3, ///< DV
+        AVCHROMA_LOC_TOP = 4,
+        AVCHROMA_LOC_BOTTOMLEFT = 5,
+        AVCHROMA_LOC_BOTTOM = 6,
+        AVCHROMA_LOC_NB              ///< Not part of ABI
+    }
+
+    public enum AVColorPrimaries
+    {
+        AVCOL_PRI_BT709 = 1, ///< also ITU-R BT1361 / IEC 61966-2-4 / SMPTE RP177 Annex B
+        AVCOL_PRI_UNSPECIFIED = 2,
+        AVCOL_PRI_BT470M = 4,
+        AVCOL_PRI_BT470BG = 5, ///< also ITU-R BT601-6 625 / ITU-R BT1358 625 / ITU-R BT1700 625 PAL & SECAM
+        AVCOL_PRI_SMPTE170M = 6, ///< also ITU-R BT601-6 525 / ITU-R BT1358 525 / ITU-R BT1700 NTSC
+        AVCOL_PRI_SMPTE240M = 7, ///< functionally identical to above
+        AVCOL_PRI_FILM = 8,
+        AVCOL_PRI_NB ///< Not part of ABI
+    }
+
+    public enum AVColorRange
+    {
+        AVCOL_RANGE_UNSPECIFIED = 0,
+        AVCOL_RANGE_MPEG = 1, ///< the normal 219*2^(n-8) "MPEG" YUV ranges
+        AVCOL_RANGE_JPEG = 2, ///< the normal     2^n-1   "JPEG" YUV ranges
+        AVCOL_RANGE_NB              ///< Not part of ABI
+    }
+
+    public enum AVColorSpace
+    {
+        AVCOL_SPC_RGB = 0,
+        AVCOL_SPC_BT709 = 1, ///< also ITU-R BT1361 / IEC 61966-2-4 xvYCC709 / SMPTE RP177 Annex B
+        AVCOL_SPC_UNSPECIFIED = 2,
+        AVCOL_SPC_FCC = 4,
+        AVCOL_SPC_BT470BG = 5, ///< also ITU-R BT601-6 625 / ITU-R BT1358 625 / ITU-R BT1700 625 PAL & SECAM / IEC 61966-2-4 xvYCC601
+        AVCOL_SPC_SMPTE170M = 6, ///< also ITU-R BT601-6 525 / ITU-R BT1358 525 / ITU-R BT1700 NTSC / functionally identical to above
+        AVCOL_SPC_SMPTE240M = 7,
+        AVCOL_SPC_YCOCG = 8, ///< Used by Dirac / VC-2 and H.264 FRext, see ITU-T SG16
+        AVCOL_SPC_NB              ///< Not part of ABI
+    }
+
+    public enum AVColorTransferCharacteristic
+    {
+        AVCOL_TRC_BT709 = 1, ///< also ITU-R BT1361
+        AVCOL_TRC_UNSPECIFIED = 2,
+        AVCOL_TRC_GAMMA22 = 4, ///< also ITU-R BT470M / ITU-R BT1700 625 PAL & SECAM
+        AVCOL_TRC_GAMMA28 = 5, ///< also ITU-R BT470BG
+        AVCOL_TRC_SMPTE240M = 7,
+        AVCOL_TRC_NB ///< Not part of ABI
+    }
+
+    public enum AVFieldOrder
+    {
+        AV_FIELD_UNKNOWN,
+        AV_FIELD_PROGRESSIVE,
+        AV_FIELD_TT,          //< Top coded_first, top displayed first
+        AV_FIELD_BB,          //< Bottom coded first, bottom displayed first
+        AV_FIELD_TB,          //< Top coded first, bottom displayed first
+        AV_FIELD_BT          //< Bottom coded first, top displayed first
+    }
+
+    public enum AVMediaType
+    {
+        AVMEDIA_TYPE_UNKNOWN = -1,  ///< Usually treated as AVMEDIA_TYPE_DATA
+        AVMEDIA_TYPE_VIDEO,
+        AVMEDIA_TYPE_AUDIO,
+        AVMEDIA_TYPE_DATA,          ///< Opaque data information usually continuous
+        AVMEDIA_TYPE_SUBTITLE,
+        AVMEDIA_TYPE_ATTACHMENT,    ///< Opaque data information usually sparse
+        AVMEDIA_TYPE_NB
+    }
+
+    public enum AVPictureType
+    {
+        AV_PICTURE_TYPE_NONE = 0, ///< Undefined
+        AV_PICTURE_TYPE_I,     ///< Intra
+        AV_PICTURE_TYPE_P,     ///< Predicted
+        AV_PICTURE_TYPE_B,     ///< Bi-dir predicted
+        AV_PICTURE_TYPE_S,     ///< S(GMC)-VOP MPEG4
+        AV_PICTURE_TYPE_SI,    ///< Switching Intra
+        AV_PICTURE_TYPE_SP,    ///< Switching Predicted
+        AV_PICTURE_TYPE_BI    ///< BI type
+    }
+
+    public enum AVSampleFormat
+    {
+        AV_SAMPLE_FMT_NONE = -1,
+        AV_SAMPLE_FMT_U8,          ///< unsigned 8 bits
+        AV_SAMPLE_FMT_S16,         ///< signed 16 bits
+        AV_SAMPLE_FMT_S32,         ///< signed 32 bits
+        AV_SAMPLE_FMT_FLT,         ///< float
+        AV_SAMPLE_FMT_DBL,         ///< double
+
+        AV_SAMPLE_FMT_U8P,         ///< unsigned 8 bits, planar
+        AV_SAMPLE_FMT_S16P,        ///< signed 16 bits, planar
+        AV_SAMPLE_FMT_S32P,        ///< signed 32 bits, planar
+        AV_SAMPLE_FMT_FLTP,        ///< float, planar
+        AV_SAMPLE_FMT_DBLP,        ///< double, planar
+
+        AV_SAMPLE_FMT_NB           ///< Number of sample formats. DO NOT USE if linking dynamically
     }
 }

@@ -1,3 +1,6 @@
+2012-09-05  Martin Cyr <mcyr@innvue.com>
+	* Update for support of LIBAVCODEC 54
+
 2012-01-05  Justin Cherniak <justin.cherniak@gmail.com>
     * Major rewrite to support reading multiple streams (such as audio and 
 	video) per file

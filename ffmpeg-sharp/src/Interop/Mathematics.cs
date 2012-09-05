@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using FFmpegSharp.Interop.Util;
-using FFmpegSharp.Interop.AVUtil;
 using System.Runtime.InteropServices;
 
 namespace FFmpegSharp.Interop

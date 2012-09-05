@@ -26,14 +26,16 @@
 using System;
 using System.Runtime.InteropServices;
 using FFmpegSharp.Interop.Codec;
+using FFmpegSharp.Interop.Util;
 
-namespace FFmpegSharp.Interop.Format
+namespace FFmpegSharp.Interop.Format.Output
 {
     public delegate int WriteHeader(ref AVFormatContext pAVFormatContext);
     public delegate int WritePacket(ref AVFormatContext pAVFormatContext, ref AVPacket pAVPacket);
     public delegate int WriteTrailer(ref AVFormatContext pAVFormatContext);
-    public delegate int SetParametersCallback(ref AVFormatContext pAVFormatContext, ref AVFormatParameters avFormatParameters);
     public delegate int InterleavePacketCallback(ref AVFormatContext pAVFormatContext, ref AVPacket pOutAVPacket, ref AVPacket pInAVPacket, int flush);
+    public delegate int QueryCodecCallback(AVCodecID id, int std_compliance);
+    public delegate void GetOutputTimestampCallback(ref AVFormatContext pAVFormatContext, int stream, ref long dts, ref long wall);
 
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct AVOutputFormat
@@ -62,17 +64,19 @@ namespace FFmpegSharp.Interop.Format
             get { return new string(extensions_ptr); }
         }
 
+        public AVCodecID audio_codec;
+        public AVCodecID video_codec;
+        public AVCodecID subtitle_codec;
+
+        public int flags;
+
+        public AVCodecTag** codec_tag;
+
+        public AVClass* priv_class;
+
+        public AVOutputFormat* next;
+
         public int priv_data_size;
-
-        /// <summary>
-        /// default audio codec 
-        /// </summary>
-        public CodecID audio_codec;
-
-        /// <summary>
-        /// default video codec
-        /// </summary>
-        public CodecID video_codec;
 
         private IntPtr write_header_ptr;
         public WriteHeader write_header
@@ -92,34 +96,22 @@ namespace FFmpegSharp.Interop.Format
             get { return Utils.GetDelegate<WriteTrailer>(write_trailer_ptr); }
         }
 
-        public OutputFormatFlags flags;
-
-        private IntPtr set_parameters_ptr;
-        /// <summary>
-        /// currently only used to set pixel format if not YUV420P
-        /// </summary>
-        public SetParametersCallback set_parameters
-        {
-            get { return Utils.GetDelegate<SetParametersCallback>(set_parameters_ptr); }
-        }
-
         private IntPtr interleave_packet_ptr;
         public InterleavePacketCallback interleave_packet
         {
             get { return Utils.GetDelegate<InterleavePacketCallback>(interleave_packet_ptr); }
         }
 
-        /// <summary>
-        /// list of supported codec_id-codec_tag pairs, ordered by "better choice first"
-        /// the arrays are all CODEC_ID_NONE terminated
-        /// </summary>
-        AVCodecTag** codec_tag;
+        private IntPtr query_codec_ptr;
+        public QueryCodecCallback query_codec
+        {
+            get { return Utils.GetDelegate<QueryCodecCallback>(query_codec_ptr); }
+        }
 
-        /// <summary>
-        /// default subtitle codec
-        /// </summary>
-        CodecID subtitle_codec;
-
-        public AVOutputFormat* next;
+        private IntPtr get_output_timestamp_ptr;
+        public GetOutputTimestampCallback get_output_timestamp
+        {
+            get { return Utils.GetDelegate<GetOutputTimestampCallback>(get_output_timestamp_ptr); }
+        }
     };
 }

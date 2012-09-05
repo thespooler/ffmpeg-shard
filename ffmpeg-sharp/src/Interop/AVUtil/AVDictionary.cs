@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace FFmpegSharp.Interop.AVUtil
+namespace FFmpegSharp.Interop.Util
 {
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct AVDictionary

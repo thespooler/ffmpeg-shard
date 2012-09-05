@@ -28,13 +28,15 @@ using System.Runtime.InteropServices;
 using System.Security;
 using FFmpegSharp.Interop.Codec;
 using FFmpegSharp.Interop.Util;
+using FFmpegSharp.Interop.Codec.BitStream;
+using FFmpegSharp.Interop.Format;
 
 namespace FFmpegSharp.Interop
 {
     [SuppressUnmanagedCodeSecurity]
     public unsafe partial class FFmpeg
     {
-        public const string AVCODEC_DLL_NAME = "avcodec-51.dll";
+        public const string AVCODEC_DLL_NAME = "avcodec-54.dll";
 
         #region "Functions"
 
@@ -256,7 +258,7 @@ namespace FFmpegSharp.Interop
         public static extern void avcodec_init();
 
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern void register_avcodec(ref AVCodec pAVCodec);
+        public static extern void avcodec_register(ref AVCodec pAVCodec);
 
         /// <summary>
         /// Finds an encoder with a matching Codec ID
@@ -264,7 +266,7 @@ namespace FFmpegSharp.Interop
         /// <param name="id">CodecID of the requested encoder</param>
         /// <returns>An encoder if one was found, NULL otherwise</returns>
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern AVCodec* avcodec_find_encoder(CodecID id);
+        public static extern AVCodec* avcodec_find_encoder(AVCodecID id);
 
         /// <summary>
         /// Finds an encoder with the specified name.
@@ -275,7 +277,7 @@ namespace FFmpegSharp.Interop
         public static extern AVCodec* avcodec_find_encoder_by_name(string name);
 
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern AVCodec* avcodec_find_decoder(CodecID id);
+        public static extern AVCodec* avcodec_find_decoder(AVCodecID id);
 
         /// <summary>
         /// Finds a decoder with the specified name.
@@ -634,7 +636,7 @@ namespace FFmpegSharp.Interop
         /// <param name="codec_id">The codec</param>
         /// <returns>Number of bits per sample or zero if unknown for the given codec</returns>
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern int av_get_bits_per_sample(CodecID codec_id);
+        public static extern int av_get_bits_per_sample(AVCodecID codec_id);
 
         /// <summary>Returns sample format bits per sample.</summary>
         /// <param ref="sample_fmt">the sample format</param>
@@ -649,7 +651,7 @@ namespace FFmpegSharp.Interop
         public static extern void av_register_codec_parser(ref AVCodecParser pAVcodecParser);
 
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
-        public static extern AVCodecParserContext* av_parser_init(CodecID codec_id);
+        public static extern AVCodecParserContext* av_parser_init(AVCodecID codec_id);
 
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int av_parser_parse(ref AVCodecParserContext pAVCodecParserContext,
@@ -675,7 +677,7 @@ namespace FFmpegSharp.Interop
 
         [DllImport(AVCODEC_DLL_NAME, CharSet = CharSet.Ansi)]
         public static extern int av_bitstream_filter_filter(ref AVBitStreamFilterContext pAVBitStreamFilterContext,
-                                        ref AVCodec pAVCodecContext,
+                                        ref AVCodecContext pAVCodecContext,
                                         string args,
                                         ref byte[] poutbuf,
                                         ref int poutbuf_size, byte[] buf, int buf_size, int keyframe);
@@ -753,6 +755,13 @@ namespace FFmpegSharp.Interop
 #endif
 
         #endregion
+
+        [DllImport(AVCODEC_DLL_NAME)]
+        public static extern void av_init_packet(ref AVPacket pkt);
+
+        [DllImport(AVCODEC_DLL_NAME)]
+        public static extern void av_free_packet(ref AVPacket pkt);
+
 
         #region "Consts"
 
@@ -1120,5 +1129,6 @@ namespace FFmpegSharp.Interop
         public const int AVERROR_NOENT = -2; /**< No such file or directory. */
 
         #endregion
+
     }
 }

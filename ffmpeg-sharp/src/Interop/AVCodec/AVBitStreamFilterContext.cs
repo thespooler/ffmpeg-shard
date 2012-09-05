@@ -26,7 +26,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace FFmpegSharp.Interop.Codec
+namespace FFmpegSharp.Interop.Codec.BitStream
 {
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct AVBitStreamFilterContext

@@ -30,7 +30,7 @@ namespace FFmpegSharp
 
         public long Length
         {
-            get { return FormatContext.file_size; }
+            get { return FormatContext.duration; }
         }
 
         public string FileFormat
@@ -80,14 +80,19 @@ namespace FFmpegSharp
             m_filename = Filename;
 
             // Open the file with FFmpeg
-            if (FFmpeg.av_open_input_file(out FormatContext, Filename) != AVError.OK)
+            if (FFmpeg.avformat_open_input_file(out FormatContext, Filename) != AVError.OK)
                 throw new DecoderException("Couldn't open file");
 
-            if (FFmpeg.av_find_stream_info(ref FormatContext) < AVError.OK)
+            //if (FFmpeg.av_find_stream_info(ref FormatContext) < AVError.OK)
+            //    throw new DecoderException("Couldn't find stream info");
+
+            if (FFmpeg.avformat_find_stream_info(ref FormatContext, null) < AVError.OK)
                 throw new DecoderException("Couldn't find stream info");
 
             if (FormatContext.nb_streams < 1)
                 throw new DecoderException("No streams found");
+
+            FFmpeg.avcodec_register_all();
 
             m_streams = new SortedList<int, DecoderStream>();
             for (int i = 0; i < FormatContext.nb_streams; i++)
@@ -96,15 +101,15 @@ namespace FFmpegSharp
 
                 switch (stream.codec->codec_type)
                 {
-                    case CodecType.CODEC_TYPE_VIDEO:
+                    case AVMediaType.AVMEDIA_TYPE_VIDEO:
                         m_streams.Add(i, new VideoDecoderStream(this, ref stream));
                         break;
-                    case CodecType.CODEC_TYPE_AUDIO:
+                    case AVMediaType.AVMEDIA_TYPE_AUDIO:
                         m_streams.Add(i, new AudioDecoderStream(this, ref stream));
                         break;
-                    case CodecType.CODEC_TYPE_UNKNOWN:
-                    case CodecType.CODEC_TYPE_DATA:
-                    case CodecType.CODEC_TYPE_SUBTITLE:
+                    case AVMediaType.AVMEDIA_TYPE_UNKNOWN:
+                    case AVMediaType.AVMEDIA_TYPE_DATA:
+                    case AVMediaType.AVMEDIA_TYPE_SUBTITLE:
                     default:
                         m_streams.Add(i, null);
                         break;

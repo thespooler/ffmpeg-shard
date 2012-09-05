@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FFmpegSharp.Interop.AVUtil
+namespace FFmpegSharp.Interop.Util
 {
     public enum AVRounding
     {

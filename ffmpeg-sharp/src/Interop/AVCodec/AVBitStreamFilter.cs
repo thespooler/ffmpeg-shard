@@ -26,13 +26,15 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace FFmpegSharp.Interop.Codec
+namespace FFmpegSharp.Interop.Codec.BitStream
 {
     public delegate int FilterCallback(ref AVBitStreamFilterContext pAVBitStreamFilterContext,
                                        ref AVCodecContext pAVCodecContext,
                                        string args,
                                        ref byte[] poutbuf, ref int poutbuf_size,
                                        byte[] buf, int buf_size, int keyframe);
+
+    public delegate void CloseCallback(ref AVBitStreamFilterContext pAVBitStreamFilterContext);
 
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct AVBitStreamFilter
@@ -49,6 +51,12 @@ namespace FFmpegSharp.Interop.Codec
         public FilterCallback filter
         {
             get { return Utils.GetDelegate<FilterCallback>(filter_ptr); }
+        }
+
+        private IntPtr close_ptr;
+        public CloseCallback close
+        {
+            get { return Utils.GetDelegate<CloseCallback>(close_ptr); }
         }
 
         public AVBitStreamFilter* next;

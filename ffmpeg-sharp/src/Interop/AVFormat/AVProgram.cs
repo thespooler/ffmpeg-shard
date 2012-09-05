@@ -2,30 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 using FFmpegSharp.Interop.Codec;
+using FFmpegSharp.Interop.Util;
 
 namespace FFmpegSharp.Interop.Format
 {
     public unsafe struct AVProgram
     {
         public int id;
-
-        private sbyte* provider_name_ptr;
-        /// <summary>
-        /// Network name for DVB streams
-        /// </summary>
-        public string provider_name
-        {
-            get { return new string(provider_name_ptr); }
-        }
-
-        private sbyte* name_ptr;
-        /// <summary>
-        /// Service name for DVB streams
-        /// </summary>
-        public string name
-        {
-            get { return new string(name_ptr); }
-        }
 
         public int flags;
 
@@ -37,5 +20,11 @@ namespace FFmpegSharp.Interop.Format
         public uint* stream_index;
 
         public uint nb_stream_indexes;
+
+        public AVDictionary* metadata;
+
+        public int program_num;
+        public int pmt_pid;
+        public int pcr_pid;
     }
 }

@@ -49,6 +49,11 @@ namespace FFmpegSharp.Interop.Util
         public double min;
         public double max;
         public AV_OPT_FLAG flags;
-        public IntPtr unit;
+
+        sbyte* unit_ptr;
+        public string unit
+        {
+            get { return new string(unit_ptr); }
+        }
     };
 }
