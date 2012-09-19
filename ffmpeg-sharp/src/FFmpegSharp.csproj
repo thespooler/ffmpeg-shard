@@ -179,15 +179,6 @@
     <Compile Include="Interop\AVFormat\AVStream.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Interop\AVFormat\URLContext.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interop\AVFormat\URLPoolEntry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interop\AVFormat\URLProtocol.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Interop\SWScale\Enums.cs" />
     <Compile Include="Interop\SWScale\SwsContext.cs" />
     <Compile Include="Interop\SWScale\SwsFilter.cs" />
@@ -256,6 +247,32 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="avcodec-54.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="avdevice-54.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="avfilter-3.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="avformat-54.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="avutil-51.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="postproc-52.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="swresample-0.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="swscale-2.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

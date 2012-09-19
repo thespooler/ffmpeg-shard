@@ -774,14 +774,14 @@ namespace FFmpegSharp.Interop.Codec
          * number of bytes per packet if constant and known or 0
          * Used by some WAV based audio codecs.
          */
-        int block_align;
+        public int block_align;
 
         /**
          * Audio cutoff bandwidth (0 means "automatic")
          * - encoding: Set by user.
          * - decoding: unused
          */
-        int cutoff;
+        public int cutoff;
 
         /**
          * Decoder should decode to this many channels if it can (0 for default)
@@ -789,28 +789,28 @@ namespace FFmpegSharp.Interop.Codec
          * - decoding: Set by user.
          * @deprecated Deprecated in favor of request_channel_layout.
          */
-        int request_channels;
+        public int request_channels;
 
         /**
          * Audio channel layout.
          * - encoding: set by user.
          * - decoding: set by user, may be overwritten by libavcodec.
          */
-        ulong channel_layout;
+        public ulong channel_layout;
 
         /**
          * Request decoder to use this channel layout if it can (0 for default)
          * - encoding: unused
          * - decoding: Set by user.
          */
-        ulong request_channel_layout;
+        public ulong request_channel_layout;
 
         /**
         * Type of service that the audio stream conveys.
         * - encoding: Set by user.
         * - decoding: Set by libavcodec.
         */
-        AVAudioServiceType audio_service_type;
+        public AVAudioServiceType audio_service_type;
 
         /**
          * desired sample format
@@ -818,7 +818,7 @@ namespace FFmpegSharp.Interop.Codec
          * - decoding: Set by user.
          * Decoder will decode to this format if it can.
          */
-        AVSampleFormat request_sample_fmt;
+        public AVSampleFormat request_sample_fmt;
 
 
         /**
@@ -877,7 +877,7 @@ namespace FFmpegSharp.Interop.Codec
          * - decoding: Set by libavcodec, user can override.
          */
 
-        public IntPtr get_buffer_ptr;
+        IntPtr get_buffer_ptr;
         public GetBufferCallback get_buffer
         {
             get { return (Utils.GetDelegate<GetBufferCallback>(get_buffer_ptr)); }
@@ -893,7 +893,7 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: unused
          * - decoding: Set by libavcodec, user can override.
          */
-        public IntPtr release_buffer_ptr;
+        IntPtr release_buffer_ptr;
         public ReleaseBufferCallback release_buffer
         {
             get { return (Utils.GetDelegate<ReleaseBufferCallback>(release_buffer_ptr)); }
@@ -912,36 +912,36 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: unused
          * - decoding: Set by libavcodec, user can override.
          */
-        public IntPtr reget_buffer_ptr;
+        IntPtr reget_buffer_ptr;
         public GetBufferCallback reget_buffer
         {
             get { return (Utils.GetDelegate<GetBufferCallback>(reget_buffer_ptr)); }
         }
 
         /* - encoding parameters */
-        float qcompress;  ///< amount of qscale change between easy & hard scenes (0.0-1.0)
-        float qblur;      ///< amount of qscale smoothing over time (0.0-1.0)
+        public float qcompress;  ///< amount of qscale change between easy & hard scenes (0.0-1.0)
+        public float qblur;      ///< amount of qscale smoothing over time (0.0-1.0)
 
         /**
          * minimum quantizer
          * - encoding: Set by user.
          * - decoding: unused
          */
-        int qmin;
+        public int qmin;
 
         /**
          * maximum quantizer
          * - encoding: Set by user.
          * - decoding: unused
          */
-        int qmax;
+        public int qmax;
 
         /**
          * maximum quantizer difference between frames
          * - encoding: Set by user.
          * - decoding: unused
          */
-        int max_qdiff;
+        public int max_qdiff;
 
         /**
          * ratecontrol qmin qmax limiting method
@@ -949,69 +949,69 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: Set by user.
          * - decoding: unused
          */
-        float rc_qsquish;
+        public float rc_qsquish;
 
-        float rc_qmod_amp;
-        int rc_qmod_freq;
+        public float rc_qmod_amp;
+        public int rc_qmod_freq;
 
         /**
          * decoder bitstream buffer size
          * - encoding: Set by user.
          * - decoding: unused
          */
-        int rc_buffer_size;
+        public int rc_buffer_size;
 
         /**
          * ratecontrol override, see RcOverride
          * - encoding: Allocated/set/freed by user.
          * - decoding: unused
          */
-        int rc_override_count;
-        RcOverride* rc_override;
+        public int rc_override_count;
+        public RcOverride* rc_override;
 
         /**
          * rate control equation
          * - encoding: Set by user
          * - decoding: unused
          */
-        char* rc_eq;
+        public char* rc_eq;
 
         /**
          * maximum bitrate
          * - encoding: Set by user.
          * - decoding: unused
          */
-        int rc_max_rate;
+        public int rc_max_rate;
 
         /**
          * minimum bitrate
          * - encoding: Set by user.
          * - decoding: unused
          */
-        int rc_min_rate;
+        public int rc_min_rate;
 
-        float rc_buffer_aggressivity;
+        public float rc_buffer_aggressivity;
 
         /**
          * initial complexity for pass1 ratecontrol
          * - encoding: Set by user.
          * - decoding: unused
          */
-        float rc_initial_cplx;
+        public float rc_initial_cplx;
 
         /**
          * Ratecontrol attempt to use, at maximum, <value> of what can be used without an underflow.
          * - encoding: Set by user.
          * - decoding: unused.
          */
-        float rc_max_available_vbv_use;
+        public float rc_max_available_vbv_use;
 
         /**
          * Ratecontrol attempt to use, at least, <value> times the amount needed to prevent a vbv overflow.
          * - encoding: Set by user.
          * - decoding: unused.
          */
-        float rc_min_vbv_overflow_use;
+        public float rc_min_vbv_overflow_use;
 
         /**
          * Number of bits which should be loaded into the rc buffer before decoding starts.
@@ -1025,28 +1025,28 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: Set by user.
          * - decoding: unused
          */
-        int coder_type;
+        public int coder_type;
 
         /**
          * context model
          * - encoding: Set by user.
          * - decoding: unused
          */
-        int context_model;
+        public int context_model;
 
         /**
          * minimum Lagrange multipler
          * - encoding: Set by user.
          * - decoding: unused
          */
-        int lmin;
+        public int lmin;
 
         /**
          * maximum Lagrange multipler
          * - encoding: Set by user.
          * - decoding: unused
          */
-        int lmax;
+        public int lmax;
 
         /**
          * frame skip threshold
@@ -1060,47 +1060,47 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: Set by user.
          * - decoding: unused
          */
-        int frame_skip_factor;
+        public int frame_skip_factor;
 
         /**
          * frame skip exponent
          * - encoding: Set by user.
          * - decoding: unused
          */
-        int frame_skip_exp;
+        public int frame_skip_exp;
 
         /**
          * frame skip comparison function
          * - encoding: Set by user.
          * - decoding: unused
          */
-        int frame_skip_cmp;
+        public int frame_skip_cmp;
 
         /**
          * trellis RD quantization
          * - encoding: Set by user.
          * - decoding: unused
          */
-        int trellis;
+        public int trellis;
 
         /**
          * - encoding: Set by user.
          * - decoding: unused
          */
-        int min_prediction_order;
+        public int min_prediction_order;
 
         /**
          * - encoding: Set by user.
          * - decoding: unused
          */
-        int max_prediction_order;
+        public int max_prediction_order;
 
         /**
          * GOP timecode frame start number
          * - encoding: Set by user, in non drop frame format
          * - decoding: Set by libavcodec (timecode in the 25 bits format, -1 if unset)
          */
-        long timecode_frame_start;
+        public long timecode_frame_start;
 
         /* The RTP callback: This function is called    */
         /* every time the encoder has a packet to send. */
@@ -1114,7 +1114,7 @@ namespace FFmpegSharp.Interop.Codec
             get { return (Utils.GetDelegate<RtpCallback>(rtp_callback_ptr)); }
         }
 
-        int rtp_payload_size;   /* The size of the RTP payload: the coder will  */
+        public int rtp_payload_size;   /* The size of the RTP payload: the coder will  */
         /* do its best to deliver a chunk with size     */
         /* below rtp_payload_size, the chunk will start */
         /* with a start code on some codecs like H.263. */
@@ -1122,28 +1122,28 @@ namespace FFmpegSharp.Interop.Codec
         /* headers inside the transmitted RTP payload.  */
 
         /* statistics, used for 2-pass encoding */
-        int mv_bits;
-        int header_bits;
-        int i_tex_bits;
-        int p_tex_bits;
-        int i_count;
-        int p_count;
-        int skip_count;
-        int misc_bits;
+        public int mv_bits;
+        public int header_bits;
+        public int i_tex_bits;
+        public int p_tex_bits;
+        public int i_count;
+        public int p_count;
+        public int skip_count;
+        public int misc_bits;
 
         /**
          * number of bits used for the previously encoded frame
          * - encoding: Set by libavcodec.
          * - decoding: unused
          */
-        int frame_bits;
+        public int frame_bits;
 
         /**
          * pass1 encoding statistics output buffer
          * - encoding: Set by libavcodec.
          * - decoding: unused
          */
-        char* stats_out;
+        public char* stats_out;
 
         /**
          * pass2 encoding statistics input buffer
@@ -1151,14 +1151,14 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: Allocated/set/freed by user.
          * - decoding: unused
          */
-        char* stats_in;
+        public char* stats_in;
 
         /**
          * Work around bugs in encoders which sometimes cannot be detected automatically.
          * - encoding: Set by user
          * - decoding: Set by user
          */
-        int workaround_bugs;
+        public int workaround_bugs;
 
         /**
          * strictly follow the standard (MPEG4, ...).
@@ -1172,35 +1172,35 @@ namespace FFmpegSharp.Interop.Codec
          * when they can) unless they are explicitly asked to behave stupidly
          * (=strictly conform to the specs)
          */
-        int strict_std_compliance;
+        public int strict_std_compliance;
 
         /**
          * error concealment flags
          * - encoding: unused
          * - decoding: Set by user.
          */
-        int error_concealment;
+        public int error_concealment;
 
         /**
          * debug
          * - encoding: Set by user.
          * - decoding: Set by user.
          */
-        int debug;
+        public int debug;
 
         /**
          * debug
          * - encoding: Set by user.
          * - decoding: Set by user.
          */
-        int debug_mv;
+        public int debug_mv;
 
         /**
          * Error recognition; may misdetect some more or less valid parts as errors.
          * - encoding: unused
          * - decoding: Set by user.
          */
-        int err_recognition;
+        public int err_recognition;
 
         /**
          * opaque 64bit number (generally a PTS) that will be reordered and
@@ -1209,14 +1209,14 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: unused
          * - decoding: Set by user.
          */
-        long reordered_opaque;
+        public long reordered_opaque;
 
         /**
          * Hardware accelerator in use
          * - encoding: unused.
          * - decoding: Set by libavcodec
          */
-        AVHWAccel* hwaccel;
+        public AVHWAccel* hwaccel;
 
         /**
          * Hardware accelerator context.
@@ -1228,56 +1228,56 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: unused
          * - decoding: Set by user
          */
-        void* hwaccel_context;
+        public void* hwaccel_context;
 
         /**
          * error
          * - encoding: Set by libavcodec if flags&CODEC_FLAG_PSNR.
          * - decoding: unused
          */
-        fixed ulong error[8];
+        public fixed ulong error[8];
 
         /**
          * DCT algorithm, see FF_DCT_* below
          * - encoding: Set by user.
          * - decoding: unused
          */
-        int dct_algo;
+        public int dct_algo;
 
         /**
          * IDCT algorithm, see FF_IDCT_* below.
          * - encoding: Set by user.
          * - decoding: Set by user.
          */
-        int idct_algo;
+        public int idct_algo;
 
         /**
          * bits per sample/pixel from the demuxer (needed for huffyuv).
          * - encoding: Set by libavcodec.
          * - decoding: Set by user.
          */
-        int bits_per_coded_sample;
+        public int bits_per_coded_sample;
 
         /**
          * Bits per sample/pixel of internal libavcodec pixel/sample format.
          * - encoding: set by user.
          * - decoding: set by libavcodec.
          */
-        int bits_per_raw_sample;
+        public int bits_per_raw_sample;
 
         /**
          * low resolution decoding, 1-> 1/2 size, 2->1/4 size
          * - encoding: unused
          * - decoding: Set by user.
          */
-        int lowres;
+        public int lowres;
 
         /**
          * the picture in the bitstream
          * - encoding: Set by libavcodec.
          * - decoding: Set by libavcodec.
          */
-        AVFrame* coded_frame;
+        public AVFrame* coded_frame;
 
         /**
          * thread count
@@ -1285,7 +1285,7 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: Set by user.
          * - decoding: Set by user.
          */
-        int thread_count;
+        public int thread_count;
 
         /**
          * Which multithreading methods to use.
@@ -1295,14 +1295,14 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: Set by user, otherwise the default is used.
          * - decoding: Set by user, otherwise the default is used.
          */
-        int thread_type;
+        public int thread_type;
 
         /**
          * Which multithreading methods are in use by the codec.
          * - encoding: Set by libavcodec.
          * - decoding: Set by libavcodec.
          */
-        int active_thread_type;
+        public int active_thread_type;
 
         /**
          * Set by the client if its custom get_buffer() callback can be called
@@ -1312,7 +1312,7 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: Set by user.
          * - decoding: Set by user.
          */
-        int thread_safe_callbacks;
+        public int thread_safe_callbacks;
 
         /**
          * The codec may call this to execute several independent things.
@@ -1359,49 +1359,49 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: set by execute()
          * - decoding: set by execute()
          */
-        void* thread_opaque;
+        public void* thread_opaque;
 
         /**
          * noise vs. sse weight for the nsse comparsion function
          * - encoding: Set by user.
          * - decoding: unused
          */
-        int nsse_weight;
+        public int nsse_weight;
 
         /**
          * profile
          * - encoding: Set by user.
          * - decoding: Set by libavcodec.
          */
-        int profile;
+        public int profile;
 
         /**
          * level
          * - encoding: Set by user.
          * - decoding: Set by libavcodec.
          */
-        int level;
+        public int level;
 
         /**
          *
          * - encoding: unused
          * - decoding: Set by user.
          */
-        AVDiscard skip_loop_filter;
+        public AVDiscard skip_loop_filter;
 
         /**
          *
          * - encoding: unused
          * - decoding: Set by user.
          */
-        AVDiscard skip_idct;
+        public AVDiscard skip_idct;
 
         /**
          *
          * - encoding: unused
          * - decoding: Set by user.
          */
-        AVDiscard skip_frame;
+        public AVDiscard skip_frame;
 
         /**
          * Header containing style information for text subtitles.
@@ -1411,15 +1411,15 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: Set/allocated/freed by user (before avcodec_open2())
          * - decoding: Set/allocated/freed by libavcodec (by avcodec_open2())
          */
-        byte* subtitle_header;
-        int subtitle_header_size;
+        public byte* subtitle_header;
+        public int subtitle_header_size;
 
         /**
          * Simulates errors in the bitstream to test error concealment.
          * - encoding: Set by user.
          * - decoding: unused
          */
-        int error_rate;
+        public int error_rate;
 
         /**
          * Current packet as passed into the decoder, to avoid having
@@ -1428,7 +1428,7 @@ namespace FFmpegSharp.Interop.Codec
          * - decoding: set by avcodec_decode_*, read by get_buffer() for setting pkt_pts
          * - encoding: unused
          */
-        AVPacket* pkt;
+        public AVPacket* pkt;
 
         /**
          * VBV delay coded in the last frame (in periods of a 27 MHz clock).
@@ -1436,7 +1436,7 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: Set by libavcodec.
          * - decoding: unused.
          */
-        ulong vbv_delay;
+        public ulong vbv_delay;
 
         /**
          * Timebase in which pkt_dts/pts and AVPacket.dts/pts are.
@@ -1445,7 +1445,7 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding unused.
          * - decodimg set by user
          */
-        AVRational pkt_timebase;
+        public AVRational pkt_timebase;
 
         /**
          * AVCodecDescriptor
@@ -1454,17 +1454,17 @@ namespace FFmpegSharp.Interop.Codec
          * - encoding: unused.
          * - decoding: set by libavcodec.
          */
-        AVCodecDescriptor* codec_descriptor;
+        public AVCodecDescriptor* codec_descriptor;
 
         /**
          * Current statistics for PTS correction.
          * - decoding: maintained and used by libavcodec, not intended to be used by user apps
          * - encoding: unused
          */
-        long pts_correction_num_faulty_pts; /// Number of incorrect PTS values so far
-        long pts_correction_num_faulty_dts; /// Number of incorrect DTS values so far
-        long pts_correction_last_pts;       /// PTS of the last frame
-        long pts_correction_last_dts;       /// DTS of the last frame
+        public long pts_correction_num_faulty_pts; /// Number of incorrect PTS values so far
+        public long pts_correction_num_faulty_dts; /// Number of incorrect DTS values so far
+        public long pts_correction_last_pts;       /// PTS of the last frame
+        public long pts_correction_last_dts;       /// DTS of the last frame
     }
 
     public unsafe struct AVCodecDescriptor
@@ -1476,11 +1476,23 @@ namespace FFmpegSharp.Interop.Codec
          * unique for each codec descriptor. It should contain alphanumeric
          * characters and '_' only.
          */
-        public char* name;
+        private sbyte* name;
+        public string Name
+        {
+            get { return new string(name); }
+            set { Utils.SetString(name, 32, value); }
+        }
+
         /**
          * A more descriptive name for this codec. May be NULL.
          */
-        public char* long_name;
+        private sbyte* long_name;
+        public string LongName
+        {
+            get { return new string(long_name); }
+            set { Utils.SetString(long_name, 32, value); }
+        }
+
         /**
          * Codec properties, a combination of AV_CODEC_PROP_* flags.
          */

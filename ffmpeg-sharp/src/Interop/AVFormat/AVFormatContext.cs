@@ -25,7 +25,6 @@
 
 using System;
 using System.Runtime.InteropServices;
-using FFmpegSharp.Interop.AVIO;
 using FFmpegSharp.Interop.Util;
 using FFmpegSharp.Interop.Codec;
 using FFmpegSharp.Interop.Format.Input;
