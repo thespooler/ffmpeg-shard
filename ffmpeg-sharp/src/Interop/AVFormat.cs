@@ -27,7 +27,6 @@ using System;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
-using FFmpegSharp.Interop.AVIO;
 using FFmpegSharp.Interop.Codec;
 using FFmpegSharp.Interop.Format;
 using FFmpegSharp.Interop.Util;
@@ -139,7 +138,6 @@ namespace FFmpegSharp.Interop
         public static AVError avformat_open_input_file(out AVFormatContext pFormatContext, string filename)
         {
             IntPtr ptr;
-            //AVError err = av_open_input_file(out ptr, filename, null, 0, null);
             AVError err = avformat_open_input(out ptr, filename, null, null);
 
             if (ptr == IntPtr.Zero)
@@ -150,12 +148,21 @@ namespace FFmpegSharp.Interop
 
             pFormatContext = *(AVFormatContext*)ptr.ToPointer();
 
-            //FFmpeg.av_freep(ref ptr);
-            //FFmpeg.avformat_close_input(ref pFormatContext);
-
             return err;
         }
         
+        [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
+        public static extern void avformat_close_input(ref IntPtr ppAvFormatCtx);
+        
+        public unsafe static void avformat_close_input(ref AVFormatContext s)
+        {
+            fixed (AVFormatContext* avc = &s)
+            {
+                IntPtr ptr = (IntPtr)avc;
+                avformat_close_input(ref ptr);
+            }
+        }
+
         /// <summary>
         /// Read packets of a media file to get stream information. This
         /// is useful for file formats with no headers such as MPEG. This
@@ -236,6 +243,7 @@ namespace FFmpegSharp.Interop
         /// </summary>
         /// <param name="pAVFormatContext">Media file handle</param>
         [DllImport(AVFORMAT_DLL_NAME, CharSet = CharSet.Ansi)]
+        [Obsolete]
         public static extern void av_close_input_file(ref AVFormatContext pAVFormatContext);
 
         /// <summary>

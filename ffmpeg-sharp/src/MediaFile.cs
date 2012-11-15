@@ -154,7 +154,7 @@ namespace FFmpegSharp
                     m_streams = null;
                 }
 
-                FFmpeg.av_close_input_file(ref FormatContext);
+                FFmpeg.avformat_close_input(ref FormatContext);
             }
         }
     }
