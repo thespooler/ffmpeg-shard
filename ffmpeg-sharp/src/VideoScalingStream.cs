@@ -100,7 +100,7 @@ namespace FFmpegSharp
                     throw new DecoderException("Error scaling output");
 
                 // copy data into our managed buffer
-                if (pOutPict->data[0] == null)//IntPtr.Zero)
+                if (pOutPict->data[0] == null)
                 {
                     frame = null;
                     return true;
